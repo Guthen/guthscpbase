@@ -1,0 +1,13 @@
+{
+	"title" :	"[SCP] Guthen's Addons Base",
+	"type"  :	"ServerContent",
+	"tags"  :	["roleplay","realism"],
+	"ignore":
+	[
+		"*.cmd",
+		"*.ini",
+		"*.lnk",
+		"*.url",
+		"guthscpbase.jpg"
+	]
+}
