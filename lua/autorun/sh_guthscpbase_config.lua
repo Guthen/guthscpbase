@@ -23,6 +23,12 @@ function GuthSCP.createTeamsConfigElement( element )
     }, element or {} )
 end
 
+function GuthSCP.createTeamConfigElement( element )
+    element = GuthSCP.createTeamsConfigElement( element )
+    element.type = "ComboBox" --  set element type as a single combobox and not an array
+    return element
+end
+
 function GuthSCP.receiveTeamsConfig( teams )
     assert( istable( teams ), "'teams' is not a table" )
     
@@ -44,6 +50,16 @@ function GuthSCP.parseTeamsConfig( teams )
     end
 
     return new_teams
+end
+
+function GuthSCP.parseTeamConfig( team_key )
+    local team_id = isnumber( team_key ) and team_key or _G[team_key]
+    if not isnumber( team_id ) then return end
+
+    local team_info = team.GetAllTeams()[team_id]
+    if not team_info.Joinable then return end
+
+    return GuthSCP.getTeamKeyname( team_id )
 end
 
 hook.Add( "guthscpbase:config", "guthscpbase", function()

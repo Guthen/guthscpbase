@@ -68,14 +68,16 @@ hook.Add( "InitPostEntity", "GuthSCPBase:Config", run_config )
 
 function GuthSCP.isSCP( ply )
     local teams = GuthSCP.Config.guthscpbase.scp_teams or {}
-    return teams[isnumber( ply ) and ply or ply:Team()] or false
+    return teams[GuthSCP.getTeamKeyname( isnumber( ply ) and ply or ply:Team() )] or false
 end
 
 function GuthSCP.getSCPs()
     local teams, players = GuthSCP.Config.guthscpbase.scp_teams or {}, {}
 
     for i, v in ipairs( player.GetAll() ) do
-        if teams[v:Team()] then players[#players + 1] = v end
+        if teams[GuthSCP.getTeamKeyname( v:Team() )] then 
+            players[#players + 1] = v 
+        end
     end
 
     return players

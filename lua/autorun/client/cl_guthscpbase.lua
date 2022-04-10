@@ -142,7 +142,6 @@ local function create_array_vguis( panel, el, config_value, add_func )
     remove_button:SetText( "Delete" )
     function remove_button:DoClick()
         local target = vguis[#vguis]
-        print( target, #vguis )
         if not IsValid( target ) then return end
 
         target:Remove()
