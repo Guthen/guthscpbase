@@ -81,6 +81,40 @@ function GuthSCP.getSCPs()
     return players
 end
 
+--  teams
+local teams_keynames, keynames_teams
+function GuthSCP.cacheTeamsKeynames() 
+    teams_keynames = {}
+
+    local count = 0
+    for k, v in pairs( _G ) do
+        if k:StartWith( "TEAM_" ) then
+            teams_keynames[k] = v
+            count = count + 1
+        end
+    end
+    keynames_teams = GuthSCP.reverseTable( teams_keynames )
+
+    GuthSCP.debugPrint( "guthscpbase", "Cached %d teams keynames", count )
+end
+hook.Add( "InitPostEntity", "GuthSCPBase:CacheTeamsKeynames", GuthSCP.cacheTeamsKeynames )
+
+function GuthSCP.getTeamsKeynames()
+    if not teams_keynames then 
+        GuthSCP.cacheTeamsKeynames() 
+    end
+    
+    return teams_keynames
+end
+
+function GuthSCP.getTeamKeyname( team_id )
+    if not keynames_teams then 
+        GuthSCP.cacheTeamsKeynames() 
+    end
+
+    return keynames_teams[team_id]
+end
+
 --  debug
 local convar_debug = CreateConVar( "guthscpbase_debug", "0", FCVAR_NONE, "Enables debug messages", "0", "1" )
 
@@ -106,6 +140,16 @@ function GuthSCP.mergeTable( to_tbl, from_tbl )
     end
 
     return to_tbl
+end
+
+function GuthSCP.reverseTable( tbl )
+    local new_tbl = {}
+
+    for k, v in pairs( tbl ) do
+        new_tbl[v] = k
+    end
+
+    return new_tbl
 end
 
 function GuthSCP.valuesToKeysTable( tbl )

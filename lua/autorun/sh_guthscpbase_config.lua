@@ -4,7 +4,7 @@ function GuthSCP.createTeamsConfigElement( element )
         name = "Teams",
         id = "teams",
         value = function( config_value, config_key )
-            id = isnumber( config_key ) and config_key or _G[config_value]
+            id = isnumber( config_key ) and config_key or isstring( config_key ) and _G[config_key]
             return id and team.GetName( id ) or false
         end,
         choice = function()
@@ -14,13 +14,36 @@ function GuthSCP.createTeamsConfigElement( element )
                 if not v.Joinable then continue end
                 teams[#teams + 1] = {
                     value = v.Name,
-                    data = k,
+                    data = GuthSCP.getTeamKeyname( k ),
                 }
             end
 
             return teams
         end,
     }, element or {} )
+end
+
+function GuthSCP.receiveTeamsConfig( teams )
+    assert( istable( teams ), "'teams' is not a table" )
+    
+    return GuthSCP.valuesToKeysTable( teams )
+end
+
+function GuthSCP.parseTeamsConfig( teams ) 
+    assert( istable( teams ), "'teams' is not a table" )
+
+    local new_teams = {}
+
+    for k, v in pairs( team.GetAllTeams() ) do
+        if not v.Joinable then continue end
+
+        local keyname = GuthSCP.getTeamKeyname( k )
+        if not teams[v.Name] and not teams[k] and not teams[keyname] then continue end
+
+        new_teams[keyname] = true
+    end
+
+    return new_teams
 end
 
 hook.Add( "guthscpbase:config", "guthscpbase", function()
@@ -93,30 +116,32 @@ hook.Add( "guthscpbase:config", "guthscpbase", function()
                 }
             },
         },
+        --[[ 
+            @function guthscpbase::config.receive
+                | description: Called when an superadministrator apply his configuration to the server. This is where you want to
+                            check the sent information and apply the form to the configuration system by using GuthSCP.applyConfig
+                | realm: Server
+                | params:
+                    form: table Formular data
+        ]]
         receive = function( form )
-            local teams = {}
+            form.scp_teams = GuthSCP.receiveTeamsConfig( form.scp_teams )
 
-            for i, id in ipairs( form.scp_teams ) do
-                teams[id] = true
-            end
-
-            form.scp_teams = teams
             GuthSCP.applyConfig( "guthscpbase", form, {
                 network = true,
                 save = true,
             } )
         end,
+        --[[ 
+            @function guthscpbase::config.parse
+                | description: Called while a call to GuthSCP.applyConfig (either from guthscpbase::config.receive or after loading from file)
+                               before applying the configuration values. Here you can check your configuration values and edit them.
+                | realm: Shared
+                | params:
+                    form: table Formular data
+        ]]
         parse = function( form )
-            local teams = {}
-
-            for k, v in pairs( team.GetAllTeams() ) do
-                if not v.Joinable then continue end
-                if not form.scp_teams[v.Name] and not form.scp_teams[k] then continue end
-
-                teams[k] = true
-            end
-
-            form.scp_teams = teams
+            form.scp_teams = GuthSCP.parseTeamsConfig( form.scp_teams )
         end,
     } )
 

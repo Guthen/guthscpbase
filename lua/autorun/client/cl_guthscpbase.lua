@@ -99,6 +99,7 @@ local function create_array_vguis( panel, el, config_value, add_func )
 
     local function add_vgui( value, key )
         local child = add_func( scroll_panel, value, key )
+        if not child then return end 
 
         local mouse_pressed = child.OnMousePressed
         function child:OnMousePressed( mouse_button )
@@ -141,6 +142,7 @@ local function create_array_vguis( panel, el, config_value, add_func )
     remove_button:SetText( "Delete" )
     function remove_button:DoClick()
         local target = vguis[#vguis]
+        print( target, #vguis )
         if not IsValid( target ) then return end
 
         target:Remove()
