@@ -124,13 +124,25 @@ function GuthSCP.isDebug()
     return convar_debug:GetBool()
 end
 
-function GuthSCP.debugPrint( name, message, ... )
-    if not GuthSCP.isDebug() then return end
-
+local function colored_print( color, name, message, ... )
     if ... then 
         message = message:format( ... )
     end
-    MsgC( Color( 66, 203, 245 ), "[", name, "] ", color_white, message, "\n" )
+    MsgC( color, "[", name, "] ", message, "\n" )
+end
+
+function GuthSCP.alert( name, message, ... )
+    colored_print( Color( 245, 78, 66 ), "Alert", name .. ": " .. message, ... )
+end
+
+function GuthSCP.print( name, message, ... )
+    colored_print( Color( 66, 203, 245 ), "Info", name .. ": " .. message, ... )
+end
+
+function GuthSCP.debugPrint( name, message, ... )
+    if not GuthSCP.isDebug() then return end
+
+    colored_print( Color( 66, 245, 135 ), "Debug", name .. ": " .. message, ... )
 end
 
 --  utilities
