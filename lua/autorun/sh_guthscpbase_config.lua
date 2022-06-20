@@ -29,6 +29,35 @@ function GuthSCP.createTeamConfigElement( element )
     return element
 end
 
+function GuthSCP.createEnumElement( enum, element )
+    return table.Merge( {
+        type = "ComboBox",
+        value = function( config_key, config_value )
+            --  is 'config_value' the data?
+            if isnumber( config_value ) then
+                for k, v in pairs( enum ) do
+                    if v == config_value then
+                        return k:sub( 1, 1 ):upper() .. k:sub( 2 ):lower()
+                    end
+                end
+            end
+            return config_value
+        end,
+        choice = function()
+            local choices = {}
+
+            for k, v in pairs( enum ) do
+                choices[#choices + 1] = {
+                    value = k:sub( 1, 1 ):upper() .. k:sub( 2 ):lower(),
+                    data = v,
+                }
+            end
+
+            return choices
+        end,
+    }, element or {} )
+end
+
 function GuthSCP.receiveTeamsConfig( teams )
     assert( istable( teams ), "'teams' is not a table" )
     
