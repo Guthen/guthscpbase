@@ -67,6 +67,8 @@ end )
 hook.Add( "InitPostEntity", "GuthSCPBase:Config", run_config )
 
 function GuthSCP.isSCP( ply )
+    if not ply:IsPlayer() then return false end
+
     local teams = GuthSCP.Config.guthscpbase.scp_teams or {}
     return teams[GuthSCP.getTeamKeyname( isnumber( ply ) and ply or ply:Team() )] or false
 end
