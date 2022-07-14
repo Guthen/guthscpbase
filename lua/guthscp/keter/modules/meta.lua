@@ -11,9 +11,11 @@ MODULE.__index = MODULE
 
 MODULE.icon = "icon16/brick.png"
 MODULE.dependencies = {}
+MODULE.requires = {}
 
 --  used by version checker to warn owner when a new version of this module is available
 --MODULE.version_url = "https://raw.githubusercontent.com/Guthen/VKXToolsEntitySpawner/master/lua/autorun/vkx_entspawner.lua"  --  optional
+
 
 
 --  methods
@@ -48,6 +50,5 @@ function MODULE:print( message, ... )
     --  log
     print( ( "[guthscp/%s] Message: %s" ):format( self.id, message ) )
 end
-
 
 guthscp.module_meta = MODULE

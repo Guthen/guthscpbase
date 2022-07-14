@@ -41,20 +41,20 @@ function guthscp.require_folder( path, is_recursive )
     local files, dirs = file.Find( path .. "*", "LUA" )
 
     --  load files
-    for i, v in ipairs( files ) do
+    for i, name in ipairs( files ) do
         local realm = guthscp.REALMS.SHARED
-        if v:find( "^sv_" ) then
+        if name:find( "^sv_" ) then
             realm = guthscp.REALMS.SERVER
-        elseif v:find( "^cl_" ) then
+        elseif name:find( "^cl_" ) then
             realm = guthscp.REALMS.CLIENT
         end
-        guthscp.require_file( path .. v, realm )
+        guthscp.require_file( path .. name, realm )
     end
 
     --  load folders (recursive)
     if is_recursive then
-        for i, v in ipairs( dirs ) do
-            guthscp.require_folder( path .. v .. "/", is_recursive )
+        for i, name in ipairs( dirs ) do
+            guthscp.require_folder( path .. name .. "/", is_recursive )
         end
     end
 end

@@ -37,6 +37,23 @@ function guthscp.init_module( id )
 
     --  TODO: version & dependency checking
 
+    --  load requires
+    print( "guthscp module: found " .. table.Count( module.requires ) .. " requires.." )
+    for path, realm in pairs( module.requires ) do
+        local current_path = guthscp.modules_path .. module.id .. "/" .. path
+
+        --  require folder
+        if current_path:find( "/$" ) then
+            local files = file.Find( current_path .. "*", "LUA" )
+            for i, name in ipairs( files ) do
+                guthscp.require_file( current_path .. name, realm )
+            end
+        --  require file
+        else
+            guthscp.require_file( current_path, realm )
+        end
+    end
+
     --  call init
     module:init()
     print( "guthscp module: " .. id .. " is initialized" )
@@ -53,14 +70,14 @@ function guthscp.require_modules()
 
     --  construct modules
     print( "guthscp module: constructing.." )
-    for i, v in ipairs( dirs ) do
-        guthscp.construct_module( v )
+    for i, name in ipairs( dirs ) do
+        guthscp.construct_module( name )
     end
 
     --  init modules
     print( "guthscp module: initializing.." )
-    for k, v in pairs( guthscp.modules ) do
-        guthscp.init_module( v )
+    for id, module in pairs( guthscp.modules ) do
+        guthscp.init_module( module )
     end
 
     print( "guthscp module: finished!" )
