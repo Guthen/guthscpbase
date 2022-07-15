@@ -85,29 +85,6 @@ function guthscp.module.init( id )
 	if module.version_url then
 		module._.version_check = guthscp.VERSION_STATES.PENDING
 		--    ^^^ ._.  funny emote
-
-		http.Fetch( module.version_url, 
-			function( body )
-				local remote_version = body:match( "version = \"(.-)\"" )
-				if not remote_version then 
-					module._.version_check = guthscp.VERSION_STATES.NONE
-					return guthscp.error( "guthscp.module", "failed to retrieve online version for %q (pattern returned nil)!", id ) 
-				end
-
-				--  compare versions
-				local result = guthscp.helpers.compare_versions( module.version, remote_version )
-				if result >= 0 then
-					module._.version_check = guthscp.VERSION_STATES.UPDATE
-					guthscp.info( "guthscp.module", "%q is up-to-date (v%s)", id, module.version )
-				else
-					module._.version_check = guthscp.VERSION_STATES.OUTDATE
-					guthscp.warning( "guthscp.module", "%q is out-of-date, consider updating it (current: v%s; online: v%s)", id, module.version, remote_version )
-				end
-			end,
-			function( reason )
-				guthscp.error( "guthscp.module", "failed to check version of %q (%s)!", id, reason )
-			end
-		)
 	end
 
 	--  check dependencies
@@ -159,7 +136,6 @@ function guthscp.module.init( id )
 	guthscp.print_tabs = guthscp.print_tabs - 2
 end
 
-
 function guthscp.module.require()
 	guthscp.modules = {}
 
@@ -191,3 +167,35 @@ function guthscp.module.require()
 	guthscp.print_tabs = guthscp.print_tabs - 1
 	print()
 end
+
+
+hook.Add( "InitPostEntity", "guthscp.modules:version_url", function()
+	timer.Simple( 5, function()
+		for id, module in pairs( guthscp.modules ) do
+			if not module.version_url then continue end
+	
+			http.Fetch( module.version_url, 
+				function( body )
+					local remote_version = body:match( "version = \"(.-)\"" )
+					if not remote_version then 
+						module._.version_check = guthscp.VERSION_STATES.NONE
+						return guthscp.error( "guthscp.module", "failed to retrieve online version for %q (pattern returned nil)!", id ) 
+					end
+	
+					--  compare versions
+					local result = guthscp.helpers.compare_versions( module.version, remote_version )
+					if result >= 0 then
+						module._.version_check = guthscp.VERSION_STATES.UPDATE
+						guthscp.info( "guthscp.module", "%q is up-to-date (v%s)", id, module.version )
+					else
+						module._.version_check = guthscp.VERSION_STATES.OUTDATE
+						guthscp.warning( "guthscp.module", "%q is out-of-date, consider updating it (current: v%s; online: v%s)", id, module.version, remote_version )
+					end
+				end,
+				function( reason )
+					guthscp.error( "guthscp.module", "failed to check version of %q (%s)!", id, reason )
+				end
+			)
+		end
+	end )
+end )
