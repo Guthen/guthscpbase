@@ -12,11 +12,11 @@ local MODULE = {
 }
 
 function MODULE:construct()
-	self:print( "I am constructed!" )
+	self:info( "constructed!" )
 end
 
 function MODULE:init()
-	self:print( "I am initialized!" )
+	self:info( "initialized!" )
 end
 
 

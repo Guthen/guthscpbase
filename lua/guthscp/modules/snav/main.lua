@@ -1,7 +1,7 @@
 local MODULE = {
     --  infos
-    name = "S-NAV",
-    id = "snav",
+    --name = "S-NAV",
+    --id = "snav",
     icon = "icon16/map.png",
 
     --  versions
@@ -9,17 +9,15 @@ local MODULE = {
         base = "1.1.0",
         --keycard = "1.0.0",
     },
-    version = "1.0.0",
+    --version = "1.0.0",
 }
 
 
 function MODULE:construct()
-    self:print( "I am constructed!" )
 end
 
 
 function MODULE:init()
-    self:print( "I am initialized!" )
 end
 
 

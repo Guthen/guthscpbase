@@ -4,20 +4,32 @@ guthscp.module.path = "guthscp/modules/"
 
 --  loader
 function guthscp.module.construct( id )
+	guthscp.info( "guthscp.module", "%q", id )
+	guthscp.print_tabs = guthscp.print_tabs + 1
+
 	local module = guthscp.require_file( guthscp.module.path .. id .. "/main.lua", guthscp.REALMS.SHARED )
 	if not module then 
-		return print( "guthscp: error, failed to construct module" .. id .. ", main.lua not found!" ) 
+		return guthscp.error( "guthscp.module", "failed to construct module %q (\"main.lua\" not found)!", id ) 
 	end
 
 	--  check required properties
+	local failed = false
 	if not isstring( module.name ) or #module.name == 0 then
-		return print( "guthscp module: error, module lack the 'name' property of type 'string'" )
+		failed = true
+		guthscp.error( "guthscp.module", "%q must have the 'name' property of type 'string'", id )
 	end
 	if not isstring( module.id ) or #module.id == 0 then
-		return print( "guthscp module: error, module lack the 'id' property of type 'string'" )
+		failed = true 
+		guthscp.error( "guthscp.module", "%q must have the 'id' property of type 'string'", id )
 	end
 	if not isstring( module.version ) or not guthscp.helpers.split_version( module.version ) then
-		return print( "guthscp module: error, module lack the 'version' property of type 'string'")
+		failed = true
+		guthscp.error( "guthscp.module", "%q must have the 'version' property of type 'string'", id )
+	end
+
+	if failed then
+		guthscp.print_tabs = guthscp.print_tabs - 1
+		return
 	end
 
 	--  copy variables (preventing editing meta)
@@ -36,17 +48,18 @@ function guthscp.module.construct( id )
 	setmetatable( module, guthscp.module.meta )
 
 	--  construct
+	guthscp.print_tabs = guthscp.print_tabs + 1
 	module:construct()
-
+	
 	--  register
 	guthscp.modules[id] = module
-	print( "guthscp module: " .. id .. " is constructed and registered" )
+	guthscp.print_tabs = guthscp.print_tabs - 2
 end
 
 function guthscp.module.call( id, method, ... )
 	local module = guthscp.modules[id]
 	if not module then 
-		return print( "guthscp: error, failed to call module " .. id .. "/" .. method .. "( " .. table.concat( { ... }, "," ) .. " ), module not found!" ) 
+		return guthscp.error( "guthscp.module", "failed to call module \"%s/%s( %s )\" (module not found)!", id, method, table.concat( { ... }, "," ) ) 
 	end
 
 	module[method]( self, ... )
@@ -62,8 +75,11 @@ function guthscp.module.init( id )
 	end
 	
 	if not module then 
-		return print( "guthscp: error, failed to init module " .. id .. ", module not found!" ) 
+		return guthscp.error( "guthscp.module", "failed to initialize module %q (module not found)!", id ) 
 	end
+
+	guthscp.info( "guthscp.module", "%q (v%s)", id, module.version )
+	guthscp.print_tabs = guthscp.print_tabs + 1
 
 	--  version URL checking
 	if module.version_url then
@@ -72,24 +88,24 @@ function guthscp.module.init( id )
 
 		http.Fetch( module.version_url, 
 			function( body )
-				local remote_version = body:match( "version = \".+\"" )
+				local remote_version = body:match( "version = \"(.-)\"" )
 				if not remote_version then 
 					module._.version_check = guthscp.VERSION_STATES.NONE
-					return print( "guthscp module: error, failed to retrieve online version for " .. id ) 
+					return guthscp.error( "guthscp.module", "failed to retrieve online version for %q (pattern returned nil)!", id ) 
 				end
 
 				--  compare versions
 				local result = guthscp.helpers.compare_versions( module.version, remote_version )
 				if result >= 0 then
 					module._.version_check = guthscp.VERSION_STATES.UPDATE
-					print( "guthscp module: " .. id .. " is up-to-date" )
+					guthscp.print( "guthscp.module", "%q is up-to-date (v%s)", id, module.version )
 				else
 					module._.version_check = guthscp.VERSION_STATES.OUTDATE
-					print( "guthscp module: " .. id .. " is out-of-date, consider updating it!" )
+					guthscp.warning( "guthscp.module", "%q is out-of-date, consider updating it (current: v%s; online: v%s)", id, module.version, remote_version )
 				end
 			end,
 			function( reason )
-				print( "guthscp module: error, failed to check version of " .. id .. " (" .. reason .. ")" )
+				guthscp.error( "guthscp.module", "failed to check version of %q (%s)!", id, reason )
 			end
 		)
 	end
@@ -99,7 +115,7 @@ function guthscp.module.init( id )
 		--  ensure dependency is registered
 		local dep_module = guthscp.modules[dep_id]
 		if not dep_module then 
-			return print( "guthscp module: error, dependency " .. dep_id .. " wasn't found, aborting initializing of " .. id ) 
+			return guthscp.error( "guthscp.module", "dependency %q can't be found, aborting initializing of %q", dep_id, id ) 
 		end
 
 		--  compare version
@@ -107,16 +123,17 @@ function guthscp.module.init( id )
 		if result >= 0 then
 			--  warn for eventual API's changes
 			if depth == 1 then
-				print( "guthscp module: warning, dependency " .. dep_id .. " API's version is greater than required, script errors could happen" )
+				guthscp.warning( "guthscp.module", "dependency %q API's version is greater than required, script errors could happen with module %q", dep_id, id )
 			end
 		else
-			print( "guthscp module: error, dependency " .. dep_id .. "'s version is lower than required (" .. dep_module.version .. "<" .. version .. ")" )
+			guthscp.error( "guthscp.module", "dependency %q's version is lower than required (current: v%s; required: v%s)", dep_module.version, version )
 			return
 		end
 	end
 
 	--  load requires
-	print( "guthscp module: found " .. table.Count( module.requires ) .. " requires.." )  --  TODO: fix requires count
+	guthscp.info( "guthscp.module", "loading %d requires..",  table.Count( module.requires ) )  --  TODO: fix requires count
+	guthscp.print_tabs = guthscp.print_tabs + 1
 	for path, realm in pairs( module.requires ) do
 		local current_path = guthscp.module.path .. module.id .. "/" .. path
 
@@ -131,11 +148,15 @@ function guthscp.module.init( id )
 			guthscp.require_file( current_path, realm )
 		end
 	end
+	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  call init
+	guthscp.print_tabs = guthscp.print_tabs + 1
 	module:init()
+
+	--  register state
 	module._.is_initialized = true
-	print( "guthscp module: " .. id .. " is initialized" )
+	guthscp.print_tabs = guthscp.print_tabs - 2
 end
 
 
@@ -144,22 +165,29 @@ function guthscp.module.require()
 
 	--  find modules
 	local _, dirs = file.Find( guthscp.module.path .. "*", "LUA" )
-	print( "guthscp module: found " .. #dirs .. " modules.." )
 	if #dirs == 0 then 
-		return print( "guthscp module: aborting.." ) 
+		return guthscp.warning( "guthscp.module", "no modules found, aborting.." ) 
 	end
+	guthscp.info( "guthscp.module", "loading %d modules..", #dirs )
+	guthscp.print_tabs = guthscp.print_tabs + 1
 
 	--  construct modules
-	print( "guthscp module: constructing.." )
+	guthscp.info( "guthscp.module", "constructing.." )
+	guthscp.print_tabs = guthscp.print_tabs + 1
 	for i, name in ipairs( dirs ) do
 		guthscp.module.construct( name )
 	end
+	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  init modules
-	print( "guthscp module: initializing.." )
+	guthscp.info( "guthscp.module", "initializing.." )
+	guthscp.print_tabs = guthscp.print_tabs + 1
 	for id, module in pairs( guthscp.modules ) do
 		guthscp.module.init( module )
 	end
 
-	print( "guthscp module: finished!" )
+	guthscp.print_tabs = guthscp.print_tabs - 1
+	guthscp.info( "guthscp.module", "finished!" )
+	guthscp.print_tabs = guthscp.print_tabs - 1
+	print()
 end

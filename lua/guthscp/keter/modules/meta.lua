@@ -45,20 +45,22 @@ function MODULE:init()
 end
 
 --[[ 
-	@function MODULE:print
-		| description: Log a module message to console
+	@function MODULE:info
+		| description: Log a module information to console
 		| params:
 			message: string Message to log
 			...: varargs Values to format into message 
 ]]
-function MODULE:print( message, ... )
-	--  format
-	if ... then
-		message = message:format( ... )
-	end
+function MODULE:info( message, ... )
+	guthscp.info( "guthscp/" .. self.id, message, ... )
+end
 
-	--  log
-	print( ( "[guthscp/%s] Message: %s" ):format( self.id, message ) )
+function MODULE:error( message, ... )
+	guthscp.error( "guthscp/" .. self.id, message, ... )
+end
+
+function MODULE:warning( message, ... )
+	guthscp.warning( "guthscp/" .. self.id, message, ... )
 end
 
 guthscp.module.meta = MODULE
