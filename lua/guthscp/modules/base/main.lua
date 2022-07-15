@@ -12,11 +12,9 @@ local MODULE = {
 }
 
 function MODULE:construct()
-	self:info( "constructed!" )
 end
 
 function MODULE:init()
-	self:info( "initialized!" )
 end
 
 

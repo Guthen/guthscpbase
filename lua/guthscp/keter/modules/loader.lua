@@ -53,6 +53,7 @@ function guthscp.module.construct( id )
 	
 	--  register
 	guthscp.modules[id] = module
+	module:info( "constructed!" )
 	guthscp.print_tabs = guthscp.print_tabs - 2
 end
 
@@ -133,6 +134,7 @@ function guthscp.module.init( id )
 
 	--  register state
 	module._.is_initialized = true
+	module:info( "initialized!" )
 	guthscp.print_tabs = guthscp.print_tabs - 2
 end
 
