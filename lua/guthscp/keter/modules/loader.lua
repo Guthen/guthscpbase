@@ -20,6 +20,18 @@ function guthscp.module.construct( id )
 		return print( "guthscp module: error, module lack the 'version' property of type 'string'")
 	end
 
+	--  copy variables (preventing editing meta)
+	for k, v in pairs( guthscp.module.meta ) do
+		if k:StartWith( "__" ) or module[k] then continue end
+		if isfunction( v ) then continue end
+		
+		--  copy element
+		if istable( v ) then
+			module[k] = table.Copy( v )
+		else
+			module[k] = v
+		end
+	end
 	--  inherit meta (@'meta.lua')
 	setmetatable( module, guthscp.module.meta )
 
