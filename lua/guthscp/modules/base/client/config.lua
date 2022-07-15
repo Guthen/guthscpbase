@@ -1,25 +1,26 @@
-GuthSCP = GuthSCP or {}
+guthscp = guthscp or {}
+guthscp.config = guthscp.config or {}
 
 local config = {}
 
 --  config
-function GuthSCP.addConfig( name, tbl )
+function guthscp.config.add( name, tbl )
     tbl.name = name
-    tbl.elements = GuthSCP.rehashTable( tbl.elements )
+    tbl.elements = guthscp.table.rehash( tbl.elements )
     for i, form in ipairs( tbl.elements ) do
-        form.elements = GuthSCP.rehashTable( form.elements )
+        form.elements = guthscp.table.rehash( form.elements )
     end
     config[name] = tbl
 
-    GuthSCP.Config[name] = {}
-    GuthSCP.loadConfigDefaults( name )
+    guthscp.Config[name] = {}
+    guthscp.config.load_defaults( name )
 end
 
-function GuthSCP.getConfigs()
+function guthscp.config.get_all()
     return config
 end
 
-function GuthSCP.sendConfig( name, form )
+function guthscp.config.send( name, form )
     if not LocalPlayer():IsSuperAdmin() then return end
     if table.Count( form ) <= 0 then return end
 
@@ -27,28 +28,28 @@ function GuthSCP.sendConfig( name, form )
         table.remove( form, 1 )
     end
 
-    net.Start( "guthscpbase:send" )
+    net.Start( "guthscp.config:send" )
         net.WriteString( name )
         net.WriteTable( form )
     net.SendToServer()
 end
 
-net.Receive( "guthscpbase:send", function( len, ply )
+net.Receive( "guthscp.config:send", function( len, ply )
     local name = net.ReadString()
 
     local tbl = net.ReadTable()
     if table.Count( tbl ) <= 0 then return end
 
-    print( ( "GuthSCP ─ Received %q config" ):format( name ) )
-    if GetConVar( "developer" ):GetInt() > 1 then
+    guthscp.info( "guthscp", "received %q config", name )
+    if guthscp.is_debug() then
         PrintTable( tbl )
     end
 
-    GuthSCP.applyConfig( name, tbl )
+    guthscp.config.apply( name, tbl )
 end )
 
-hook.Add( "InitPostEntity", "guthscpbase:config", function()
-    net.Start( "guthscpbase:config" )
+hook.Add( "InitPostEntity", "guthscp.config:receive", function()
+    net.Start( "guthscp.config:receive" )
     net.SendToServer()
 end )
 
@@ -173,7 +174,7 @@ form_vgui = {
         for i, el in ipairs( el.elements or {} ) do
             local id = el.id or #form + 1
             if not form_vgui[el.type] then
-                print( ( "guthscpbase - %q is not recognized as a registered type!" ):format( el.type ) )
+                guthscp.error( "guthscp", "element %q is not a recognized type!", el.type )
             else
                 form[id] = form_vgui[el.type]( panel, el, config_value[id], form )
                 if el.desc then
@@ -265,15 +266,15 @@ form_vgui = {
     end,
 }
 
-function GuthSCP.OpenPanel()
+function guthscp.config.open_menu()
     if not LocalPlayer():IsSuperAdmin() then return end
 
-    --hook.Run( "guthscpbase:config" )
+    --hook.Run( "guthscp.config:receive" )
 
     local tab_id = 1
-    if IsValid( GuthSCP.Panel ) then
-        if GuthSCP.Panel.sheet then tab_id = GuthSCP.Panel.sheet.tab_id end
-        GuthSCP.Panel:Remove() 
+    if IsValid( guthscp.config.menu ) then
+        if guthscp.config.menu.sheet then tab_id = guthscp.config.menu.sheet.tab_id end
+        guthscp.config.menu:Remove() 
     end
 
     local w, h = ScrW() * .4, ScrH() * .4
@@ -282,9 +283,9 @@ function GuthSCP.OpenPanel()
     frame:SetSize( w, h )
     frame:Center()
     frame:SetDraggable( false )
-    frame:SetTitle( "guthscpbase" )
+    frame:SetTitle( "GuthSCP Configuration" )
     frame:MakePopup()
-    GuthSCP.Panel = frame
+    guthscp.config.menu = frame
 
     local sheet = frame:Add( "DPropertySheet", frame )
     sheet:Dock( FILL )
@@ -297,7 +298,7 @@ function GuthSCP.OpenPanel()
         scroll_panel:Dock( FILL )
 
         for iform, vform in ipairs( v.elements or {} ) do
-            form_vgui[vform.type]( scroll_panel, vform, GuthSCP.Config[v.name] or {} )
+            form_vgui[vform.type]( scroll_panel, vform, guthscp.Config[v.name] or {} )
         end
 
         --[[ panel:InvalidateLayout( true )
@@ -311,10 +312,11 @@ function GuthSCP.OpenPanel()
         end
     end
 end
-concommand.Add( "guthscpbase", GuthSCP.OpenPanel )
+concommand.Add( "guthscp_menu", guthscp.config.open_menu )
+concommand.Add( "guthscpbase", guthscp.config.open_menu )
 
 --  developping
-if GuthSCP.Panel then 
-    RunConsoleCommand( "guthscpbase_reload_configs" )
-    timer.Simple( .1, GuthSCP.OpenPanel )
+if guthscp.config.menu then 
+    RunConsoleCommand( "guthscp_reload_configs" )
+    timer.Simple( .1, guthscp.config.open_menu )
 end

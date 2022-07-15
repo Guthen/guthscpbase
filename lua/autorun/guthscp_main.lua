@@ -124,7 +124,7 @@ MsgC( info_color, [[
     ░ ░   ░  ░░░ ░ ░   ░       ░  ░░ ░░  ░  ░  ░        ░░       
           ░    ░               ░  ░  ░      ░  ░ ░               
                                                ░     
-
 ]] ) --  wooohoo it's scary \o/
+print("\n")
 guthscp.require_folder( "guthscp/keter/", true )
 guthscp.module.require()

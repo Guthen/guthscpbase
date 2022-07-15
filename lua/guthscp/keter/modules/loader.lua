@@ -98,7 +98,7 @@ function guthscp.module.init( id )
 				local result = guthscp.helpers.compare_versions( module.version, remote_version )
 				if result >= 0 then
 					module._.version_check = guthscp.VERSION_STATES.UPDATE
-					guthscp.print( "guthscp.module", "%q is up-to-date (v%s)", id, module.version )
+					guthscp.info( "guthscp.module", "%q is up-to-date (v%s)", id, module.version )
 				else
 					module._.version_check = guthscp.VERSION_STATES.OUTDATE
 					guthscp.warning( "guthscp.module", "%q is out-of-date, consider updating it (current: v%s; online: v%s)", id, module.version, remote_version )
