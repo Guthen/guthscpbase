@@ -4,6 +4,7 @@ local MODULE = {
     --  internal
     --  contain all module states
     _ = {
+        is_initialized = false,
         version_check = guthscp.VERSION_STATES.NONE,
     },
     

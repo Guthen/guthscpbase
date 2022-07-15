@@ -122,6 +122,7 @@ function guthscp.module.init( id )
 
     --  call init
     module:init()
+	module._.is_initialized = true
     print( "guthscp module: " .. id .. " is initialized" )
 end
 
