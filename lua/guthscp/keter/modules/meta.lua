@@ -1,22 +1,29 @@
 guthscp.module = guthscp.module or {}
 
-local MODULE = {}
+local MODULE = {
+    --  internal
+    --  contain all module states
+    _ = {
+        version_check = guthscp.VERSION_STATES.NONE,
+    },
+    
+    --  variables
+    --name = "ModuleMeta",  --  required!
+    
+    --  identifier used to reference the module table:
+    --  will register as 'guthscp.modules.<id>'
+    --id = "_module_meta", --  required!
+    --version = "1.0.0", -- required!
+    
+    icon = "icon16/brick.png",
+    dependencies = {},
+    requires = {},
+    
+    --  used by version checker to warn owner when a new version of this module is available
+    --version_url = "https://raw.githubusercontent.com/Guthen/VKXToolsEntitySpawner/master/lua/autorun/vkx_entspawner.lua",  --  optional
+}
 MODULE.__index = MODULE
 
---  variables
---MODULE.name = "ModuleMeta"  --  required!
-
---  identifier used to reference the module table:
---  will register as 'guthscp.modules.<id>'
---MODULE.id = "_module_meta" --  required!
---MODULE.version = "1.0.0" -- required!
-
-MODULE.icon = "icon16/brick.png"
-MODULE.dependencies = {}
-MODULE.requires = {}
-
---  used by version checker to warn owner when a new version of this module is available
---MODULE.version_url = "https://raw.githubusercontent.com/Guthen/VKXToolsEntitySpawner/master/lua/autorun/vkx_entspawner.lua"  --  optional
 
 
 

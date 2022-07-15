@@ -10,7 +10,6 @@ local MODULE = {
         --keycard = "1.0.0",
     },
     version = "1.0.0",
-    version_url = "https://raw.githubusercontent.com/Guthen/VKXToolsEntitySpawner/master/lua/autorun/vkx_entspawner.lua",
 }
 
 
