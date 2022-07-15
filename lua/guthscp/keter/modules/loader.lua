@@ -5,6 +5,16 @@ guthscp.modules_path = "guthscp/modules/"
 function guthscp.construct_module( id )
     local module = guthscp.require_file( guthscp.modules_path .. id .. "/main.lua", guthscp.REALMS.SHARED )
     if not module then return print( "guthscp: error, failed to construct module" .. id .. ", main.lua not found!" ) end
+    --  check required properties
+    if not isstring( module.name ) or #module.name == 0 then
+        return print( "guthscp module: error, module lack the 'name' property of type 'string'" )
+    end
+    if not isstring( module.id ) or #module.id == 0 then
+        return print( "guthscp module: error, module lack the 'id' property of type 'string'" )
+    end
+    if not isstring( module.version ) or #module.version == 0 then
+        return print( "guthscp module: error, module lack the 'version' property of type 'string'")
+    end
 
     --  inherit meta
     setmetatable( module, guthscp.module_meta )
