@@ -5,9 +5,10 @@ local MODULE = {
     icon = "icon16/bricks.png",
     version_url = "https://raw.githubusercontent.com/Guthen/VKXToolsEntitySpawner/master/lua/autorun/vkx_entspawner.lua",
     requires = {
+        ["shared/"] = guthscp.REALMS.SHARED,
         ["server/"] = guthscp.REALMS.SERVER,
-        ["shared/sound_channel.lua"] = guthscp.REALMS.SHARED,
-    }
+        ["client/"] = guthscp.REALMS.CLIENT,
+    },
 }
 
 function MODULE:construct()

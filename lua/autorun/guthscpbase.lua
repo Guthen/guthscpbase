@@ -61,4 +61,4 @@ end
 
 --  load
 guthscp.require_folder( "guthscp/keter/", true )
-guthscp.require_modules()
+guthscp.module.require()

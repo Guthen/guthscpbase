@@ -1,3 +1,5 @@
+guthscp.module = guthscp.module or {}
+
 local MODULE = {}
 MODULE.__index = MODULE
 
@@ -51,4 +53,4 @@ function MODULE:print( message, ... )
     print( ( "[guthscp/%s] Message: %s" ):format( self.id, message ) )
 end
 
-guthscp.module_meta = MODULE
+guthscp.module.meta = MODULE
