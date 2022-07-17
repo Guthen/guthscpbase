@@ -14,7 +14,6 @@ local debug_color = Color( 88, 222, 88 )
 guthscp.print_tabs = 0
 
 local function get_current_realm_name()
-	--  assuming MENU_DLL will never run this
 	return SERVER and "server" or "client"
 end
 

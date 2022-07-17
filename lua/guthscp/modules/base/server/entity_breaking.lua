@@ -49,7 +49,7 @@ function guthscp.break_entity( ent, velocity )
         ent.guthscp_breakable_phys = phys_ent
     end
 
-    if guthscp.Config.guthscp.open_at_respawn then
+    if guthscp.configs.base.open_at_respawn then
         ent:Fire( "Open", 0 )
         ent:Fire( "UnLock", 0 )
     end
@@ -60,8 +60,8 @@ function guthscp.break_entity( ent, velocity )
     breaked_entities[ent] = true
 
     --  auto-respawn
-    if guthscp.Config.guthscp.enable_respawn then
-        timer.Simple( guthscp.Config.guthscp.ent_respawn_time, function()
+    if guthscp.configs.base.enable_respawn then
+        timer.Simple( guthscp.configs.base.ent_respawn_time, function()
             if IsValid( ent ) then
                 guthscp.repair_entity( ent )
             end
@@ -103,7 +103,7 @@ function guthscp.break_entities_at_player_trace( ply, break_force )
 
     for i, v in ipairs( ents.FindInSphere( tr.HitPos, 32 ) ) do
         if guthscp.is_breakable_entity( v ) then
-            if guthscp.break_entity( v, tr.Normal * guthscp.Config.guthscp.ent_break_force * break_force ) then
+            if guthscp.break_entity( v, tr.Normal * guthscp.configs.base.ent_break_force * break_force ) then
                 count = count + 1
             end
         end

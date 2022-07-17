@@ -1,16 +1,15 @@
 guthscp.config = guthscp.config or {}
-guthscp.config.path = "guthscpbase"  --  data path
 
 --  config
-guthscp.Config = guthscp.Config or {}  --  TODO: find a better name
+guthscp.configs = guthscp.configs or {}  --  TODO: find a better name
 
 function guthscp.config.apply( name, tbl, options )
     local config = guthscp.config.get_all()[name]
     if config and config.parse then config.parse( tbl ) end
 
-    guthscp.Config[name] = guthscp.Config[name] or {}
+    guthscp.configs[name] = guthscp.configs[name] or {}
     for k, v in pairs( tbl ) do
-        guthscp.Config[name][k] = v
+        guthscp.configs[name][k] = v
     end
 
     if istable( options ) then
@@ -21,20 +20,16 @@ function guthscp.config.apply( name, tbl, options )
         end
 
         if options.save then
-            file.CreateDir( guthscp.config.path )
-            file.Write( ( guthscp.config.path .. "/%s.json" ):format( name ), util.TableToJSON( tbl, true ) )
+            guthscp.data.save_to_json( name .. ".json", tbl, true )
         end
     end
 end
 
 function guthscp.config.load( name )
-    local content = file.Read( ( guthscp.config.path .. "/%s.json" ):format( name ) )
-    if not content then return false end
-
-    local tbl = util.JSONToTable( content )
+    local tbl = guthscp.data.load_from_json( name .. ".json" )
     if not tbl then return false end
 
-    guthscp.config.apply( name, guthscp.table.merge( guthscp.Config[name] or {}, tbl ), {
+    guthscp.config.apply( name, guthscp.table.merge( guthscp.configs[name] or {}, tbl ), {
         network = true,
     } )
     return true
@@ -46,7 +41,7 @@ function guthscp.config.load_defaults( name )
 
     for i, v in ipairs( tbl.elements[1].elements ) do
         if v.id and v.default then
-            guthscp.Config[name][v.id] = v.default
+            guthscp.configs[name][v.id] = v.default
         end
     end
 end
@@ -71,7 +66,7 @@ hook.Add( "InitPostEntity", "guthscp:run_config", run_config )
 hook.Add( "guthscp:config", "guthscp:base", function()
 
     --  > Configuration
-    guthscp.config.add( "guthscp", {
+    guthscp.config.add( "base", {
         label = "Base",
         icon = "icon16/bricks.png",
         elements = {

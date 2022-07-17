@@ -14,11 +14,10 @@ function guthscp.config.add( name, tbl )
         parse = tbl.parse,
     }
 
-
-    if not guthscp.Config[name] then guthscp.Config[name] = {} end
+    if not guthscp.configs[name] then guthscp.configs[name] = {} end
     guthscp.config.load_defaults( name )
     if not guthscp.config.load( name ) then
-        guthscp.config.apply( name, guthscp.Config[name], {
+        guthscp.config.apply( name, guthscp.configs[name], {
             network = true,
         } )
     end
@@ -59,7 +58,7 @@ end )
 
 --  network config
 net.Receive( "guthscp.config:receive", function( len, ply )
-    for k, v in pairs( guthscp.Config ) do
+    for k, v in pairs( guthscp.configs ) do
         guthscp.config.sync( k, v, ply )
     end
 end )

@@ -12,7 +12,7 @@ function guthscp.config.add( name, tbl )
     end
     config[name] = tbl
 
-    guthscp.Config[name] = {}
+    guthscp.configs[name] = {}
     guthscp.config.load_defaults( name )
 end
 
@@ -298,7 +298,7 @@ function guthscp.config.open_menu()
         scroll_panel:Dock( FILL )
 
         for iform, vform in ipairs( v.elements or {} ) do
-            form_vgui[vform.type]( scroll_panel, vform, guthscp.Config[v.name] or {} )
+            form_vgui[vform.type]( scroll_panel, vform, guthscp.configs[v.name] or {} )
         end
 
         --[[ panel:InvalidateLayout( true )

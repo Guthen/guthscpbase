@@ -2,12 +2,12 @@
 function guthscp.is_scp( ply )
     if not ply:IsPlayer() then return false end
 
-    local teams = guthscp.Config.guthscp.scp_teams or {}
+    local teams = guthscp.configs.base.scp_teams or {}
     return teams[guthscp.get_team_keyname( isnumber( ply ) and ply or ply:Team() )] or false
 end
 
 function guthscp.get_scps()
-    local teams, players = guthscp.Config.guthscp.scp_teams or {}, {}
+    local teams, players = guthscp.configs.base.scp_teams or {}, {}
 
     for i, v in ipairs( player.GetAll() ) do
         if teams[guthscp.get_team_keyname( v:Team() )] then 
