@@ -7,7 +7,7 @@ function guthscp.data.save( name, data )
 end
 
 function guthscp.data.save_to_json( name, tbl, is_pretty_print )
-    local json = util.TableToJSON( tbl, is_pretty_print == false and false or true )
+    local json = util.TableToJSON( tbl, is_pretty_print )
     if not json then 
         return guthscp.error( "guthscp.data", "failed to export json for %q", name )
     end
