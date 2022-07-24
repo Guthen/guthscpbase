@@ -131,7 +131,7 @@ function guthscp.module.init( id )
 			},
 			receive = module.config.receive,
 			parse = module.config.parse,
-		} )
+		}, true )
 	end
 
 	--  call init
@@ -204,6 +204,15 @@ function guthscp.module.hot_reload( module )
 	guthscp.module.is_loading = false
 end
 
+
+--  modules load config
+hook.Add( "InitPostEntity", "guthscp.modules:load_config", function()
+	for id, module in pairs( guthscp.modules ) do
+		if not module.config then continue end
+
+		guthscp.config.load( id )
+	end
+end )
 
 --  modules version checking
 hook.Add( "InitPostEntity", "guthscp.modules:version_url", function()

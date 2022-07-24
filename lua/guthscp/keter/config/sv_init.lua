@@ -2,7 +2,7 @@ guthscp.config = guthscp.config or {}
 
 local config = {}
 
-function guthscp.config.add( name, tbl )
+function guthscp.config.add( name, tbl, no_load )
     --  ensure elements table is sequential 
     tbl.elements = guthscp.table.rehash( tbl.elements )
     for i, form in ipairs( tbl.elements ) do
@@ -19,7 +19,7 @@ function guthscp.config.add( name, tbl )
     --  load config
     guthscp.configs[name] = guthscp.configs[name] or {} 
     guthscp.config.load_defaults( name )
-    if not guthscp.config.load( name ) then
+    if no_load or not guthscp.config.load( name ) then
         guthscp.config.apply( name, guthscp.configs[name], {
             network = true,
         } )
@@ -50,18 +50,21 @@ util.AddNetworkString( "guthscp.config:receive" )
 net.Receive( "guthscp.config:send", function( len, ply )
     if not ply:IsSuperAdmin() then return end
 
+    --  check config id
     local config_id = net.ReadString()
     if not config[config_id] then 
-        return guthscp.error( "guthscp.config", "%q (%s) sent a configuration of %q which isn't registered!", ply:GetName(), ply:SteamID(), config_id )
+        return guthscp.error( "guthscp.config", "%q (%s) sent config of %q which isn't registered!", ply:GetName(), ply:SteamID(), config_id )
     end
 
+    --  check data
     local form = net.ReadTable()
     if table.Count( form ) <= 0 then 
-        return guthscp.error( "guthscp.config", "%q (%s) sent a configuration of %q which has no data!", ply:GetName(), ply:SteamID(), config_id )
+        return guthscp.error( "guthscp.config", "%q (%s) sent config of %q which has no data!", ply:GetName(), ply:SteamID(), config_id )
     end
 
+    --  config callback
     config[config_id].receive( form )
-    guthscp.info( "guthscp.config", "%q (%s) applied a configuration of %q!", ply:GetName(), ply:SteamID(), config_id )
+    guthscp.info( "guthscp.config", "%q (%s) applied %q config!", ply:GetName(), ply:SteamID(), config_id )
 end )
 
 --  network config
