@@ -22,14 +22,7 @@ MODULE.config = {
 			name = "SCP Teams",
 			id = "scp_teams",
 			desc = "All teams which represents a SCP team should be added in the list",
-			default = {  --  TODO: delete values
-				"TEAM_SCP035",
-				"TEAM_SCP049",
-				"TEAM_SCP106",
-				"TEAM_SCP096",
-				"TEAM_SCP173",
-				"TEAM_SCP682",
-			},
+			default = {},
 		} ),
 		{
 			type = "Category",
