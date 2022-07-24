@@ -1,6 +1,7 @@
 guthscp.modules = guthscp.modules or {}
 guthscp.module = guthscp.module or {}
 guthscp.module.path = "guthscp/modules/"
+guthscp.module.is_loading = false
 
 --  loader
 function guthscp.module.construct( id )
@@ -50,13 +51,15 @@ function guthscp.module.construct( id )
 	--  construct
 	guthscp.print_tabs = guthscp.print_tabs + 1
 	module:construct()
+	guthscp.print_tabs = guthscp.print_tabs - 1
 	
 	--  register
 	guthscp.modules[id] = module
 	module:info( "constructed!" )
-	guthscp.print_tabs = guthscp.print_tabs - 2
+	guthscp.print_tabs = guthscp.print_tabs - 1
 end
 
+--  TODO: remove if not used
 function guthscp.module.call( id, method, ... )
 	local module = guthscp.modules[id]
 	if not module then 
@@ -109,8 +112,6 @@ function guthscp.module.init( id )
 	end
 
 	--  load requires
-	guthscp.info( "guthscp.module", "loading %d requires..",  table.Count( module.requires ) )  --  TODO: fix requires count
-	guthscp.print_tabs = guthscp.print_tabs + 1
 	for path, realm in pairs( module.requires ) do
 		local current_path = guthscp.module.path .. module.id .. "/" .. path
 
@@ -125,7 +126,6 @@ function guthscp.module.init( id )
 			guthscp.require_file( current_path, realm )
 		end
 	end
-	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  add config
 	if istable( module.config ) then
@@ -147,15 +147,17 @@ function guthscp.module.init( id )
 	--  call init
 	guthscp.print_tabs = guthscp.print_tabs + 1
 	module:init()
+	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  register state
 	module._.is_initialized = true
 	module:info( "initialized!" )
-	guthscp.print_tabs = guthscp.print_tabs - 2
+	guthscp.print_tabs = guthscp.print_tabs - 1
 end
 
 function guthscp.module.require()
 	guthscp.modules = {}
+	guthscp.module.is_loading = true
 
 	--  find modules
 	local _, dirs = file.Find( guthscp.module.path .. "*", "LUA" )
@@ -179,14 +181,41 @@ function guthscp.module.require()
 	for id, module in pairs( guthscp.modules ) do
 		guthscp.module.init( module )
 	end
-
 	guthscp.print_tabs = guthscp.print_tabs - 1
+	
 	guthscp.info( "guthscp.module", "finished!" )
 	guthscp.print_tabs = guthscp.print_tabs - 1
 	print()
+
+	guthscp.module.is_loading = false
+end
+
+function guthscp.module.hot_reload( module )
+	if guthscp.module.is_loading then return end  --  avoid infinite loops
+	guthscp.module.is_loading = true
+
+	guthscp.info( "guthscp.module", "hot reloading %q..", module.id )
+	guthscp.print_tabs = guthscp.print_tabs + 1
+
+	--  construct
+	guthscp.info( "guthscp.module", "constructing.." )
+	guthscp.print_tabs = guthscp.print_tabs + 1
+	guthscp.module.construct( module.id )
+	guthscp.print_tabs = guthscp.print_tabs - 1
+
+	--  initialize
+	guthscp.info( "guthscp.module", "initializing.." )
+	guthscp.print_tabs = guthscp.print_tabs + 1
+	guthscp.module.init( module.id )
+
+	guthscp.print_tabs = guthscp.print_tabs - 2
+	print()
+
+	guthscp.module.is_loading = false
 end
 
 
+--  modules version checking
 hook.Add( "InitPostEntity", "guthscp.modules:version_url", function()
 	timer.Simple( 5, function()
 		for id, module in pairs( guthscp.modules ) do
