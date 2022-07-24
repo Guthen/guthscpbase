@@ -75,7 +75,7 @@ end
 function guthscp.config.receive_teams( teams )
     assert( istable( teams ), "'teams' is not a table" )
     
-    return guthscp.table.values_to_keys( teams )
+    return guthscp.table.create_set( teams )
 end
 
 --  parsers

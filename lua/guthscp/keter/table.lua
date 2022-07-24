@@ -20,7 +20,7 @@ function guthscp.table.reverse( tbl )
     return new_tbl
 end
 
-function guthscp.table.values_to_keys( tbl )
+function guthscp.table.create_set( tbl )
     local new_tbl = {}
 
     for i, v in ipairs( tbl ) do
