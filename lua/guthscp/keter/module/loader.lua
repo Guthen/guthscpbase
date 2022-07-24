@@ -104,8 +104,7 @@ function guthscp.module.init( id )
 				guthscp.warning( "guthscp.module", "dependency %q API's version is greater than required, script errors could happen with module %q", dep_id, id )
 			end
 		else
-			guthscp.error( "guthscp.module", "dependency %q's version is lower than required (current: v%s; required: v%s)", dep_module.version, version )
-			return
+			return guthscp.error( "guthscp.module", "dependency %q's version is lower than required (current: v%s; required: v%s)", dep_module.version, version )
 		end
 	end
 
@@ -127,6 +126,23 @@ function guthscp.module.init( id )
 		end
 	end
 	guthscp.print_tabs = guthscp.print_tabs - 1
+
+	--  add config
+	if istable( module.config ) then
+		guthscp.config.add( module.id, {
+			label = module.name,
+			icon = module.icon,
+			elements = {
+				{
+					type = "Form",
+					name = "Configuration",
+					elements = module.config.form,
+				},
+			},
+			receive = module.config.receive,
+			parse = module.config.parse,
+		} )
+	end
 
 	--  call init
 	guthscp.print_tabs = guthscp.print_tabs + 1

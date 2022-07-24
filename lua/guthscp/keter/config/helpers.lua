@@ -1,3 +1,6 @@
+guthscp.config = guthscp.config or {}
+
+--  creators
 function guthscp.config.create_teams_element( element )
     return table.Merge( {
         type = "ComboBox[]",
@@ -58,12 +61,24 @@ function guthscp.config.create_enum_element( enum, element )
     }, element or {} )
 end
 
+function guthscp.config.create_apply_button( config_id )
+    return {
+        type = "Button",
+        name = "Apply",
+        action = function( form, serialize_form )
+            guthscp.config.send( config_id, serialize_form )
+        end,
+    }
+end
+
+--  receivers
 function guthscp.config.receive_teams( teams )
     assert( istable( teams ), "'teams' is not a table" )
     
     return guthscp.table.values_to_keys( teams )
 end
 
+--  parsers
 function guthscp.config.parse_teams( teams ) 
     assert( istable( teams ), "'teams' is not a table" )
 

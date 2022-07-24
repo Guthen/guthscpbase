@@ -1,4 +1,3 @@
-guthscp = guthscp or {}
 guthscp.config = guthscp.config or {}
 
 local config = {}

@@ -1,24 +1,33 @@
 guthscp.config = guthscp.config or {}
-
---  config
-guthscp.configs = guthscp.configs or {}  --  TODO: find a better name
+guthscp.configs = guthscp.configs or {}
 
 function guthscp.config.apply( name, tbl, options )
     local config = guthscp.config.get_all()[name]
-    if config and config.parse then config.parse( tbl ) end
+    if not config then 
+        return guthscp.error( "guthscp.config", "trying to apply config %q which isn't registered!", name )
+    end
 
+    --  parse
+    if config.parse then 
+        config.parse( tbl ) 
+    end
+
+    --  apply data
     guthscp.configs[name] = guthscp.configs[name] or {}
     for k, v in pairs( tbl ) do
         guthscp.configs[name][k] = v
     end
 
+    --  special options
     if istable( options ) then
+        --  network to players
         if SERVER and options.network then
             timer.Simple( 0, function() 
                 guthscp.config.sync( name, tbl ) 
             end )
         end
 
+        --  save to json
         if options.save then
             guthscp.data.save_to_json( name .. ".json", tbl, true )
         end
@@ -63,7 +72,7 @@ end )
 hook.Add( "InitPostEntity", "guthscp:run_config", run_config )
 
 --  TODO: move that into module main.lua 
-hook.Add( "guthscp:config", "guthscp:base", function()
+--[[ hook.Add( "guthscp:config", "guthscp:base", function()
 
     --  > Configuration
     guthscp.config.add( "base", {
@@ -141,14 +150,14 @@ hook.Add( "guthscp:config", "guthscp:base", function()
                 | params:
                     form: table Formular data
         ]]
-        receive = function( form )
+        --[[ receive = function( form )
             form.scp_teams = guthscp.config.receive_teams( form.scp_teams )
 
             guthscp.config.apply( "guthscp", form, {
                 network = true,
                 save = true,
             } )
-        end,
+        end, ]]
         --[[ 
             @function guthscp::config.parse
                 | description: Called while a call to guthscp.config.apply (either from guthscp::config.receive or after loading from file)
@@ -157,9 +166,9 @@ hook.Add( "guthscp:config", "guthscp:base", function()
                 | params:
                     form: table Formular data
         ]]
-        parse = function( form )
+        --[[parse = function( form )
             form.scp_teams = guthscp.config.parse_teams( form.scp_teams )
         end,
     } )
 
-end )
+end ) ]]
