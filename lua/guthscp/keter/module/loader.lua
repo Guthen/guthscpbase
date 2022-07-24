@@ -45,7 +45,7 @@ function guthscp.module.construct( id )
 			module[k] = v
 		end
 	end
-	--  inherit meta (@'meta.lua')
+	--  inherit @'meta.lua'
 	setmetatable( module, guthscp.module.meta )
 
 	--  construct
@@ -57,16 +57,6 @@ function guthscp.module.construct( id )
 	guthscp.modules[id] = module
 	module:info( "constructed!" )
 	guthscp.print_tabs = guthscp.print_tabs - 1
-end
-
---  TODO: remove if not used
-function guthscp.module.call( id, method, ... )
-	local module = guthscp.modules[id]
-	if not module then 
-		return guthscp.error( "guthscp.module", "failed to call module \"%s/%s( %s )\" (module not found)!", id, method, table.concat( { ... }, "," ) ) 
-	end
-
-	module[method]( self, ... )
 end
 
 function guthscp.module.init( id )
