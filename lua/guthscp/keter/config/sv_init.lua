@@ -2,7 +2,7 @@ guthscp.config = guthscp.config or {}
 
 local config = {}
 
-function guthscp.config.add( name, tbl, no_load )
+function guthscp.config.add( id, tbl, no_load )
     --  ensure elements table is sequential 
     tbl.elements = guthscp.table.rehash( tbl.elements )
     for i, form in ipairs( tbl.elements ) do
@@ -10,17 +10,17 @@ function guthscp.config.add( name, tbl, no_load )
     end
 
     --  add config meta
-    config[name] = {
+    config[id] = {
         elements = tbl.elements,
         receive = tbl.receive,
         parse = tbl.parse,
     }
 
     --  load config
-    guthscp.configs[name] = guthscp.configs[name] or {} 
-    guthscp.config.load_defaults( name )
-    if no_load or not guthscp.config.load( name ) then
-        guthscp.config.apply( name, guthscp.configs[name], {
+    guthscp.configs[id] = guthscp.configs[id] or {} 
+    guthscp.config.load_defaults( id )
+    if no_load or not guthscp.config.load( id ) then
+        guthscp.config.apply( id, guthscp.configs[id], {
             network = true,
         } )
     end
@@ -30,9 +30,9 @@ function guthscp.config.get_all()
     return config
 end
 
-function guthscp.config.sync( name, tbl, target )
+function guthscp.config.sync( id, tbl, target )
     net.Start( "guthscp.config:send" )
-        net.WriteString( name )
+        net.WriteString( id )
         net.WriteTable( tbl )
     if IsValid( target ) then
         net.Send( target )
@@ -40,7 +40,7 @@ function guthscp.config.sync( name, tbl, target )
         net.Broadcast()
     end
 
-    guthscp.info( "guthscp.config", "networked %q config to %s", name, IsValid( target ) and "'" .. target:GetName() .. "'" or "everyone" )
+    guthscp.info( "guthscp.config", "networked %q config to %s", id, IsValid( target ) and "'" .. target:GetName() .. "'" or "everyone" )
 end
 
 --  edit config 

@@ -3,23 +3,23 @@ guthscp.config = guthscp.config or {}
 local config = {}
 
 --  config
-function guthscp.config.add( name, tbl )
-    tbl.name = name
+function guthscp.config.add( id, tbl )
+    tbl.id = id
     tbl.elements = guthscp.table.rehash( tbl.elements )
     for i, form in ipairs( tbl.elements ) do
         form.elements = guthscp.table.rehash( form.elements )
     end
-    config[name] = tbl
+    config[id] = tbl
 
-    guthscp.configs[name] = {}
-    guthscp.config.load_defaults( name )
+    guthscp.configs[id] = {}
+    guthscp.config.load_defaults( id )
 end
 
 function guthscp.config.get_all()
     return config
 end
 
-function guthscp.config.send( name, form )
+function guthscp.config.send( id, form )
     if not LocalPlayer():IsSuperAdmin() then return end
     if table.Count( form ) <= 0 then return end
 
@@ -28,23 +28,23 @@ function guthscp.config.send( name, form )
     end
 
     net.Start( "guthscp.config:send" )
-        net.WriteString( name )
+        net.WriteString( id )
         net.WriteTable( form )
     net.SendToServer()
 end
 
 net.Receive( "guthscp.config:send", function( len, ply )
-    local name = net.ReadString()
+    local id = net.ReadString()
 
     local tbl = net.ReadTable()
     if table.Count( tbl ) <= 0 then return end
 
-    guthscp.info( "guthscp", "received %q config", name )
+    guthscp.info( "guthscp", "received %q config", id )
     if guthscp.is_debug() then
         PrintTable( tbl )
     end
 
-    guthscp.config.apply( name, tbl )
+    guthscp.config.apply( id, tbl )
 end )
 
 hook.Add( "InitPostEntity", "guthscp.config:receive", function()
