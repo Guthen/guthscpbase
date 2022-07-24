@@ -1,24 +1,6 @@
 guthscp.table = guthscp.table or {}
 
 --[[ 
-    @function guthscp.table.merge
-        | description: merges a table's values into another
-        | params:
-            to_tbl: <table> target table
-            from_tbl: <table> table to merge into the target
-        | return: <table> to_tbl
-]]
-function guthscp.table.merge( to_tbl, from_tbl )
-    for k, v in pairs( from_tbl ) do
-        if not ( from_tbl[k] == nil ) then
-            to_tbl[k] = from_tbl[k]
-        end
-    end
-
-    return to_tbl
-end
-
---[[ 
     @function guthscp.table.reverse
         | description: reverses the values and the keys of the given table; keys becoming values and vice-versa
         | params:
