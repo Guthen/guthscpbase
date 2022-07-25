@@ -7,7 +7,12 @@ function guthscp.is_scp( ply )
 end
 
 function guthscp.get_scps()
-    local teams, players = guthscp.configs.base.scp_teams or {}, {}
+    local teams, players = guthscp.configs.base.scp_teams, {}
+
+    --  no teams? no need to iterate through all players
+    if not teams then 
+        return players 
+    end
 
     for i, v in ipairs( player.GetAll() ) do
         if teams[guthscp.get_team_keyname( v:Team() )] then 
