@@ -1,7 +1,6 @@
 guthscp.spawnmenu = guthscp.spawnmenu or {}
 guthscp.spawnmenu.weapons = guthscp.spawnmenu.weapons or {}
 guthscp.spawnmenu.entities = guthscp.spawnmenu.entities or {}
-guthscp.spawnmenu.config_node = guthscp.spawnmenu.config_node or nil
 
 function guthscp.spawnmenu.add_weapon( weapon, category )
     guthscp.spawnmenu.weapons[category] = guthscp.spawnmenu.weapons[category] or {}
@@ -66,31 +65,40 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
     --  configuration
     local config_node = tree:AddNode( "Configuration", "icon16/wrench.png" )
     config_node:SetExpanded( true, true )  --  instant expand
+    config_node.nodes = {}
     for i, config in SortedPairsByMemberValue( guthscp.config.get_all(), "name" ) do
         local node = config_node:AddNode( config.label, config.icon )
+        function node:DoPopulate()
+            --  create parent
+            local container = panel:Add( "DPanel" )
+            container:DockPadding( 5, 5, 5, 5 )
+            container:SetVisible( false )
+    
+            local scroll_panel = container:Add( "DScrollPanel" )
+            scroll_panel:Dock( FILL )
+    
+            --  populate
+            guthscp.config.populate_config( scroll_panel, config )
+            
+            --  register
+            self.container = container
+        end
         function node:DoClick()
             --  populate
             if not IsValid( self.panel ) then 
-                --  create parent
-                local container = panel:Add( "DPanel" )
-                container:DockPadding( 5, 5, 5, 5 )
-                container:SetVisible( false )
-        
-                local scroll_panel = container:Add( "DScrollPanel" )
-                scroll_panel:Dock( FILL )
-        
-                --  populate
-                guthscp.config.populate_config( scroll_panel, config )
-                
-                --  register
-                self.container = container
+                self:DoPopulate()
             end
     
             --  switch
             panel:SwitchPanel( self.container )
         end
+
+        --  register node
+        config_node.nodes[config.id] = node
     end
+
     guthscp.spawnmenu.config_node = config_node
+    guthscp.spawnmenu.panel = panel
 end )
 
 spawnmenu.AddCreationTab( "GuthSCP", function()
@@ -105,4 +113,27 @@ hook.Add( "OnSpawnMenuOpen", "guthscp.spawnmenu:restrict_config", function()
 
     --  change config visibility
     guthscp.spawnmenu.config_node:SetVisible( LocalPlayer():IsSuperAdmin() )
+end )
+
+hook.Add( "guthscp.config:applied", "guthscp.spawnmenu:reload_config", function( id, config )
+    if not IsValid( guthscp.spawnmenu.config_node ) or not IsValid( guthscp.spawnmenu.panel ) then return end
+
+    local node = guthscp.spawnmenu.config_node.nodes[id]
+    if not IsValid( node ) or not IsValid( node.container ) then return end
+
+    --  get if is selected
+    local was_selected = guthscp.spawnmenu.panel.SelectedPanel == node.container
+
+    --  re-create config
+    --  ISSUE?: will refresh if you are currently editing the config and someone else apply the config, can be frustrating; 
+    --          but this case should not happen since this is stupid
+    node.container:Remove()
+    node:DoPopulate()
+
+    --  refresh selection
+    if was_selected then
+        guthscp.spawnmenu.panel:SwitchPanel( node.container )
+    end
+
+    guthscp.info( "guthscp.spawnmenu", "refreshed config %q", id )
 end )

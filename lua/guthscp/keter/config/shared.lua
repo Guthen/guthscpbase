@@ -32,6 +32,9 @@ function guthscp.config.apply( id, tbl, options )
             guthscp.data.save_to_json( id .. ".json", tbl, true )
         end
     end
+
+    --  run hook
+    hook.Run( "guthscp.config:applied", id, guthscp.configs[id] )
 end
 
 function guthscp.config.setup( id )
