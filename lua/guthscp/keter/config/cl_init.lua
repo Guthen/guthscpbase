@@ -11,8 +11,7 @@ function guthscp.config.add( id, tbl )
     end
     config[id] = tbl
 
-    guthscp.configs[id] = {}
-    guthscp.config.load_defaults( id )
+    guthscp.config.setup( id )
 end
 
 function guthscp.config.get_all()
@@ -289,6 +288,7 @@ function guthscp.config.open_menu()
     local sheet = frame:Add( "DPropertySheet", frame )
     sheet:Dock( FILL )
 
+    --  create configs
     for i, v in SortedPairsByMemberValue( config, "name" ) do
         local panel = sheet:Add( "DPanel" )
         panel:DockPadding( 5, 5, 5, 5 )
@@ -296,14 +296,15 @@ function guthscp.config.open_menu()
         local scroll_panel = panel:Add( "DScrollPanel" )
         scroll_panel:Dock( FILL )
 
+        --  create form
         for iform, vform in ipairs( v.elements or {} ) do
-            form_vgui[vform.type]( scroll_panel, vform, guthscp.configs[v.name] or {} )
+            form_vgui[vform.type]( scroll_panel, vform, guthscp.configs[v.id] )
         end
 
         --[[ panel:InvalidateLayout( true )
         panel:SizeToChildren( false, true )
         panel:SetTall( panel:GetTall() - 0 ) ]]
-        sheet:AddSheet( v.label or v.name, panel, v.icon )
+        sheet:AddSheet( v.label or v.id, panel, v.icon )
 
         scroll_panel:InvalidateLayout( true )
         for i, v in ipairs( scroll_panel:GetChildren() ) do
