@@ -9,8 +9,9 @@ function guthscp.module.construct( id )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 
 	local module = guthscp.require_file( guthscp.module.path .. id .. "/main.lua", guthscp.REALMS.SHARED )
-	if not module then 
-		return guthscp.error( "guthscp.module", "failed to construct module %q (\"main.lua\" not found)!", id ) 
+	if not module then
+		guthscp.error( "guthscp.module", "failed to construct module %q (\"main.lua\" not found)!", id )  
+		return false
 	end
 
 	--  check required properties
@@ -30,7 +31,7 @@ function guthscp.module.construct( id )
 
 	if failed then
 		guthscp.print_tabs = guthscp.print_tabs - 1
-		return
+		return false
 	end
 
 	--  copy variables (preventing editing meta)
@@ -57,6 +58,7 @@ function guthscp.module.construct( id )
 	guthscp.modules[id] = module
 	module:info( "constructed!" )
 	guthscp.print_tabs = guthscp.print_tabs - 1
+	return true
 end
 
 function guthscp.module.init( id )
@@ -68,8 +70,9 @@ function guthscp.module.init( id )
 		module = guthscp.modules[id]
 	end
 	
-	if not module then 
-		return guthscp.error( "guthscp.module", "failed to initialize module %q (module not found)!", id ) 
+	if not module then
+		guthscp.error( "guthscp.module", "failed to initialize module %q (module not found)!", id )  
+		return false
 	end
 
 	guthscp.info( "guthscp.module", "%q (v%s)", id, module.version )
@@ -85,8 +88,9 @@ function guthscp.module.init( id )
 	for dep_id, version in pairs( module.dependencies ) do
 		--  ensure dependency is registered
 		local dep_module = guthscp.modules[dep_id]
-		if not dep_module then 
-			return guthscp.error( "guthscp.module", "dependency %q can't be found, aborting initializing of %q", dep_id, id ) 
+		if not dep_module then
+			guthscp.error( "guthscp.module", "dependency %q can't be found, aborting initializing of %q", dep_id, id )  
+			return false
 		end
 
 		--  compare version
@@ -101,7 +105,7 @@ function guthscp.module.init( id )
 		else
 			guthscp.error( "guthscp.module", "dependency %q's version is lower than required, update it (current: v%s; required: v%s)", dep_id, dep_module.version, version )
 			module:error( "failed!" )
-			return
+			return false
 		end
 	end
 
@@ -147,6 +151,7 @@ function guthscp.module.init( id )
 	module._.is_initialized = true
 	module:info( "initialized!" )
 	guthscp.print_tabs = guthscp.print_tabs - 1
+	return true
 end
 
 function guthscp.module.require()
@@ -194,13 +199,28 @@ function guthscp.module.hot_reload( module )
 	--  construct
 	guthscp.info( "guthscp.module", "constructing.." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
-	guthscp.module.construct( module.id )
+	if not guthscp.module.construct( module.id ) then 
+		guthscp.print_tabs = 0
+		return 
+	end
 	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  initialize
 	guthscp.info( "guthscp.module", "initializing.." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
-	guthscp.module.init( module.id )
+	if not guthscp.module.init( module.id ) then 
+		guthscp.print_tabs = 0
+		return
+	end
+	guthscp.print_tabs = guthscp.print_tabs - 1
+
+	--  load config
+	if module.config then
+		guthscp.info( "guthscp.module", "config.." )
+		guthscp.print_tabs = guthscp.print_tabs + 1
+		guthscp.config.load( module.id )
+		guthscp.print_tabs = guthscp.print_tabs - 1
+	end
 
 	guthscp.print_tabs = guthscp.print_tabs - 2
 	print()

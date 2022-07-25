@@ -34,14 +34,24 @@ function guthscp.config.apply( id, tbl, options )
     end
 end
 
+function guthscp.config.setup( id )
+    guthscp.configs[id] = guthscp.configs[id] or {} 
+    guthscp.config.load_defaults( id )
+end
+
 function guthscp.config.load( id )
+    --  setup
+    guthscp.config.setup( id )
+    
+    --  load from data file
     local tbl = guthscp.data.load_from_json( id .. ".json" )
     if not tbl then return false end
 
+    --  apply data
     guthscp.config.apply( id, table.Merge( guthscp.configs[id] or {}, tbl ), {
         network = true,
     } )
-    guthscp.info( "guthscp.config", "loaded saved %q config", id )
+    guthscp.info( "guthscp.config", "loaded data to %q config", id )
     return true
 end
 
@@ -54,4 +64,5 @@ function guthscp.config.load_defaults( id )
             guthscp.configs[id][v.id] = v.default
         end
     end
+    guthscp.info( "guthscp.config", "loaded defaults to %q config", id )
 end
