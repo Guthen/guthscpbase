@@ -94,10 +94,14 @@ function guthscp.module.init( id )
 		if result >= 0 then
 			--  warn for eventual API's changes
 			if depth == 1 then
-				guthscp.warning( "guthscp.module", "dependency %q API's version is greater than required, script errors could happen with module %q", dep_id, id )
+				guthscp.warning( "guthscp.module", "dependency %q API's version is greater than required, script errors could happen (current: v%s; required: v%s)", dep_id, dep_module.version, version )
+			else
+				guthscp.info( "guthscp.module", "dependency %q found (current: v%s; required: v%s)", dep_id, dep_module.version, version )
 			end
 		else
-			return guthscp.error( "guthscp.module", "dependency %q's version is lower than required (current: v%s; required: v%s)", dep_module.version, version )
+			guthscp.error( "guthscp.module", "dependency %q's version is lower than required, update it (current: v%s; required: v%s)", dep_id, dep_module.version, version )
+			module:error( "failed!" )
+			return
 		end
 	end
 
