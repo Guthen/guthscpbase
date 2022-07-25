@@ -1,6 +1,7 @@
 guthscp.spawnmenu = guthscp.spawnmenu or {}
 guthscp.spawnmenu.weapons = guthscp.spawnmenu.weapons or {}
 guthscp.spawnmenu.entities = guthscp.spawnmenu.entities or {}
+guthscp.spawnmenu.config_node = guthscp.spawnmenu.config_node or nil
 
 function guthscp.spawnmenu.add_weapon( weapon, category )
     guthscp.spawnmenu.weapons[category] = guthscp.spawnmenu.weapons[category] or {}
@@ -63,10 +64,10 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
     add_entity_node_doclick( panel, entity_node, guthscp.spawnmenu.entities, "entity" )
 
     --  configuration
-    local config_tree = tree:AddNode( "Configuration", "icon16/wrench.png" )
-    config_tree:SetExpanded( true, true )  --  instant expand
+    local config_node = tree:AddNode( "Configuration", "icon16/wrench.png" )
+    config_node:SetExpanded( true, true )  --  instant expand
     for i, config in SortedPairsByMemberValue( guthscp.config.get_all(), "name" ) do
-        local node = config_tree:AddNode( config.label, config.icon )
+        local node = config_node:AddNode( config.label, config.icon )
         function node:DoClick()
             --  populate
             if not IsValid( self.panel ) then 
@@ -89,6 +90,7 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
             panel:SwitchPanel( self.container )
         end
     end
+    guthscp.spawnmenu.config_node = config_node
 end )
 
 spawnmenu.AddCreationTab( "GuthSCP", function()
@@ -97,3 +99,10 @@ spawnmenu.AddCreationTab( "GuthSCP", function()
 
 	return ctrl
 end, "icon16/brick.png" )
+
+hook.Add( "OnSpawnMenuOpen", "guthscp.spawnmenu:restrict_config", function()
+    if not IsValid( guthscp.spawnmenu.config_node ) then return end
+
+    --  change config visibility
+    guthscp.spawnmenu.config_node:SetVisible( LocalPlayer():IsSuperAdmin() )
+end )
