@@ -264,19 +264,28 @@ form_vgui = {
     end,
 }
 
+function guthscp.config.populate_config( parent, config )
+    --  create form
+    for iform, vform in ipairs( config.elements or {} ) do
+        form_vgui[vform.type]( parent, vform, guthscp.configs[config.id] )
+    end
+end
+
 function guthscp.config.open_menu()
     if not LocalPlayer():IsSuperAdmin() then return end
 
-    --hook.Run( "guthscp.config:receive" )
-
+    --  refresh menu and select previous tab
     local tab_id = 1
     if IsValid( guthscp.config.menu ) then
-        if guthscp.config.menu.sheet then tab_id = guthscp.config.menu.sheet.tab_id end
+        if guthscp.config.menu.sheet then 
+            tab_id = guthscp.config.menu.sheet.tab_id 
+        end
         guthscp.config.menu:Remove() 
     end
 
     local w, h = ScrW() * .4, ScrH() * .4
 
+    --  create frame
     local frame = vgui.Create( "DFrame" )
     frame:SetSize( w, h )
     frame:Center()
@@ -285,7 +294,8 @@ function guthscp.config.open_menu()
     frame:MakePopup()
     guthscp.config.menu = frame
 
-    local sheet = frame:Add( "DPropertySheet", frame )
+    --  create sheets
+    local sheet = frame:Add( "DPropertySheet" )
     sheet:Dock( FILL )
 
     --  create configs
@@ -296,16 +306,13 @@ function guthscp.config.open_menu()
         local scroll_panel = panel:Add( "DScrollPanel" )
         scroll_panel:Dock( FILL )
 
-        --  create form
-        for iform, vform in ipairs( v.elements or {} ) do
-            form_vgui[vform.type]( scroll_panel, vform, guthscp.configs[v.id] )
-        end
+        --  populate
+        guthscp.config.populate_config( scroll_panel, v )
 
-        --[[ panel:InvalidateLayout( true )
-        panel:SizeToChildren( false, true )
-        panel:SetTall( panel:GetTall() - 0 ) ]]
+        --  add sheet
         sheet:AddSheet( v.label or v.id, panel, v.icon )
 
+        --  size to children
         scroll_panel:InvalidateLayout( true )
         for i, v in ipairs( scroll_panel:GetChildren() ) do
             v:SetTall( v:GetTall() + 5 )
