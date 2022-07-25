@@ -10,7 +10,7 @@ function guthscp.get_scps()
     local teams, players = guthscp.configs.base.scp_teams, {}
 
     --  no teams? no need to iterate through all players
-    if not teams then 
+    if not teams or not next( teams ) then 
         return players 
     end
 
