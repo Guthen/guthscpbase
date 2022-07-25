@@ -1,11 +1,26 @@
 guthscp.data = guthscp.data or {}
 guthscp.data.path = "guthscp/"
 
+--[[ 
+    @function guthscp.data.save
+        | description: save to a data file; the file is relative to 'guthscp/'
+        | params:
+            name: <string> file name
+            data: <string> content to save
+]]
 function guthscp.data.save( name, data )
     file.CreateDir( guthscp.data.path )  --  ensure base folder is created
     file.Write( guthscp.data.path .. name, data )
 end
 
+--[[ 
+    @function guthscp.data.save_to_json
+        | description: save table as json to a data file; use `guthscp.data.save` internally
+        | params:
+            name: <string> file name
+            tbl: <table> table to convert and save
+            is_pretty_print: <bool?> should save json as pretty print
+]]
 function guthscp.data.save_to_json( name, tbl, is_pretty_print )
     local json = util.TableToJSON( tbl, is_pretty_print )
     if not json then 
@@ -15,14 +30,35 @@ function guthscp.data.save_to_json( name, tbl, is_pretty_print )
     guthscp.data.save( name, json )
 end
 
+--[[ 
+    @function guthscp.data.exists
+        | description: check if a data file relative to 'guthscp/' exists
+        | params:
+            name: <string> file name
+        | return: <bool> exists
+]]
 function guthscp.data.exists( name )
     return file.Exists( guthscp.data.path .. name, "DATA" )
 end
 
+--[[ 
+    @function guthscp.data.load
+        | description: get the data file content relative to 'guthscp/'
+        | params:
+            name: <string> file name
+        | return: <string?> content
+]]
 function guthscp.data.load( name )
     return file.Read( guthscp.data.path .. name, "DATA" )
 end
 
+--[[ 
+    @function guthscp.data.load_from_json
+        | description: get the json data file content relative to 'guthscp/' as a table 
+        | params:
+            name: <string> file name
+        | return: <table?> tbl
+]]
 function guthscp.data.load_from_json( name )
     local json = guthscp.data.load( name )
     if not json then return end
