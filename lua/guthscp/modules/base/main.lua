@@ -21,7 +21,7 @@ MODULE.config = {
 		guthscp.config.create_teams_element( {
 			name = "SCP Teams",
 			id = "scp_teams",
-			desc = "All teams which represents a SCP team should be added in the list",
+			desc = "All teams which represents a SCP team should be added in the list. These teams may not trigger SCPs behaviours.",
 			default = {},
 		} ),
 		{
