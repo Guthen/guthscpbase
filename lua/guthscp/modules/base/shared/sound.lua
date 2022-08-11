@@ -2,21 +2,21 @@ guthscp.sound = guthscp.sound or {}
 
 --  basic client sound
 if SERVER then 
-    util.AddNetworkString( "guthscp:play_sound" )
+	util.AddNetworkString( "guthscp:play_sound" )
 else
-    net.Receive( "guthscp:play_sound", function()
-        guthscp.sound.play_client( net.ReadString() )
-    end )
+	net.Receive( "guthscp:play_sound", function()
+		guthscp.sound.play_client( net.ReadString() )
+	end )
 end
 
 function guthscp.sound.play_client( ply, sound_path )
-    if SERVER then
-        if #sound_path == 0 then return end
+	if SERVER then
+		if #sound_path == 0 then return end
 
-        net.Start( "guthscp:play_sound" )
-            net.WriteString( sound_path )
-        net.Send( ply )
-    else
-        surface.PlaySound( sound_path or ply )
-    end
+		net.Start( "guthscp:play_sound" )
+			net.WriteString( sound_path )
+		net.Send( ply )
+	else
+		surface.PlaySound( sound_path or ply )
+	end
 end
