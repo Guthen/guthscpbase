@@ -23,9 +23,7 @@ function guthscp.config.add( id, tbl, no_load )
     
     --  load config
     if no_load or not guthscp.config.load( id ) then
-        guthscp.config.apply( id, guthscp.configs[id], {
-            network = true,
-        } )
+        guthscp.config.apply( id, guthscp.configs[id] )
     end
 end 
 
