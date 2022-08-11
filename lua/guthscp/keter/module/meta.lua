@@ -9,7 +9,8 @@ local MODULE = {
 	},
 	
 	--  variables
-	--name = "ModuleMeta",  --  required!
+	name = "unknown",  --  required!
+	author = "unknown",  --  required!
 	
 	--  identifier used to reference the module table:
 	--  will register as 'guthscp.modules.<id>'

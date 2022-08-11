@@ -20,9 +20,9 @@ function guthscp.module.construct( id )
 		failed = true
 		guthscp.error( "guthscp.module", "%q must have the 'name' property of type 'string'", id )
 	end
-	if not isstring( module.id ) or #module.id == 0 then
+	if not isstring( module.author ) or #module.author == 0 then
 		failed = true 
-		guthscp.error( "guthscp.module", "%q must have the 'id' property of type 'string'", id )
+		guthscp.error( "guthscp.module", "%q must have the 'author' property of type 'string'", id )
 	end
 	if not isstring( module.version ) or not guthscp.helpers.split_version( module.version ) then
 		failed = true
