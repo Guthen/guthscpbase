@@ -48,12 +48,12 @@ end
 local convar_debug = CreateConVar( "guthscp_debug", "0", FCVAR_ARCHIVE, "enables debug messages", 0, 1 )
 
 function guthscp.is_debug()
-    return convar_debug:GetBool()
+	return convar_debug:GetBool()
 end
 
 function guthscp.debug( title, message, ... )
-    if not guthscp.is_debug() then return end
-    guthscp.print( debug_color, "[%s:debug] %s: " .. message, get_current_realm_name(), title, ... )
+	if not guthscp.is_debug() then return end
+	guthscp.print( debug_color, "[%s:debug] %s: " .. message, get_current_realm_name(), title, ... )
 end
 
 --  file management
@@ -113,16 +113,16 @@ end
 
 --  load
 MsgC( info_color, [[                                                             
-      ▄████  █    ██ ▄▄▄█████▓ ██░ ██   ██████  ▄████▄   ██▓███  
-     ██▒ ▀█▒ ██  ▓██▒▓  ██▒ ▓▒▓██░ ██▒▒██    ▒ ▒██▀ ▀█  ▓██░  ██▒
-    ▒██░▄▄▄░▓██  ▒██░▒ ▓██░ ▒░▒██▀▀██░░ ▓██▄   ▒▓█    ▄ ▓██░ ██▓▒
-    ░▓█  ██▓▓▓█  ░██░░ ▓██▓ ░ ░▓█ ░██   ▒   ██▒▒▓▓▄ ▄██▒▒██▄█▓▒ ▒
-    ░▒▓███▀▒▒▒█████▓   ▒██▒ ░ ░▓█▒░██▓▒██████▒▒▒ ▓███▀ ░▒██▒ ░  ░
-     ░▒   ▒ ░▒▓▒ ▒ ▒   ▒ ░░    ▒ ░░▒░▒▒ ▒▓▒ ▒ ░░ ░▒ ▒  ░▒▓▒░ ░  ░
-      ░   ░ ░░▒░ ░ ░     ░     ▒ ░▒░ ░░ ░▒  ░ ░  ░  ▒   ░▒ ░     
-    ░ ░   ░  ░░░ ░ ░   ░       ░  ░░ ░░  ░  ░  ░        ░░       
-          ░    ░               ░  ░  ░      ░  ░ ░               
-                                               ░     
+	  ▄████  █    ██ ▄▄▄█████▓ ██░ ██   ██████  ▄████▄   ██▓███  
+	 ██▒ ▀█▒ ██  ▓██▒▓  ██▒ ▓▒▓██░ ██▒▒██    ▒ ▒██▀ ▀█  ▓██░  ██▒
+	▒██░▄▄▄░▓██  ▒██░▒ ▓██░ ▒░▒██▀▀██░░ ▓██▄   ▒▓█    ▄ ▓██░ ██▓▒
+	░▓█  ██▓▓▓█  ░██░░ ▓██▓ ░ ░▓█ ░██   ▒   ██▒▒▓▓▄ ▄██▒▒██▄█▓▒ ▒
+	░▒▓███▀▒▒▒█████▓   ▒██▒ ░ ░▓█▒░██▓▒██████▒▒▒ ▓███▀ ░▒██▒ ░  ░
+	 ░▒   ▒ ░▒▓▒ ▒ ▒   ▒ ░░    ▒ ░░▒░▒▒ ▒▓▒ ▒ ░░ ░▒ ▒  ░▒▓▒░ ░  ░
+	  ░   ░ ░░▒░ ░ ░     ░     ▒ ░▒░ ░░ ░▒  ░ ░  ░  ▒   ░▒ ░     
+	░ ░   ░  ░░░ ░ ░   ░       ░  ░░ ░░  ░  ░  ░        ░░       
+		  ░    ░               ░  ░  ░      ░  ░ ░               
+											   ░     
 ]] ) --  wooohoo it's scary \o/
 print("\n")
 guthscp.require_folder( "guthscp/keter/", true )
