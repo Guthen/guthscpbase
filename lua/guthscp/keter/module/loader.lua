@@ -225,7 +225,7 @@ function guthscp.module.hot_reload( id )
 		guthscp.print_tabs = guthscp.print_tabs - 1
 	end
 
-	guthscp.print_tabs = guthscp.print_tabs - 2
+	guthscp.print_tabs = guthscp.print_tabs - 1
 	print()
 
 	guthscp.module.is_loading = false
