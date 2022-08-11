@@ -14,6 +14,9 @@ function guthscp.module.construct( id )
 		return false
 	end
 
+	--  set id
+	module.id = id
+
 	--  check required properties
 	local failed = false
 	if not isstring( module.name ) or #module.name == 0 then
@@ -189,17 +192,17 @@ function guthscp.module.require()
 	guthscp.module.is_loading = false
 end
 
-function guthscp.module.hot_reload( module )
-	if guthscp.module.is_loading then return end  --  avoid infinite loops
+function guthscp.module.hot_reload( id )
+	if guthscp.module.is_loading then return end  --  avoid stack overflow
 	guthscp.module.is_loading = true
 
-	guthscp.info( "guthscp.module", "hot reloading %q..", module.id )
+	guthscp.info( "guthscp.module", "hot reloading %q..", id )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 
 	--  construct
 	guthscp.info( "guthscp.module", "constructing.." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
-	if not guthscp.module.construct( module.id ) then 
+	if not guthscp.module.construct( id ) then 
 		guthscp.print_tabs = 0
 		return 
 	end
@@ -208,17 +211,17 @@ function guthscp.module.hot_reload( module )
 	--  initialize
 	guthscp.info( "guthscp.module", "initializing.." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
-	if not guthscp.module.init( module.id ) then 
+	if not guthscp.module.init( id ) then 
 		guthscp.print_tabs = 0
 		return
 	end
 	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  load config
-	if module.config then
+	if guthscp.modules[id].config then
 		guthscp.info( "guthscp.module", "config.." )
 		guthscp.print_tabs = guthscp.print_tabs + 1
-		guthscp.config.load( module.id )
+		guthscp.config.load( id )
 		guthscp.print_tabs = guthscp.print_tabs - 1
 	end
 

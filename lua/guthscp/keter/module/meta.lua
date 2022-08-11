@@ -11,11 +11,11 @@ local MODULE = {
 	--  variables
 	name = "unknown",  --  required!
 	author = "unknown",  --  required!
+	version = "0.0.0",  -- required!
 	
 	--  identifier used to reference the module table:
 	--  will register as 'guthscp.modules.<id>'
-	--id = "_module_meta", --  required!
-	--version = "1.0.0", -- required!
+	id = "",  --  internally set to the module's folder name
 	
 	icon = "icon16/brick.png",
 	dependencies = {},

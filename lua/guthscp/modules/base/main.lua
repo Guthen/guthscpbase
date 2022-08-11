@@ -78,5 +78,5 @@ end
 function MODULE:init()
 end
 
-guthscp.module.hot_reload( MODULE )
+guthscp.module.hot_reload( "base" )
 return MODULE
