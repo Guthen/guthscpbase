@@ -67,7 +67,7 @@ local function serialize_form( form )
 	local s_form = {}
 
 	for k, v in pairs( form ) do
-		--if isnumber( k ) then continue end
+		if k == "_id" then continue end  --  ignore '_id' property
 
 		if istable( v ) then
 			s_form[k] = serialize_form( v )
@@ -162,13 +162,16 @@ end
 
 local form_vgui
 form_vgui = {
-	["Form"] = function( parent, el, config_value )
+	["Form"] = function( parent, el, config_id )
 		local panel = parent:Add( "DForm" )
 		panel:Dock( FILL )
 		panel:DockMargin( 0, 0, 5, 0 )
 		panel:SetName( el.name )
 
+		local config_value = guthscp.configs[config_id]
+
 		local form = {}
+		form._id = config_id
 		for i, el in ipairs( el.elements or {} ) do
 			local id = el.id or #form + 1
 			if not form_vgui[el.type] then
@@ -267,7 +270,7 @@ form_vgui = {
 function guthscp.config.populate_config( parent, config )
 	--  create form
 	for iform, vform in ipairs( config.elements or {} ) do
-		form_vgui[vform.type]( parent, vform, guthscp.configs[config.id] )
+		form_vgui[vform.type]( parent, vform, config.id )
 	end
 end
 

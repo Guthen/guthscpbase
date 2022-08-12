@@ -61,12 +61,12 @@ function guthscp.config.create_enum_element( enum, element )
 	}, element or {} )
 end
 
-function guthscp.config.create_apply_button( config_id )
+function guthscp.config.create_apply_button()
 	return {
 		type = "Button",
 		name = "Apply",
 		action = function( form, serialize_form )
-			guthscp.config.send( config_id, serialize_form )
+			guthscp.config.send( form._id, serialize_form )
 		end,
 	}
 end

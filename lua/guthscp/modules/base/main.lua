@@ -56,7 +56,7 @@ MODULE.config = {
 			desc = "When a door respawn, if checked, it will be open, otherwise its state won't change",
 			default = true,
 		},
-		guthscp.config.create_apply_button( MODULE.id ),
+		guthscp.config.create_apply_button(),
 	},
 	receive = function( form )
 		form.scp_teams = guthscp.config.receive_teams( form.scp_teams )
