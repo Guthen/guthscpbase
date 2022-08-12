@@ -22,10 +22,7 @@ function guthscp.config.send( id, form )
 	if not LocalPlayer():IsSuperAdmin() then return end
 	if table.Count( form ) <= 0 then return end
 
-	for i = 1, #form do
-		table.remove( form, 1 )
-	end
-
+	--  send data
 	net.Start( "guthscp.config:send" )
 		net.WriteString( id )
 		net.WriteTable( form )
@@ -55,31 +52,46 @@ concommand.Add( "guthscp_sync", guthscp.config.sync )
 
 --  > Formular
 local vgui_values = {
-	["DCheckBoxLabel"] = function( v ) 
-		return v:GetChecked() or false
+	["DCheckBoxLabel"] = function( self ) 
+		return self:GetChecked() or false
 	end,
-	["DComboBox"] = function( v ) 
-		local text, data = v:GetSelected()
+	["DComboBox"] = function( self ) 
+		local text, data = self:GetSelected()
 		--print( text, data )
-		return data or text or v:GetValue()
+		return data or text or self:GetValue()
+	end,
+	["DLabel"] = function( self )
+		return nil  --  skip categories serializing
+	end,
+	["DButton"] = function( self )
+		return nil  --  skip buttons serializing
 	end,
 }
 
 local function serialize_form( form )
-	local s_form = {}
+	local serialized = {}
 
 	for k, v in pairs( form ) do
 		if k == "_id" then continue end  --  ignore '_id' property
 
 		if istable( v ) then
-			s_form[k] = serialize_form( v )
+			serialized[k] = serialize_form( v )
 		else
+			--  use special serializors..
 			local serializor = vgui_values[v:GetName()]
-			s_form[k] = not serializor and v:GetValue() or serializor( v )
+			if serializor then
+				local value = serializor( v )
+				if not ( value == nil ) then
+					serialized[k] = value
+				end
+			--  or value
+			else
+				serialized[k] = v:GetValue()
+			end
 		end
 	end
 
-	return s_form
+	return serialized
 end
 
 local function create_array_vguis( panel, el, config_value, add_func )
