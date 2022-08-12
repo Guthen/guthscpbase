@@ -9,7 +9,7 @@ guthscp.data.path = "guthscp/"
 			data: <string> content to save
 ]]
 function guthscp.data.save( name, data )
-	file.CreateDir( guthscp.data.path )  --  ensure base folder is created
+	file.CreateDir( string.GetPathFromFilename( guthscp.data.path .. name ) )  --  ensure base folder is created
 	file.Write( guthscp.data.path .. name, data )
 end
 
