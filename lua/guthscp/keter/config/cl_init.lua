@@ -327,8 +327,9 @@ end
 concommand.Add( "guthscp_menu", guthscp.config.open_menu )
 concommand.Add( "guthscpbase", guthscp.config.open_menu )
 
---  developping
+--  hot reload
 if guthscp.config.menu then 
-	RunConsoleCommand( "guthscp_reload_configs" )
-	timer.Simple( .1, guthscp.config.open_menu )
+	guthscp.module.require()
+	guthscp.config.sync()
+	timer.Simple( .5, guthscp.config.open_menu )
 end
