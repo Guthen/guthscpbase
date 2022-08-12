@@ -22,9 +22,11 @@ function guthscp.config.apply( id, tbl, options )
 	if istable( options ) then
 		--  network to players
 		if SERVER and options.network then
-			timer.Simple( 0, function() 
-				guthscp.config.sync( id, tbl ) 
-			end )
+			if player.GetCount() > 0 then  --  only sync if players are in-game
+				timer.Simple( 0, function() 
+					guthscp.config.sync( id, tbl ) 
+				end )
+			end
 		end
 
 		--  save to json
