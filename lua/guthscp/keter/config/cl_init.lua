@@ -46,10 +46,12 @@ net.Receive( "guthscp.config:send", function( len, ply )
 	guthscp.config.apply( id, tbl )
 end )
 
-hook.Add( "InitPostEntity", "guthscp.config:receive", function()
+function guthscp.config.sync() 
 	net.Start( "guthscp.config:receive" )
 	net.SendToServer()
-end )
+end
+hook.Add( "InitPostEntity", "guthscp.config:receive", guthscp.config.sync )
+concommand.Add( "guthscp_sync", guthscp.config.sync )
 
 --  > Formular
 local vgui_values = {

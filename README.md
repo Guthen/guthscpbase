@@ -20,11 +20,12 @@ This addon is available on the Workshop [here](https://steamcommunity.com/shared
 **\*** These features are only effective on addons (mostly mine) using this base, this will do nothing if you don't have any.
 
 ## Commands
-+ `guthscp_repair_entities`: *Server*; Repair all broken entities
-+ `guthscp_debug_break_at_trace`: *Client (Superadmin)*; Destroy the looked entities
-+ `guthscp_stop_channel_sounds`: *Client*; Stop and remove all sound channels currently playing
-+ `guthscp_print_channel_sounds`: *Client*; Print all the existing sound channels 
-+ `guthscp_menu`: *Client (Superadmin)*; The must-have console command of this addon! Show the configuration panel and allow you to edit all available settings of installed compatible addons
++ `guthscp_repair_entities`: *server*; repair all broken entities
++ `guthscp_debug_break_at_trace`: *client (`superadmin`)*; destroy the looked entities
++ `guthscp_stop_channel_sounds`: *client*; stop and remove all sound channels currently playing
++ `guthscp_print_channel_sounds`: *client*; print all the existing sound channels 
++ `guthscp_sync`: *client*; retrieve all configs from the server
++ `guthscp_menu`: *client (`superadmin`)*; the **must-have console command** of this addon! it shows the configuration panel and allow you to edit all available settings of installed compatible addons
 
 ## Modules
 *Wanna see addons which use this one?* Here is a (small) list:
