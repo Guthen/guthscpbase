@@ -2,6 +2,7 @@ local MODULE = {
 	name = "Base",
 	author = "Guthen",
 	version = "2.0.0",
+	description = "The must-have addon that allows you to see this interface (and surely more)!",
 	icon = "icon16/bricks.png",
 	version_url = "https://raw.githubusercontent.com/Guthen/guthscpbase/remaster-as-modules-based/lua/guthscp/modules/base/main.lua",
 	requires = {

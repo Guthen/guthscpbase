@@ -12,6 +12,7 @@ local MODULE = {
 	name = "unknown",  --  required!
 	author = "unknown",  --  required!
 	version = "0.0.0",  -- required!
+	description = "No description",
 	
 	--  identifier used to reference the module table:
 	--  will register as 'guthscp.modules.<id>'
