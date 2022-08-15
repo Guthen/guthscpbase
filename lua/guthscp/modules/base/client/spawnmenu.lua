@@ -9,7 +9,6 @@ function guthscp.spawnmenu.add_weapon( weapon, category )
 end
 
 function guthscp.spawnmenu.add_entity( entity, category )
-	PrintTable( entity )
 	guthscp.spawnmenu.entities[category] = guthscp.spawnmenu.entities[category] or {}
 	guthscp.spawnmenu.entities[category][entity.Folder] = entity
 	guthscp.info( "guthscp.spawnmenu", "add entity %q to %q category", entity.Folder, category )
