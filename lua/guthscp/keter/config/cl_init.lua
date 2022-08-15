@@ -281,7 +281,86 @@ form_vgui = {
 	end,
 }
 
+local function create_label_category( parent, text )
+	local label = parent:Add( "DLabel" )
+	label:Dock( TOP )
+	label:DockMargin( 15, 0, 10, 0 )
+	label:SetDark( true )
+	label:SetText( text )
+	label:SetFont( "DermaDefaultBold" )
+
+	return label
+end
+
+local function create_label( parent, text )
+	local label = parent:Add( "DLabel" )
+	label:Dock( TOP )
+	label:DockMargin( 10, 0, 10, 5 )
+	label:SetDark( true )
+	label:SetText( text )
+
+	return label
+end
+
 function guthscp.config.populate_config( parent, config )
+	--  populate module data
+	local module = guthscp.modules[config.id]
+	if module then
+		local category = parent:Add( "DCollapsibleCategory" )
+		category:Dock( TOP )
+		category:DockMargin( 0, 0, 5, 5 )
+		category:SetLabel( "Module" )
+
+		local container = vgui.Create( "Panel" )
+		container:DockMargin( 5, 5, 5, 5 )
+		category:SetContents( container )
+
+		--  description
+		create_label_category( container, "Description" )
+
+		local label_author = create_label( container, module.description )
+		label_author:SetWrap( true )
+
+		--  dependencies
+		if next( module.dependencies ) then
+			create_label_category( container, "Dependencies" )
+
+			--  show all
+			for id, version in pairs( module.dependencies ) do
+				local dependency = guthscp.modules[id]
+				if dependency then  --  the reverse should not happen (since configs are loaded only if dependencies are constructed)
+					local container_dependency = container:Add( "Panel" ) 
+					container_dependency:Dock( TOP )
+					container_dependency:SetTall( 22 )
+					container_dependency:SetCursor( "hand" )
+					function container_dependency:OnMouseReleased()
+						guthscp.config.sheet:SetActiveTab( guthscp.config.sheets[id].Tab )
+					end
+
+					local icon = container_dependency:Add( "DImage" )
+					icon:SetPos( 10, 0 )
+					icon:SetSize( 16, 16 )
+					icon:SetImage( dependency.icon )
+
+					local label = container_dependency:Add( "DLabel" )
+					label:Dock( LEFT )
+					label:DockMargin( 32, 2, 0, 0 )
+					label:SetDark( true )
+					label:SetAutoStretchVertical( true )
+					label:SetText( ( "%s (>v%s)" ):format( dependency.name, dependency.version ) )
+					label:SizeToContentsX()
+					function label:Paint( w, h )
+						if not container_dependency:IsHovered() then return end
+
+						--  draw an underline
+						surface.SetDrawColor( self:GetColor() )
+						surface.DrawLine( 0, h - 1, w, h - 1 )
+					end
+				end
+			end
+		end
+	end
+
 	--  create form
 	for iform, vform in ipairs( config.elements or {} ) do
 		form_vgui[vform.type]( parent, vform, config.id )
@@ -314,6 +393,8 @@ function guthscp.config.open_menu()
 	--  create sheets
 	local sheet = frame:Add( "DPropertySheet" )
 	sheet:Dock( FILL )
+	guthscp.config.sheet = sheet
+	guthscp.config.sheets = {}
 
 	--  create configs
 	for i, v in SortedPairsByMemberValue( config, "name" ) do
@@ -327,7 +408,7 @@ function guthscp.config.open_menu()
 		guthscp.config.populate_config( scroll_panel, v )
 
 		--  add sheet
-		sheet:AddSheet( v.label or v.id, panel, v.icon )
+		guthscp.config.sheets[v.id] = sheet:AddSheet( v.label or v.id, panel, v.icon )
 
 		--  size to children
 		scroll_panel:InvalidateLayout( true )
