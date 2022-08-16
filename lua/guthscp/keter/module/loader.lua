@@ -129,7 +129,7 @@ function guthscp.module.init( id )
 	end
 
 	--  add config
-	if istable( module.config ) then
+	if istable( module.menu ) and istable( module.menu.config ) then
 		guthscp.config.add( module.id, {
 			label = module.name,
 			icon = module.icon,
@@ -137,11 +137,11 @@ function guthscp.module.init( id )
 				{
 					type = "Form",
 					name = "Configuration",
-					elements = module.config.form,
+					elements = module.menu.config.form,
 				},
 			},
-			receive = module.config.receive,
-			parse = module.config.parse,
+			receive = module.menu.config.receive,
+			parse = module.menu.config.parse,
 		}, true )
 	end
 
@@ -235,7 +235,7 @@ end
 --  modules load config
 hook.Add( "InitPostEntity", "guthscp.modules:load_config", function()
 	for id, module in pairs( guthscp.modules ) do
-		if not module.config then continue end
+		if not istable( module.menu ) or not istable( module.menu.config ) then continue end
 
 		guthscp.config.load( id )
 	end
