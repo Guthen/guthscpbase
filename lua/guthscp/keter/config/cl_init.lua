@@ -435,7 +435,7 @@ function guthscp.config.open_menu()
 		guthscp.config.menu:Remove() 
 	end
 
-	local w, h = ScrW() * .4, ScrH() * .45
+	local w, h = ScrW() * .6, ScrH() * .65
 
 	--  create frame
 	local frame = vgui.Create( "DFrame" )
