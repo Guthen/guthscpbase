@@ -6,6 +6,7 @@ local MODULE = {
 	_ = {
 		is_initialized = false,
 		version_check = guthscp.VERSION_STATES.NONE,
+		online_version = "0.0.0",
 	},
 	
 	--  variables

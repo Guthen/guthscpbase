@@ -254,6 +254,9 @@ hook.Add( "InitPostEntity", "guthscp.modules:version_url", function()
 						module._.version_check = guthscp.VERSION_STATES.NONE
 						return guthscp.error( "guthscp.module", "failed to retrieve online version for %q (pattern returned nil)!", id ) 
 					end
+
+					--  store online version
+					module._.online_version = remote_version
 	
 					--  compare versions
 					local result = guthscp.helpers.compare_versions( module.version, remote_version )

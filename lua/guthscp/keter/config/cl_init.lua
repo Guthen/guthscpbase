@@ -358,9 +358,16 @@ function guthscp.config.populate_config( parent, config )
 			},
 			{
 				text = "v" .. module.version,
-				icon = "icon16/tag_blue.png",
+				icon = "icon16/drive_go.png",
 			},
 		}
+
+		if module._.version_check > guthscp.VERSION_STATES.PENDING then
+			data[#data + 1] = {
+				text = "v" .. module._.online_version,
+				icon = "icon16/world_go.png",
+			}
+		end
 
 		--  add custom details
 		if module.menu and module.menu.details then
