@@ -336,7 +336,7 @@ function guthscp.config.populate_config( parent, config )
 					local label_icon = container:Add( "guthscp_label_icon" ) 
 					label_icon:Dock( TOP )
 					label_icon:SetIcon( dependency.icon )
-					label_icon:SetText( ( "%s (>v%s)" ):format( dependency.name, dependency.version ) )
+					label_icon:SetText( ( "%s (>=v%s)" ):format( dependency.name, version ) )
 					function label_icon:DoClick()
 						guthscp.config.sheet:SetActiveTab( guthscp.config.sheets[id].Tab )
 					end
