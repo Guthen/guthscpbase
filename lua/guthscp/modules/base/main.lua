@@ -12,6 +12,30 @@ local MODULE = {
 	},
 }
 
+MODULE.menu = {
+	details = {
+		{
+			text = "CC-BY-SA",
+			icon = "icon16/page_white_key.png",
+		},
+		{
+			text = "Github",
+			icon = "guthscp/icons/github.png",
+			url = "https://github.com/Guthen/guthscpbase",
+		},
+		{
+			text = "Steam",
+			icon = "guthscp/icons/steam.png",
+			url = "https://steamcommunity.com/sharedfiles/filedetails/?id=2139692777"
+		},
+		{
+			text = "Discord",
+			icon = "guthscp/icons/discord.png",
+			url = "https://discord.gg/3dx8EGbwvK",
+		},
+	}
+} 
+
 --  config
 MODULE.config = {
 	form = {

@@ -284,7 +284,7 @@ form_vgui = {
 local function create_label_category( parent, text )
 	local label = parent:Add( "DLabel" )
 	label:Dock( TOP )
-	label:DockMargin( 15, 0, 10, 0 )
+	label:DockMargin( 9, 0, 0, 0 )
 	label:SetDark( true )
 	label:SetText( text )
 	label:SetFont( "DermaDefaultBold" )
@@ -295,7 +295,7 @@ end
 local function create_label( parent, text )
 	local label = parent:Add( "DLabel" )
 	label:Dock( TOP )
-	label:DockMargin( 10, 0, 10, 5 )
+	label:DockMargin( 15, 0, 10, 5 )
 	label:SetDark( true )
 	label:SetText( text )
 
@@ -308,59 +308,92 @@ function guthscp.config.populate_config( parent, config )
 	if module then
 		local category = parent:Add( "DCollapsibleCategory" )
 		category:Dock( TOP )
-		category:DockMargin( 0, 0, 5, 5 )
 		category:SetLabel( "Module" )
 
-		local container = vgui.Create( "Panel" )
-		container:DockMargin( 5, 5, 5, 5 )
-		category:SetContents( container )
+		local container = vgui.Create( "Panel", category )
+		container:Dock( TOP )
+		container:DockMargin( 10, 10, 10, 0 )
+		
+		local container_left = container:Add( "Panel" )
+		container_left:Dock( FILL )
 
 		--  description
-		create_label_category( container, "Description" )
+		create_label_category( container_left, "Description" )
 
-		local label_author = create_label( container, module.description )
+		local label_author = create_label( container_left, module.description )
 		label_author:SetWrap( true )
 
 		--  dependencies
 		if next( module.dependencies ) then
-			create_label_category( container, "Dependencies" )
+			create_label_category( container_left, "Dependencies" )
 
 			--  show all
 			for id, version in pairs( module.dependencies ) do
 				local dependency = guthscp.modules[id]
 				if dependency then  --  the reverse should not happen (since configs are loaded only if dependencies are constructed)
-					local container_dependency = container:Add( "Panel" ) 
-					container_dependency:Dock( TOP )
-					container_dependency:SetTall( 22 )
-					container_dependency:SetCursor( "hand" )
-					function container_dependency:OnMouseReleased()
+					local label_icon = container_left:Add( "guthscp_label_icon" ) 
+					label_icon:Dock( TOP )
+					label_icon:SetIcon( dependency.icon )
+					label_icon:SetText( ( "%s (>v%s)" ):format( dependency.name, dependency.version ) )
+					function label_icon:DoClick()
 						guthscp.config.sheet:SetActiveTab( guthscp.config.sheets[id].Tab )
-					end
-
-					local icon = container_dependency:Add( "DImage" )
-					icon:SetPos( 10, 0 )
-					icon:SetSize( 16, 16 )
-					icon:SetImage( dependency.icon )
-
-					local label = container_dependency:Add( "DLabel" )
-					label:Dock( LEFT )
-					label:DockMargin( 32, 2, 0, 0 )
-					label:SetDark( true )
-					label:SetAutoStretchVertical( true )
-					label:SetText( ( "%s (>v%s)" ):format( dependency.name, dependency.version ) )
-					label:SizeToContentsX()
-					function label:Paint( w, h )
-						if not container_dependency:IsHovered() then return end
-
-						--  draw an underline
-						surface.SetDrawColor( self:GetColor() )
-						surface.DrawLine( 0, h - 1, w, h - 1 )
 					end
 				end
 			end
 		end
-	end
 
+		--  side bar
+		local container_sidebar = container:Add( "Panel" )
+		container_sidebar:Dock( RIGHT )
+		container_sidebar:SetWide( 200 )
+
+		create_label_category( container_sidebar, "Details" )
+
+		local data = {
+			{
+				text = module.author,
+				icon = "icon16/user_gray.png",
+			},
+			{
+				text = "v" .. module.version,
+				icon = "icon16/tag_blue.png",
+			},
+		}
+
+		--  add custom details
+		if module.menu and module.menu.details then
+			table.Add( data, module.menu.details )
+		end
+
+		for i, v in ipairs( data ) do
+			local label_icon = container_sidebar:Add( "guthscp_label_icon" )
+			label_icon:Dock( TOP )
+			label_icon:SetText( v.text )
+			if isstring( v.icon ) then
+				label_icon:SetIcon( v.icon )
+			end
+			if isstring( v.url ) then
+				function label_icon:DoClick()
+					gui.OpenURL( v.url )
+				end
+			elseif isfunction( v.callback ) then
+				label_icon.DoClick = v.callback
+			else
+				label_icon:SetClickable( false )
+			end
+		end
+
+		--  setup children pos
+		container:InvalidateChildren( true )
+		
+		--  height to children
+		local max_height = 0
+		for i, v in ipairs( table.Merge( container_left:GetChildren(), container_sidebar:GetChildren() ) ) do
+			max_height = math.max( max_height, v:GetY() + v:GetTall() )
+		end
+		container:SetTall( max_height + 5 )
+	end
+	
 	--  create form
 	for iform, vform in ipairs( config.elements or {} ) do
 		form_vgui[vform.type]( parent, vform, config.id )
