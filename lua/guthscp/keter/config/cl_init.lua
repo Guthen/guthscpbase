@@ -404,11 +404,6 @@ function guthscp.config.populate_config( parent, config )
 	for iform, vform in ipairs( config.elements or {} ) do
 		form_vgui[vform.type]( parent, vform, config.id )
 	end
-
-	timer.Simple( 0, function()
-		print( "h!")
-		parent:GetVBar():SetScroll( 0 )
-	end )
 end
 
 function guthscp.config.open_menu()
@@ -437,6 +432,12 @@ function guthscp.config.open_menu()
 	--  create sheets
 	local sheet = frame:Add( "DPropertySheet" )
 	sheet:Dock( FILL )
+	function sheet:OnActiveTabChanged( old, new )
+		--  somehow, the scroll vbar is showing incorrectly when there is not enough space to scroll, so here's my fix..
+		timer.Simple( .1, function()
+			new:GetPanel().scroll_panel:InvalidateLayout()
+		end )
+	end
 	guthscp.config.sheet = sheet
 	guthscp.config.sheets = {}
 
@@ -447,6 +448,7 @@ function guthscp.config.open_menu()
 
 		local scroll_panel = panel:Add( "DScrollPanel" )
 		scroll_panel:Dock( FILL )
+		panel.scroll_panel = scroll_panel
 
 		--  populate
 		guthscp.config.populate_config( scroll_panel, v )
