@@ -306,6 +306,7 @@ function guthscp.config.populate_config( parent, config )
 	--  populate module data
 	local module = guthscp.modules[config.id]
 	if module then
+		--  content
 		local category = parent:Add( "DCollapsibleCategory" )
 		category:Dock( TOP )
 		category:DockMargin( 0, 0, 5, 5 )
@@ -314,28 +315,25 @@ function guthscp.config.populate_config( parent, config )
 		local container = vgui.Create( "Panel", category )
 		container:Dock( TOP )
 		container:DockMargin( 10, 10, 10, 0 )
-		
-		local container_left = container:Add( "Panel" )
-		container_left:Dock( LEFT )
-		container_left:SetWide( guthscp.config.menu:GetWide() * .7 )
-
+	
 		--  description
-		create_label_category( container_left, "Description" )
+		create_label_category( container, "Description" )
 
-		local label_author = create_label( container_left, module.description )
+		local label_author = create_label( container, module.description )
 		label_author:SetContentAlignment( 9 )
 		label_author:SetAutoStretchVertical( true )
+		label_author:SizeToContentsY()
 		label_author:SetWrap( true )
 
 		--  dependencies
 		if next( module.dependencies ) then
-			create_label_category( container_left, "Dependencies" )
+			create_label_category( container, "Dependencies" )
 
 			--  show all
 			for id, version in pairs( module.dependencies ) do
 				local dependency = guthscp.modules[id]
 				if dependency then  --  the reverse should not happen (since configs are loaded only if dependencies are constructed)
-					local label_icon = container_left:Add( "guthscp_label_icon" ) 
+					local label_icon = container:Add( "guthscp_label_icon" ) 
 					label_icon:Dock( TOP )
 					label_icon:SetIcon( dependency.icon )
 					label_icon:SetText( ( "%s (>v%s)" ):format( dependency.name, dependency.version ) )
@@ -346,9 +344,20 @@ function guthscp.config.populate_config( parent, config )
 			end
 		end
 
+		--  setup children pos
+		container:InvalidateChildren( true )
+		container:InvalidateLayout( true )
+		
+		--  height to children
+		local max_height = 0
+		for i, v in ipairs( container:GetChildren() ) do
+			max_height = math.max( max_height, v:GetY() + v:GetTall() )
+		end
+		container:SetTall( max_height + 5 )
+
 		--  side bar
-		local container_sidebar = container:Add( "Panel" )
-		container_sidebar:Dock( FILL )
+		local sidebar = parent:GetParent():Add( "DScrollPanel" )
+		sidebar:Dock( RIGHT )
 
 		local data = {
 			"Details",
@@ -374,11 +383,12 @@ function guthscp.config.populate_config( parent, config )
 			table.Add( data, module.menu.details )
 		end
 
+		local max_wide = 150
 		for i, v in ipairs( data ) do
 			if isstring( v ) then
-				create_label_category( container_sidebar, v )
+				create_label_category( sidebar, v )
 			elseif istable( v ) then 
-				local label_icon = container_sidebar:Add( "guthscp_label_icon" )
+				local label_icon = sidebar:Add( "guthscp_label_icon" )
 				label_icon:Dock( TOP )
 				label_icon:SetText( v.text )
 				if isstring( v.icon ) then
@@ -393,24 +403,24 @@ function guthscp.config.populate_config( parent, config )
 				else
 					label_icon:SetClickable( false )
 				end
+
+				label_icon:InvalidateLayout( true )
+				max_wide = math.max( max_wide, label_icon.label:GetX() + label_icon.label:GetWide() )
 			end
 		end
 
-		--  setup children pos
-		container:InvalidateChildren( true )
-		
-		--  height to children
-		local max_height = 0
-		for i, v in ipairs( table.Merge( container_left:GetChildren(), container_sidebar:GetChildren() ) ) do
-			max_height = math.max( max_height, v:GetY() + v:GetTall() )
-		end
-		container:SetTall( max_height + 5 )
+		sidebar:SetWide( max_wide + 5 )
 	end
 	
 	--  create form
 	for iform, vform in ipairs( config.elements or {} ) do
 		form_vgui[vform.type]( parent, vform, config.id )
 	end
+
+	timer.Simple( 0, function()
+		print( "h!")
+		parent:GetVBar():SetScroll( 0 )
+	end )
 end
 
 function guthscp.config.open_menu()
