@@ -3,6 +3,7 @@ local PANEL = {}
 function PANEL:Init()
 	self:SetTall( 22 )
 	self:SetClickable( true )
+	self:SetCursor( "hand" )
 	
 	self.icon = self:Add( "DImage" )
 	self.icon:SetPos( 10, 0 )
@@ -38,9 +39,9 @@ end
 
 function PANEL:SetClickable( bool )
 	if bool then
-		self:SetCursor( "hand" )
+		self:SetMouseInputEnabled( true )
 	else
-		self:SetCursor( "none" )
+		self:SetMouseInputEnabled( false )
 	end
 
 	self.is_clickable = bool
