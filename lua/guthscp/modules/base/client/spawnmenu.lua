@@ -65,6 +65,16 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 	local config_node = tree:AddNode( "Configuration", "icon16/wrench.png" )
 	config_node:SetExpanded( true, true )  --  instant expand
 	config_node.nodes = {}
+
+	--  callback for switching panel (e.g. dependencies hyperlinks)
+	local function switch_callback( id )
+		local node = config_node.nodes[id]
+		if not IsValid( node ) then return end
+
+		node:InternalDoClick()
+	end
+
+	--  populating configs
 	for i, config in SortedPairsByMemberValue( guthscp.config.get_all(), "name" ) do
 		local node = config_node:AddNode( config.label, config.icon )
 		function node:DoPopulate()
@@ -77,7 +87,7 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 			scroll_panel:Dock( FILL )
 	
 			--  populate
-			guthscp.config.populate_config( scroll_panel, config )
+			guthscp.config.populate_config( scroll_panel, config, switch_callback )
 			
 			--  register
 			self.container = container
@@ -125,7 +135,7 @@ hook.Add( "guthscp.config:applied", "guthscp.spawnmenu:reload_config", function(
 
 	--  re-create config
 	--  ISSUE?: will refresh if you are currently editing the config and someone else apply the config, can be frustrating; 
-	--          but this case should not happen since this is stupid
+	--          but this case should not happen since you should not edit the config while someone else is doing it
 	node.container:Remove()
 	node:DoPopulate()
 

@@ -302,7 +302,7 @@ local function create_label( parent, text )
 	return label
 end
 
-function guthscp.config.populate_config( parent, config )
+function guthscp.config.populate_config( parent, config, switch_callback )
 	--  populate module data
 	local module = guthscp.modules[config.id]
 	if module then
@@ -341,7 +341,7 @@ function guthscp.config.populate_config( parent, config )
 					label_icon:SetIcon( dependency.icon )
 					label_icon:SetText( ( "%s (>=v%s)" ):format( dependency.name, version ) )
 					function label_icon:DoClick()
-						guthscp.config.sheet:SetActiveTab( guthscp.config.sheets[id].Tab )
+						switch_callback( id )
 					end
 				end
 			end
@@ -455,6 +455,11 @@ function guthscp.config.open_menu()
 	guthscp.config.sheet = sheet
 	guthscp.config.sheets = {}
 
+	--  callback for switching panel (e.g. dependencies hyperlinks)
+	local function switch_callback( id )
+		guthscp.config.sheet:SetActiveTab( guthscp.config.sheets[id].Tab )
+	end
+
 	--  create configs
 	for i, v in SortedPairsByMemberValue( config, "name" ) do
 		local panel = sheet:Add( "DPanel" )
@@ -465,7 +470,7 @@ function guthscp.config.open_menu()
 		panel.scroll_panel = scroll_panel
 
 		--  populate
-		guthscp.config.populate_config( scroll_panel, v )
+		guthscp.config.populate_config( scroll_panel, v, switch_callback )
 
 		--  add sheet
 		guthscp.config.sheets[v.id] = sheet:AddSheet( v.label or v.id, panel, v.icon )
