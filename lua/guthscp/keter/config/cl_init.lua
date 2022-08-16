@@ -315,12 +315,15 @@ function guthscp.config.populate_config( parent, config )
 		container:DockMargin( 10, 10, 10, 0 )
 		
 		local container_left = container:Add( "Panel" )
-		container_left:Dock( FILL )
+		container_left:Dock( LEFT )
+		container_left:SetWide( guthscp.config.menu:GetWide() * .7 )
 
 		--  description
 		create_label_category( container_left, "Description" )
 
 		local label_author = create_label( container_left, module.description )
+		label_author:SetContentAlignment( 9 )
+		label_author:SetAutoStretchVertical( true )
 		label_author:SetWrap( true )
 
 		--  dependencies
@@ -344,8 +347,7 @@ function guthscp.config.populate_config( parent, config )
 
 		--  side bar
 		local container_sidebar = container:Add( "Panel" )
-		container_sidebar:Dock( RIGHT )
-		container_sidebar:SetWide( 200 )
+		container_sidebar:Dock( FILL )
 
 		create_label_category( container_sidebar, "Details" )
 
@@ -412,7 +414,7 @@ function guthscp.config.open_menu()
 		guthscp.config.menu:Remove() 
 	end
 
-	local w, h = ScrW() * .4, ScrH() * .4
+	local w, h = ScrW() * .4, ScrH() * .45
 
 	--  create frame
 	local frame = vgui.Create( "DFrame" )

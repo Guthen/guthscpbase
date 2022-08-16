@@ -2,7 +2,15 @@ local MODULE = {
 	name = "Base",
 	author = "Guthen",
 	version = "2.0.0",
-	description = "The must-have addon that allows you to see this interface (and surely more)!",
+	description = [[The must-have addon that allows you to see this interface (and surely more)!
+
+It comes with everything considered useful for making SCPs addons work together in harmony.
+The base allows easy module creation with their own in-game configuration usable anywhere in the code.
+It also includes:
+─ its own spawnmenu for referencing all SCPs Weapons, Entities and the Configurations
+─ a custom shared sound system for easily playing looping and 3D-spatialized sounds
+─ an entity breaking system, useful for throwing doors and chairs at your victims while playing as SCP-096
+─ some useful functions for managing file data, getting a list of living NPCs, manipulating Lua tables..]],
 	icon = "icon16/bricks.png",
 	version_url = "https://raw.githubusercontent.com/Guthen/guthscpbase/remaster-as-modules-based/lua/guthscp/modules/base/main.lua",
 	requires = {
