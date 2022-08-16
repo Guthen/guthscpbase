@@ -332,8 +332,12 @@ function guthscp.config.populate_config( parent, config )
 			for id, version in pairs( module.dependencies ) do
 				local dependency = guthscp.modules[id]
 				if dependency then  --  the reverse should not happen (since configs are loaded only if dependencies are constructed)
-					local label_icon = container:Add( "guthscp_label_icon" ) 
-					label_icon:Dock( TOP )
+					local container_dependency = container:Add( "Panel" )
+					container_dependency:Dock( TOP )
+					
+					local label_icon = container_dependency:Add( "guthscp_label_icon" ) 
+					label_icon:Dock( LEFT )
+					label_icon:DockMargin( 10, 0, 0, 0 )
 					label_icon:SetIcon( dependency.icon )
 					label_icon:SetText( ( "%s (>=v%s)" ):format( dependency.name, version ) )
 					function label_icon:DoClick()
@@ -376,8 +380,12 @@ function guthscp.config.populate_config( parent, config )
 			if isstring( v ) then
 				create_label_category( sidebar, v )
 			elseif istable( v ) then 
-				local label_icon = sidebar:Add( "guthscp_label_icon" )
-				label_icon:Dock( TOP )
+				local container_dependency = sidebar:Add( "Panel" )
+				container_dependency:Dock( TOP )
+
+				local label_icon = container_dependency:Add( "guthscp_label_icon" )
+				label_icon:Dock( LEFT )
+				label_icon:DockMargin( 10, 0, 0, 0 )
 				label_icon:SetText( v.text )
 				if isstring( v.icon ) then
 					label_icon:SetIcon( v.icon )

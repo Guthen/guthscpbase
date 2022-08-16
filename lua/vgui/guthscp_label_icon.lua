@@ -6,13 +6,12 @@ function PANEL:Init()
 	self:SetCursor( "hand" )
 	
 	self.icon = self:Add( "DImage" )
-	self.icon:SetPos( 10, 0 )
 	self.icon:SetSize( 16, 16 )
 	self.icon:SetImage( "icon16/brick.png" )
 
 	self.label = self:Add( "DLabel" )
 	self.label:Dock( LEFT )
-	self.label:DockMargin( 32, 2, 0, 0 )
+	self.label:DockMargin( 22, 2, 0, 0 )
 	self.label:SetDark( true )
 	self.label:SetAutoStretchVertical( true )
 	function self.label.Paint( label, w, h )
@@ -61,4 +60,4 @@ function PANEL:DoClick()
 	--  to override
 end
 
-vgui.Register( "guthscp_label_icon", PANEL, "Panel" )
+vgui.Register( "guthscp_label_icon", PANEL, "DSizeToContents" )
