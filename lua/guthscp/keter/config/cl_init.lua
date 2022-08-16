@@ -312,9 +312,9 @@ function guthscp.config.populate_config( parent, config )
 		category:DockMargin( 0, 0, 5, 5 )
 		category:SetLabel( "Module" )
 
-		local container = vgui.Create( "Panel", category )
+		local container = vgui.Create( "DSizeToContents", category )
 		container:Dock( TOP )
-		container:DockMargin( 10, 10, 10, 0 )
+		container:DockPadding( 10, 10, 10, 10 )
 	
 		--  description
 		create_label_category( container, "Description" )
@@ -322,7 +322,6 @@ function guthscp.config.populate_config( parent, config )
 		local label_author = create_label( container, module.description )
 		label_author:SetContentAlignment( 9 )
 		label_author:SetAutoStretchVertical( true )
-		label_author:SizeToContentsY()
 		label_author:SetWrap( true )
 
 		--  dependencies
@@ -343,17 +342,6 @@ function guthscp.config.populate_config( parent, config )
 				end
 			end
 		end
-
-		--  setup children pos
-		container:InvalidateChildren( true )
-		container:InvalidateLayout( true )
-		
-		--  height to children
-		local max_height = 0
-		for i, v in ipairs( container:GetChildren() ) do
-			max_height = math.max( max_height, v:GetY() + v:GetTall() )
-		end
-		container:SetTall( max_height + 5 )
 
 		--  side bar
 		local sidebar = parent:GetParent():Add( "DScrollPanel" )
