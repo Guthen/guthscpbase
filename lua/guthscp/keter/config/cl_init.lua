@@ -350,9 +350,8 @@ function guthscp.config.populate_config( parent, config )
 		local container_sidebar = container:Add( "Panel" )
 		container_sidebar:Dock( FILL )
 
-		create_label_category( container_sidebar, "Details" )
-
 		local data = {
+			"Details",
 			{
 				text = module.author,
 				icon = "icon16/user_gray.png",
@@ -376,20 +375,24 @@ function guthscp.config.populate_config( parent, config )
 		end
 
 		for i, v in ipairs( data ) do
-			local label_icon = container_sidebar:Add( "guthscp_label_icon" )
-			label_icon:Dock( TOP )
-			label_icon:SetText( v.text )
-			if isstring( v.icon ) then
-				label_icon:SetIcon( v.icon )
-			end
-			if isstring( v.url ) then
-				function label_icon:DoClick()
-					gui.OpenURL( v.url )
+			if isstring( v ) then
+				create_label_category( container_sidebar, v )
+			elseif istable( v ) then 
+				local label_icon = container_sidebar:Add( "guthscp_label_icon" )
+				label_icon:Dock( TOP )
+				label_icon:SetText( v.text )
+				if isstring( v.icon ) then
+					label_icon:SetIcon( v.icon )
 				end
-			elseif isfunction( v.callback ) then
-				label_icon.DoClick = v.callback
-			else
-				label_icon:SetClickable( false )
+				if isstring( v.url ) then
+					function label_icon:DoClick()
+						gui.OpenURL( v.url )
+					end
+				elseif isfunction( v.callback ) then
+					label_icon.DoClick = v.callback
+				else
+					label_icon:SetClickable( false )
+				end
 			end
 		end
 

@@ -26,6 +26,7 @@ MODULE.menu = {
 			text = "CC-BY-SA",
 			icon = "icon16/page_white_key.png",
 		},
+		"Social",
 		{
 			text = "Github",
 			icon = "guthscp/icons/github.png",
