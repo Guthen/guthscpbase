@@ -350,6 +350,12 @@ function guthscp.config.populate_config( parent, config )
 		--  side bar
 		local sidebar = parent:GetParent():Add( "DScrollPanel" )
 		sidebar:Dock( RIGHT )
+		sidebar:DockMargin( 10, 0, 0, 0 )
+		sidebar:GetCanvas():DockPadding( 5, 0, 0, 0 )
+		function sidebar:Paint( w, h )
+			surface.SetDrawColor( 200, 200, 200 )
+			surface.DrawLine( 0, 5, 0, h - 5 )
+		end
 
 		local data = {
 			"Details",
@@ -405,7 +411,7 @@ function guthscp.config.populate_config( parent, config )
 			end
 		end
 
-		sidebar:SetWide( max_wide + 5 )
+		sidebar:SetWide( max_wide + 15 )
 	end
 	
 	--  create form
