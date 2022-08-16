@@ -308,6 +308,7 @@ function guthscp.config.populate_config( parent, config )
 	if module then
 		local category = parent:Add( "DCollapsibleCategory" )
 		category:Dock( TOP )
+		category:DockMargin( 0, 0, 5, 5 )
 		category:SetLabel( "Module" )
 
 		local container = vgui.Create( "Panel", category )
