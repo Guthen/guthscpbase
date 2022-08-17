@@ -5,98 +5,130 @@ guthscp.data.path = "guthscp/"
 	@function guthscp.data.save
 		| description: save to a data file; the file is relative to 'guthscp/'
 		| params:
-			name: <string> file name
+			path: <string> file path
 			data: <string> content to save
 ]]
-function guthscp.data.save( name, data )
-	file.CreateDir( string.GetPathFromFilename( guthscp.data.path .. name ) )  --  ensure base folder is created
-	file.Write( guthscp.data.path .. name, data )
+function guthscp.data.save( path, data, is_absolute )
+	local path = guthscp.data.path .. path
+	file.CreateDir( string.GetPathFromFilename( path ) )  --  ensure all folders are created
+	file.Write( path, data )
 end
 
 --[[ 
 	@function guthscp.data.save_to_json
 		| description: save table as json to a data file; use `guthscp.data.save` internally
 		| params:
-			name: <string> file name
+			path: <string> file path
 			tbl: <table> table to convert and save
 			is_pretty_print: <bool?> should save json as pretty print
 ]]
-function guthscp.data.save_to_json( name, tbl, is_pretty_print )
+function guthscp.data.save_to_json( path, tbl, is_pretty_print )
 	local json = util.TableToJSON( tbl, is_pretty_print )
 	if not json then 
-		return guthscp.error( "guthscp.data", "failed to export json for %q", name )
+		return guthscp.error( "guthscp.data", "failed to export json for %q", path )
 	end
 
-	guthscp.data.save( name, json )
+	guthscp.data.save( path, json )
 end
 
 --[[ 
 	@function guthscp.data.exists
 		| description: check if a data file relative to 'guthscp/' exists
 		| params:
-			name: <string> file name
+			path: <string> file path
 		| return: <bool> exists
 ]]
-function guthscp.data.exists( name )
-	return file.Exists( guthscp.data.path .. name, "DATA" )
+function guthscp.data.exists( path )
+	return file.Exists( guthscp.data.path .. path, "DATA" )
 end
 
 --[[ 
 	@function guthscp.data.load
 		| description: get the data file content relative to 'guthscp/'
 		| params:
-			name: <string> file name
+			path: <string> file path
 		| return: <string?> content
 ]]
-function guthscp.data.load( name )
-	return file.Read( guthscp.data.path .. name, "DATA" )
+function guthscp.data.load( path )
+	return file.Read( guthscp.data.path .. path, "DATA" )
 end
 
 --[[ 
 	@function guthscp.data.load_from_json
 		| description: get the json data file content relative to 'guthscp/' as a table 
 		| params:
-			name: <string> file name
+			path: <string> file path
 		| return: <table?> tbl
 ]]
-function guthscp.data.load_from_json( name )
-	local json = guthscp.data.load( name )
+function guthscp.data.load_from_json( path )
+	local json = guthscp.data.load( path )
 	if not json then return end
 
 	return util.JSONToTable( json )
 end
 
-
---  workaround: move old 'guthscpbase' config files
-local files = file.Find( "guthscpbase/*", "DATA" )
-if #files > 0 then
-	guthscp.info( "guthscp.data", "old \"guthscpbase\" folder detected, moving %d files..", #files )
-
-	guthscp.print_tabs = guthscp.print_tabs + 1
-	for i, name in ipairs( files ) do
-		local source_path = "guthscpbase/" .. name
-
-		--  read source file
-		local data = file.Read( source_path, "DATA" )
-		if not data then
-			guthscp.error( "failed to read %q", source_path )
-			continue
-		end
-
-		--  renaming "guthscpbase.json" to "base.json"
-		if name == "guthscpbase.json" then
-			name = "base.json"
-		end
-
-		--  save file to correct path
-		guthscp.data.save( name, data )
-
-		--  delete source path
-		file.Delete( source_path )
-
-		guthscp.info( "guthscp.data", "moving %q to %q", source_path, guthscp.data.path .. name )
+function guthscp.data.move_file( current_path, new_path )
+	--  read source file
+	local data = file.Read( current_path, "DATA" )
+	if not data then
+		guthscp.error( "guthscp.data", "failed to read %q", current_path )
+		return false
 	end
+
+	guthscp.info( "guthscp.data", "moving file %q to %q", current_path, guthscp.data.path .. new_path )
+	
+	--  save file to the new path
+	guthscp.data.save( new_path, data )
+
+	--  delete source path
+	file.Delete( current_path )
+
+	return true
+end
+
+function guthscp.data.move( path, wildcard, new_path, callback )
+	local files, dirs = file.Find( path .. wildcard, "DATA" )
+	if #files == 0 and #dirs == 0 then return false end
+
+	guthscp.info( "guthscp.data", "moving %d files and %d folders from %q to %q", #files, #dirs, path, new_path )
+	guthscp.print_tabs = guthscp.print_tabs + 1
+
+	--  moving files
+	for i, name in ipairs( files ) do
+		local source_path = path .. name
+		local end_path = new_path .. name
+		
+		--  get custom end path 
+		if callback then
+			end_path = callback( name, source_path, end_path )
+		end
+
+		--  move file
+		guthscp.data.move_file( source_path, end_path )
+	end
+
+	--  moving folders
+	for i, name in ipairs( dirs ) do
+		local source_path = path .. name .. "/"
+		local end_path = new_path .. name .. "/"
+
+		--  get custom end path 
+		if callback then
+			end_path = callback( name, source_path, end_path )
+		end
+		
+		--  move folder
+		guthscp.info( "guthscp.data", "moving folder %q to %q", source_path, guthscp.data.path .. end_path )
+
+		guthscp.print_tabs = guthscp.print_tabs + 1
+		guthscp.data.move( path .. name .. "/", wildcard, end_path, callback )
+		guthscp.print_tabs = guthscp.print_tabs - 1
+	end
+
 	guthscp.print_tabs = guthscp.print_tabs - 1
 
-	file.Delete( "guthscpbase" )
+	--  delete old path
+	file.Delete( path )
+
+	return true
 end
