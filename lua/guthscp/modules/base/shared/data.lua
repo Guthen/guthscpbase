@@ -16,7 +16,7 @@ end
 
 --[[ 
 	@function guthscp.data.save_to_json
-		| description: save table as json to a data file; use `guthscp.data.save` internally
+		| description: save table as json to a data file; use @`guthscp.data.save` internally
 		| params:
 			path: <string> file path
 			tbl: <table> table to convert and save
@@ -67,25 +67,43 @@ function guthscp.data.load_from_json( path )
 	return util.JSONToTable( json )
 end
 
-function guthscp.data.move_file( current_path, new_path )
+--[[ 
+	@function guthscp.data.move_file
+		| description: move a data file from an absolute path to a new path relative to 'guthscp/'; the old file WILL be deleted
+		| params:
+			path: <string> absolute path to the data file to move
+			new_path: <string> relative destination path to 'guthscp/'
+		| return: <bool> is_success
+]]
+function guthscp.data.move_file( path, new_path )
 	--  read source file
-	local data = file.Read( current_path, "DATA" )
+	local data = file.Read( path, "DATA" )
 	if not data then
-		guthscp.error( "guthscp.data", "failed to read %q", current_path )
+		guthscp.error( "guthscp.data", "failed to read %q", path )
 		return false
 	end
 
-	guthscp.info( "guthscp.data", "moving file %q to %q", current_path, guthscp.data.path .. new_path )
+	guthscp.info( "guthscp.data", "moving file %q to %q", path, guthscp.data.path .. new_path )
 	
 	--  save file to the new path
 	guthscp.data.save( new_path, data )
 
 	--  delete source path
-	file.Delete( current_path )
+	file.Delete( path )
 
 	return true
 end
 
+--[[ 
+	@function guthscp.data.move
+		| description: similarly to @`guthscp.data.move_file`, move recursively a list of data files and/or directories found by 
+					   a wildcard to a new path relative to `guthscp/`; the old folder WILL NOT be deleted
+		| params:
+			path: <string> absolute path to the data folder to move
+			wildcard: <string> wildcard to be use by @`file.Find`, recursively passed
+			new_path: <string> relative destination path to 'guthscp/'
+		| return: <bool> is_success
+]]
 function guthscp.data.move( path, wildcard, new_path, callback )
 	local files, dirs = file.Find( path .. wildcard, "DATA" )
 	if #files == 0 and #dirs == 0 then return false end
