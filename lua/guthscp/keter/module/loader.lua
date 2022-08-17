@@ -53,13 +53,13 @@ function guthscp.module.construct( id )
 	setmetatable( module, guthscp.module.meta )
 
 	--  construct
+	module:info( "module constructing.." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 	module:construct()
 	guthscp.print_tabs = guthscp.print_tabs - 1
 	
 	--  register
 	guthscp.modules[id] = module
-	module:info( "constructed!" )
 	guthscp.print_tabs = guthscp.print_tabs - 1
 	return true
 end
@@ -146,13 +146,13 @@ function guthscp.module.init( id )
 	end
 
 	--  call init
+	module:info( "module initializing.." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 	module:init()
 	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  register state
 	module._.is_initialized = true
-	module:info( "initialized!" )
 	guthscp.print_tabs = guthscp.print_tabs - 1
 	return true
 end
