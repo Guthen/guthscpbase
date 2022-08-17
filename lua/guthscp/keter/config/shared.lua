@@ -1,4 +1,5 @@
 guthscp.config = guthscp.config or {}
+guthscp.config.path = "configs/"
 guthscp.configs = guthscp.configs or {}
 
 function guthscp.config.apply( id, tbl, options )
@@ -31,7 +32,7 @@ function guthscp.config.apply( id, tbl, options )
 
 		--  save to json
 		if options.save then
-			guthscp.data.save_to_json( id .. ".json", tbl, true )
+			guthscp.data.save_to_json( guthscp.config.path .. id .. ".json", tbl, true )
 		end
 	end
 
@@ -49,7 +50,7 @@ function guthscp.config.load( id )
 	guthscp.config.setup( id )
 	
 	--  load from data file
-	local tbl = guthscp.data.load_from_json( id .. ".json" )
+	local tbl = guthscp.data.load_from_json( guthscp.config.path .. id .. ".json" )
 	if not tbl then return false end
 
 	--  apply data
