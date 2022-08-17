@@ -66,4 +66,8 @@ function MODULE:warning( message, ... )
 	guthscp.warning( "guthscp/" .. self.id, message, ... )
 end
 
+function MODULE:debug( message, ... )
+	guthscp.debug( "guthscp/" .. self.id, message, ... )
+end
+
 guthscp.module.meta = MODULE
