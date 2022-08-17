@@ -70,4 +70,18 @@ function MODULE:debug( message, ... )
 	guthscp.debug( "guthscp/" .. self.id, message, ... )
 end
 
+--[[ 
+	@function MODULE:port_old_config_file
+		| description: if exists, move the (assumed) old config file to the new config directory 
+		| params:
+			path: <string> file path
+		| return: <bool> is success?
+]]
+function MODULE:port_old_config_file( path )
+	if not file.Exists( path, "DATA" ) then return false end
+
+	guthscp.data.move_file( path, guthscp.config.path .. self.id .. ".json" )
+	return true
+end
+
 guthscp.module.meta = MODULE

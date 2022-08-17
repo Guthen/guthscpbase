@@ -105,11 +105,9 @@ MODULE.menu = {
 	},
 }
 
---  TODO: remove if not used
-function MODULE:construct()
-end
-
 function MODULE:init()
+	--  porting old config file 
+	self:port_old_config_file( "guthscpbase/guthscpbase.json" )
 end
 
 guthscp.module.hot_reload( "base" )
