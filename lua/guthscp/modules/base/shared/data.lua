@@ -145,8 +145,5 @@ function guthscp.data.move( path, wildcard, new_path, callback )
 
 	guthscp.print_tabs = guthscp.print_tabs - 1
 
-	--  delete old path
-	file.Delete( path )
-
 	return true
 end
