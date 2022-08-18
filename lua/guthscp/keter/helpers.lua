@@ -7,6 +7,16 @@ guthscp.VERSION_STATES = {
 	OUTDATE = 3,
 }
 
+--[[ 
+	@function guthscp.helpers.split_version
+		| description: use pattern to split a [semantic version](https://semver.org/) string into its individual parts
+		| params:
+			version: <string> semantic version to split
+		| return: 
+			<string> major_version,
+			<string> minor_version,
+			<string> patch_version,
+			<string> pre_release_version
 function guthscp.helpers.split_version( version )
 	return version:match( "(%d+)%.(%d+)%.(%d+)%-?(.*)" )
 end
