@@ -13,6 +13,12 @@ It also includes:
 ─ some useful functions for managing file data, getting a list of living NPCs, manipulating Lua tables..]],
 	icon = "icon16/bricks.png",
 	version_url = "https://raw.githubusercontent.com/Guthen/guthscpbase/remaster-as-modules-based/lua/guthscp/modules/base/main.lua",
+	--[[
+	--  unit test
+	requires = {
+		["unit_test.lua"] = guthscp.REALMS.SHARED,
+	} 
+	]]
 }
 
 MODULE.menu = {
