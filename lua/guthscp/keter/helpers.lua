@@ -17,10 +17,21 @@ guthscp.VERSION_STATES = {
 			<string> minor_version,
 			<string> patch_version,
 			<string> pre_release_version
+]]
 function guthscp.helpers.split_version( version )
 	return version:match( "(%d+)%.(%d+)%.(%d+)%-?(.*)" )
 end
 
+--[[ 
+	@function guthscp.helpers.compare_versions
+		| description: compare two [semantic versions](https://semver.org/); do NOT support build metadata
+		| params: 
+			current_version: <string> current semantic version
+			extern_version: <string> extern semantic version
+		| return: 
+			comparison_result: <int> possible results: inferior = -1; equal = 0; superior = 1,
+			depth: <int> where does the comparison stopped: major = 1; minor = 2; patch = 3; pre-release = 4
+]]
 local identifier_pattern = "[%w_]+"
 function guthscp.helpers.compare_versions( current_version, extern_version )
 	local current_versions = { guthscp.helpers.split_version( current_version ) }
