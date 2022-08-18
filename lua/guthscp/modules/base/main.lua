@@ -1,7 +1,7 @@
 local MODULE = {
 	name = "Base",
 	author = "Guthen",
-	version = "2.0.0",
+	version = "2.0.0-dev",
 	description = [[The must-have addon that allows you to see this interface (and surely more)!
 
 It comes with everything considered useful for making SCPs addons work together in harmony.
@@ -13,11 +13,6 @@ It also includes:
 ─ some useful functions for managing file data, getting a list of living NPCs, manipulating Lua tables..]],
 	icon = "icon16/bricks.png",
 	version_url = "https://raw.githubusercontent.com/Guthen/guthscpbase/remaster-as-modules-based/lua/guthscp/modules/base/main.lua",
-	requires = {
-		["shared/"] = guthscp.REALMS.SHARED,
-		["server/"] = guthscp.REALMS.SERVER,
-		["client/"] = guthscp.REALMS.CLIENT,
-	},
 }
 
 MODULE.menu = {

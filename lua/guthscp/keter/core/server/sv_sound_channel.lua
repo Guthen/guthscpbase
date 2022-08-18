@@ -1,3 +1,5 @@
+guthscp.sound = guthscp.sound or {}
+
 util.AddNetworkString( "guthscp:play_sound_channel" )
 util.AddNetworkString( "guthscp:stop_sound_channel" )
 
