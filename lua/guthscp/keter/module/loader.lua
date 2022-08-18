@@ -87,6 +87,12 @@ function guthscp.module.init( id )
 		--    ^^^ ._.  funny emote
 	end
 
+	--  warn for using a pre-release version
+	local tag_version = select( 4, guthscp.helpers.split_version( module.version ) )
+	if #tag_version > 0 then
+		module:add_warning( "Development version %q is used, some features may be broken!", tag_version )
+	end
+
 	--  check dependencies
 	for dep_id, version in pairs( module.dependencies ) do
 		--  ensure dependency is registered
@@ -102,12 +108,14 @@ function guthscp.module.init( id )
 			--  warn for eventual API's changes
 			if depth == 1 then
 				guthscp.warning( "guthscp.module", "dependency %q API's version is greater than required, script errors could happen (current: v%s; required: v%s)", dep_id, dep_module.version, version )
+				module:add_warning( "Dependency %q API's version is greater than required, script errors could happen!", dep_id )
 			else
 				guthscp.info( "guthscp.module", "dependency %q found (current: v%s; required: v%s)", dep_id, dep_module.version, version )
 			end
 		--  warn for versions using development tag
 		elseif depth == 4 then
 			guthscp.warning( "guthscp.module", "dependency %q's is under a development version, beware, some features may be broken (current: v%s; required: v%s)", dep_id, dep_module.version, version )
+			module:add_warning( "Dependency %q is using a development version, some features may be broken!", dep_id )
 		--  version lower than required, failing!
 		else
 			guthscp.error( "guthscp.module", "dependency %q's version is lower than required, update it (current: v%s; required: v%s)", dep_id, dep_module.version, version )
@@ -270,6 +278,7 @@ hook.Add( "InitPostEntity", "guthscp.modules:version_url", function()
 					else
 						module._.version_check = guthscp.VERSION_STATES.OUTDATE
 						guthscp.warning( "guthscp.module", "%q is out-of-date, consider updating it (current: v%s; online: v%s)", id, module.version, remote_version )
+						module:add_warning( "The version %q is available online, consider updating this module!", remote_version )
 					end
 				end,
 				function( reason )

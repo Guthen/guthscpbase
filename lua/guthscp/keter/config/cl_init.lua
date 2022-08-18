@@ -347,6 +347,28 @@ function guthscp.config.populate_config( parent, config, switch_callback )
 			end
 		end
 
+		--  display warnings
+		local warnings = module._.warnings
+		if #warnings > 0 then
+			create_label_category( container, "Warnings" )
+		
+			for i, v in ipairs( warnings ) do
+				local container_dependency = container:Add( "Panel" )
+				container_dependency:Dock( TOP )
+
+				local label_icon = container_dependency:Add( "guthscp_label_icon" ) 
+				label_icon:Dock( LEFT )
+				label_icon:DockMargin( 10, 0, 0, 0 )
+				label_icon:SetIcon( v.icon )
+				label_icon:SetText( v.text )
+				label_icon:SetClickable( false )
+				label_icon:NoClipping( true )
+				function label_icon:Paint( w, h )
+					draw.RoundedBox( 2, -2, -2, w + 4, 16 + 4, ColorAlpha( Color( 242, 214, 85 ), math.abs( math.sin( CurTime() * 3 ) * 84 ) ) )
+				end
+			end
+		end
+
 		--  side bar
 		local sidebar = parent:GetParent():Add( "DScrollPanel" )
 		sidebar:Dock( RIGHT )
@@ -369,6 +391,7 @@ function guthscp.config.populate_config( parent, config, switch_callback )
 			},
 		}
 
+		--  add online version
 		if module._.version_check > guthscp.VERSION_STATES.PENDING then
 			data[#data + 1] = {
 				text = "v" .. module._.online_version,

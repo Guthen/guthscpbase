@@ -4,9 +4,10 @@ local MODULE = {
 	--  internal
 	--  contain all module states
 	_ = {
-		is_initialized = false,
-		version_check = guthscp.VERSION_STATES.NONE,
-		online_version = "0.0.0",
+		is_initialized = false,  --  is the module fully initialized (is `MODULE/init` has been called by the loader?)
+		version_check = guthscp.VERSION_STATES.NONE,  --  state of the online version checking
+		online_version = "0.0.0",  --  version retrieved online
+		warnings = {},  --  list of registered warnings messages (using `MODULE/add_warning`)
 	},
 	
 	--  variables
@@ -82,6 +83,24 @@ function MODULE:port_old_config_file( path )
 
 	guthscp.data.move_file( path, guthscp.config.path .. self.id .. ".json" )
 	return true
+end
+
+--[[
+	@function MODULE:add_warning
+		| description: add a warning to the module which will be shown on its menu page
+		| params:
+			message: <string> warning message
+			...: <varargs?> message format arguments
+]]
+function MODULE:add_warning( message, ... )
+	if ... then
+		message = message:format( ... )
+	end
+
+	self._.warnings[#self._.warnings + 1] = {
+		text = message,
+		icon = "icon16/error.png",
+	}
 end
 
 guthscp.module.meta = MODULE
