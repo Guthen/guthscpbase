@@ -105,6 +105,10 @@ function guthscp.module.init( id )
 			else
 				guthscp.info( "guthscp.module", "dependency %q found (current: v%s; required: v%s)", dep_id, dep_module.version, version )
 			end
+		--  warn for versions using development tag
+		elseif depth == 4 then
+			guthscp.warning( "guthscp.module", "dependency %q's is under a development version, beware, some features may be broken (current: v%s; required: v%s)", dep_id, dep_module.version, version )
+		--  version lower than required, failing!
 		else
 			guthscp.error( "guthscp.module", "dependency %q's version is lower than required, update it (current: v%s; required: v%s)", dep_id, dep_module.version, version )
 			module:error( "failed!" )
