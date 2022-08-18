@@ -87,6 +87,12 @@ MODULE.menu = {
 			text = "CC-BY-SA",
 			icon = "icon16/page_white_key.png",
 		},
+		"Wiki",
+		{
+			text = "Read Me",
+			icon = "icon16/information.png",
+			url = "https://github.com/Guthen/guthscpbase/blob/master/README.md"
+		},
 		"Social",
 		{
 			text = "Github",
