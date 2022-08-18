@@ -88,10 +88,7 @@ function guthscp.config.parse_teams( teams )
 		if not v.Joinable then continue end
 
 		local keyname = guthscp.get_team_keyname( k )
-		if not keyname then
-			guthscp.warning( "guthscp", "%q doesn't have an unique 'TEAM_' name, this could lead to inability to save this team in the configuration!", v.Name )
-			continue
-		end
+		if not keyname then continue end
 		if not teams[v.Name] and not teams[k] and not teams[keyname] then continue end
 
 		new_teams[keyname] = true

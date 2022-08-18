@@ -56,7 +56,20 @@ function guthscp.cache_teams_keynames()
 
 	guthscp.debug( "guthscp", "cached %d teams keynames", count )
 end
-hook.Add( "InitPostEntity", "guthscp:cache_teams_keynames", guthscp.cache_teams_keynames )
+hook.Add( "InitPostEntity", "guthscp:cache_teams_keynames", function()
+	guthscp.cache_teams_keynames()
+
+	--  warn for non-unique 'TEAM_' names
+	for k, v in pairs( team.GetAllTeams() ) do
+		if not v.Joinable then continue end
+
+		local keyname = guthscp.get_team_keyname( k )
+		if keyname then continue end
+
+		guthscp.warning( "guthscp", "%q doesn't have an unique 'TEAM_' name, this could lead to inability to save this team in the configuration!", v.Name )
+		guthscp.modules.base:add_warning( "%q is not set to a unique 'TEAM_' name in the code, this could prevent you from using it in modules configurations!", v.Name )
+	end
+end )
 
 --[[ 
 	@function guthscp.get_teams_keynames
