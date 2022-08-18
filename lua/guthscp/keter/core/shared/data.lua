@@ -8,7 +8,7 @@ guthscp.data.path = "guthscp/"
 			path: <string> file path
 			data: <string> content to save
 ]]
-function guthscp.data.save( path, data, is_absolute )
+function guthscp.data.save( path, data )
 	local path = guthscp.data.path .. path
 	file.CreateDir( string.GetPathFromFilename( path ) )  --  ensure all folders are created
 	file.Write( path, data )
