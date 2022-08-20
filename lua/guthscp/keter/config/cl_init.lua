@@ -142,7 +142,7 @@ local function create_array_vguis( panel, el, config_value, add_func )
 		add_vgui( v, k )
 	end
 
-	--  > Add/Remove
+	--  add & remove buttons
 	local container = vgui.Create( "DPanel", panel )
 	container:SetPaintBackground( false )
 	panel:AddItem( container )
@@ -191,7 +191,29 @@ form_vgui = {
 			if not form_vgui[el.type] then
 				guthscp.error( "guthscp", "element %q is not a recognized type!", el.type )
 			else
-				form[id] = form_vgui[el.type]( panel, el, config_value[id], form )
+				--  create vgui
+				local child = form_vgui[el.type]( panel, el, config_value[id], form )
+				form[id] = child
+
+				--  middle click: reset to default
+				if IsValid( child ) and config_value[id] then
+					local mouse_pressed = child.OnMousePressed
+					child:SetMouseInputEnabled( true )
+					function child:OnMousePressed( mouse_button )
+						--  add a menu
+						if mouse_button == MOUSE_MIDDLE then
+							local menu = DermaMenu( nil, self )
+							menu:AddOption( "Reset to default", function()
+								self:SetValue( el.default )
+							end ):SetMaterial( "icon16/arrow_refresh.png" )
+							menu:Open()
+						end
+
+						mouse_pressed( self, mouse_button )
+					end
+				end
+
+				--  create description
 				if el.desc then
 					panel:ControlHelp( el.desc ):DockMargin( 10, 0, 0, 15 )
 				end
