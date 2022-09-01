@@ -91,7 +91,17 @@ MODULE.menu = {
 		{
 			text = "Read Me",
 			icon = "icon16/information.png",
-			url = "https://github.com/Guthen/guthscpbase/blob/master/README.md"
+			url = "https://github.com/Guthen/guthscpbase/blob/master/README.md",
+		},
+		{
+			text = "API",
+			icon = "icon16/script_code.png",
+			url = "https://github.com/Guthen/guthscpbase/wiki/API",
+		},
+		{
+			text = "Creating your own module",
+			icon = "icon16/brick_add.png",
+			url = "https://github.com/Guthen/guthscpbase/wiki/Creating-your-own-module",
 		},
 		"Social",
 		{
@@ -102,7 +112,7 @@ MODULE.menu = {
 		{
 			text = "Steam",
 			icon = "guthscp/icons/steam.png",
-			url = "https://steamcommunity.com/sharedfiles/filedetails/?id=2139692777"
+			url = "https://steamcommunity.com/sharedfiles/filedetails/?id=2139692777",
 		},
 		{
 			text = "Discord",
