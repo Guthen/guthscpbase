@@ -109,6 +109,11 @@ MODULE.menu = {
 			icon = "guthscp/icons/discord.png",
 			url = "https://discord.gg/3dx8EGbwvK",
 		},
+		{
+			text = "Ko-fi",
+			icon = "guthscp/icons/kofi.png",
+			url = "https://ko-fi.com/vyrkx",
+		},
 	},
 }
 
