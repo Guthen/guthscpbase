@@ -50,49 +50,8 @@ end
 hook.Add( "InitPostEntity", "guthscp.config:receive", guthscp.config.sync )
 concommand.Add( "guthscp_sync", guthscp.config.sync )
 
---  > Formular
-local vgui_values = {
-	["DCheckBoxLabel"] = function( self ) 
-		return self:GetChecked() or false
-	end,
-	["DComboBox"] = function( self ) 
-		local text, data = self:GetSelected()
-		--print( text, data )
-		return data or text or self:GetValue()
-	end,
-	["DLabel"] = function( self )
-		return nil  --  skip categories serializing
-	end,
-	["DButton"] = function( self )
-		return nil  --  skip buttons serializing
-	end,
-}
-
-local function serialize_form( form )
-	local serialized = {}
-
-	for k, v in pairs( form ) do
-		if k == "_id" then continue end  --  ignore '_id' property
-
-		if istable( v ) then
-			serialized[k] = serialize_form( v )
-		else
-			--  use special serializors..
-			local serializor = vgui_values[v:GetName()]
-			if serializor then
-				local value = serializor( v )
-				if not ( value == nil ) then
-					serialized[k] = value
-				end
-			--  or value
-			else
-				serialized[k] = v:GetValue()
-			end
-		end
-	end
-
-	return serialized
-end
+--  config vgui
+local vguis_types  --  required in order to use it in the functions
 
 local function create_array_vguis( panel, el, config_value, add_func )
 	local vguis = {}
@@ -174,134 +133,208 @@ local function create_array_vguis( panel, el, config_value, add_func )
 	return vguis
 end
 
-local form_vgui
-form_vgui = {
-	["Form"] = function( parent, el, config_id )
-		local panel = parent:Add( "DForm" )
-		panel:Dock( FILL )
-		panel:DockMargin( 0, 0, 5, 0 )
-		panel:SetName( el.name )
+local function serialize_form( form )
+	local serialized = {}
 
-		local config_value = guthscp.configs[config_id]
+	for k, v in pairs( form ) do
+		if k == "_type" or k == "_id" then continue end  --  ignore '_type' & '_id' property
 
-		local form = {}
-		form._id = config_id
-		for i, el in ipairs( el.elements or {} ) do
-			local id = el.id or #form + 1
-			if not form_vgui[el.type] then
-				guthscp.error( "guthscp", "element %q is not a recognized type!", el.type )
+		if istable( v ) then
+			serialized[k] = serialize_form( v )
+		else
+			print( k, v )
+			--  use special serializors..
+			local vgui_type = vguis_types[v._type]
+			if vgui_type and vgui_type.get_value then
+				local value = vgui_type.get_value( v )
+				if not ( value == nil ) then
+					serialized[k] = value
+				end
+			--  or value
 			else
-				--  create vgui
-				local child = form_vgui[el.type]( panel, el, config_value[id], form )
-				form[id] = child
-
-				--  middle click: reset to default
-				if IsValid( child ) and config_value[id] then
-					local mouse_pressed = child.OnMousePressed
-					child:SetMouseInputEnabled( true )
-					function child:OnMousePressed( mouse_button )
-						--  add a menu
-						if mouse_button == MOUSE_MIDDLE then
-							local menu = DermaMenu( nil, self )
-							menu:AddOption( "Reset to default", function()
-								self:SetValue( el.default )
-							end ):SetMaterial( "icon16/arrow_refresh.png" )
-							menu:Open()
-						end
-
-						mouse_pressed( self, mouse_button )
-					end
-				end
-
-				--  create description
-				if el.desc then
-					panel:ControlHelp( el.desc ):DockMargin( 10, 0, 0, 15 )
-				end
+				serialized[k] = v:GetValue()
 			end
 		end
+	end
 
-		panel:Help( "" )  --  attempt to fix content size
-		return form
-	end,
-	["Category"] = function( panel, el )
-		local cat = panel:Help( el.name )
-		cat:SetFont( "DermaDefaultBold" )
+	return serialized
+end
 
-		return cat
-	end,
-	["Label"] = function( panel, el )
-		return panel:Help( el.name )
-	end,
-	["Button"] = function( panel, el, config_value, form )
-		local button = panel:Button( el.name )
-		function button:DoClick()
-			el.action( form, serialize_form( form ) )
-		end
+--  register vguis types
+vguis_types = {
+	["Form"] = {
+		init = function( parent, el, config_id )
+			local panel = parent:Add( "DForm" )
+			panel:Dock( FILL )
+			panel:DockMargin( 0, 0, 5, 0 )
+			panel:SetName( el.name )
 
-		return button
-	end,
-	["NumWang"] = function( panel, el, config_value )
-		local numwang, label = panel:NumberWang( el.name, nil, el.min or -math.huge, el.max or math.huge, el.decimals or 0 )
-		numwang:SetValue( config_value or el.default or 0 )
-		numwang.y = 10
-		
-		return numwang
-	end,
-	["TextEntry"] = function( panel, el, config_value )
-		local textentry = panel:TextEntry( el.name )
-		textentry:SetValue( config_value or el.default or "" )
+			local config_value = guthscp.configs[config_id]
 
-		return textentry
-	end,
-	["TextEntry[]"] = function( panel, el, config_value )
-		return create_array_vguis( panel, el, config_value, function( parent, value, key )
-			local textentry = parent:Add( "DTextEntry" )
-			textentry:Dock( TOP )
-			textentry:DockMargin( 25, 5, 5, 0 )
-			textentry:SetValue( el.value and el.value( value, key ) or isstring( value ) and value or "" )
-	
+			local form = {}
+			form._id = config_id
+			for i, el in ipairs( el.elements or {} ) do
+				local id = el.id or #form + 1
+
+				local vgui_type = vguis_types[el.type]
+				if not vgui_type or not vgui_type.init then
+					guthscp.error( "guthscp.config", "element %q is not a recognized type!", el.type )
+				else
+					--  create vgui
+					local child = vgui_type.init( panel, el, config_value[id], form )
+					child._type = el.type  --  store type for further use
+					form[id] = child
+
+					--  middle click: reset to default
+					if IsValid( child ) and config_value[id] then
+						local mouse_pressed = child.OnMousePressed
+						child:SetMouseInputEnabled( true )
+						function child:OnMousePressed( mouse_button )
+							--  add a menu
+							if mouse_button == MOUSE_MIDDLE then
+								local menu = DermaMenu( nil, self )
+								menu:AddOption( "Reset to default", function()
+									self:SetValue( el.default )
+								end ):SetMaterial( "icon16/arrow_refresh.png" )
+								menu:Open()
+							end
+
+							mouse_pressed( self, mouse_button )
+						end
+					end
+
+					--  create description
+					if el.desc then
+						panel:ControlHelp( el.desc ):DockMargin( 10, 0, 0, 15 )
+					end
+				end
+			end
+
+			panel:Help( "" )  --  attempt to fix content size
+			return form
+		end,
+	},
+	["Category"] = {
+		init = function( panel, el )
+			local cat = panel:Help( el.name )
+			cat:SetFont( "DermaDefaultBold" )
+
+			return cat
+		end,
+		get_value = function( self )
+			return nil --  skip categories serializing
+		end,
+	},
+	["Label"] = {
+		init = function( panel, el )
+			return panel:Help( el.name )
+		end,
+		get_value = function( self )
+			return nil  --  skip labels serializing
+		end,
+	},
+	["Button"] = {
+		init = function( panel, el, config_value, form )
+			local button = panel:Button( el.name )
+			function button:DoClick()
+				el.action( form, serialize_form( form ) )
+			end
+
+			return button
+		end,
+		get_value = function( self )
+			return nil  --  skip buttons serializing
+		end,
+	},
+	["NumWang"] = {
+		init = function( panel, el, config_value )
+			local numwang, label = panel:NumberWang( el.name, nil, el.min or -math.huge, el.max or math.huge, el.decimals or 0 )
+			numwang:SetValue( config_value or el.default or 0 )
+			numwang.y = 10
+			
+			return numwang
+		end,
+	},
+	["TextEntry"] = {
+		init = function( panel, el, config_value )
+			local textentry = panel:TextEntry( el.name )
+			textentry:SetValue( config_value or el.default or "" )
+
 			return textentry
-		end )
-	end,
-	["ComboBox"] = function( panel, el, config_value )
-		local value = el.value and el.value( true, config_value or el.default ) --  i know, weird
-		--print( value, el.value, config_value, el.default )
+		end,
+	},
+	["TextEntry[]"] = {
+		init = function( panel, el, config_value )
+			return create_array_vguis( panel, el, config_value, function( parent, value, key )
+				local textentry = parent:Add( "DTextEntry" )
+				textentry:Dock( TOP )
+				textentry:DockMargin( 25, 5, 5, 0 )
+				textentry:SetValue( el.value and el.value( value, key ) or isstring( value ) and value or "" )
+		
+				return textentry
+			end )
+		end,
+	},
+	["ComboBox"] = {
+		init = function( panel, el, config_value )
+			local value = el.value and el.value( true, config_value or el.default ) --  i know, weird
 
-		local combobox = panel:ComboBox( el.name )
-		combobox:SetValue( isstring( value ) and value or "" )
-
-		for i, v in ipairs( el.choice and el.choice() or {} ) do
-			combobox:AddChoice( v.value, v.data, v.value == value )
-		end
-
-		return combobox
-	end,
-	["ComboBox[]"] = function( panel, el, config_value )
-		return create_array_vguis( panel, el, config_value, function( parent, value, key )
-			--print( "v, k: ", value, key )
-			local new_value = value and el.value and el.value( value, key ) 
-			if new_value == false then return end
-			value = new_value or value
-
-			local combobox = parent:Add( "DComboBox" )
-			combobox:Dock( TOP )
-			combobox:DockMargin( 25, 5, 5, 0 )
+			local combobox = panel:ComboBox( el.name )
 			combobox:SetValue( isstring( value ) and value or "" )
 
 			for i, v in ipairs( el.choice and el.choice() or {} ) do
-				combobox:AddChoice( v.value, v.data )
+				combobox:AddChoice( v.value, v.data, v.value == value )
 			end
-	
-			return combobox
-		end )
-	end,
-	["CheckBox"] = function( panel, el, config_value )
-		local checkbox = panel:CheckBox( el.name )
-		checkbox:SetValue( config_value or false )
 
-		return checkbox
-	end,
-}
+			return combobox
+		end,
+		get_value = function( self ) 
+			local text, data = self:GetSelected()
+			
+			--  1st priority: data
+			if data then
+				return data
+			--  2nd priority: text
+			elseif text then
+				return text
+			end
+
+			--  3rd priority: value
+			return self:GetValue()
+		end,
+	},
+	["ComboBox[]"] = {
+		init = function( panel, el, config_value )
+			return create_array_vguis( panel, el, config_value, function( parent, value, key )
+				local new_value = value and el.value and el.value( value, key ) 
+				if new_value == false then return end
+				value = new_value or value
+
+				local combobox = parent:Add( "DComboBox" )
+				combobox:Dock( TOP )
+				combobox:DockMargin( 25, 5, 5, 0 )
+				combobox:SetValue( isstring( value ) and value or "" )
+
+				for i, v in ipairs( el.choice and el.choice() or {} ) do
+					combobox:AddChoice( v.value, v.data )
+				end
+		
+				return combobox
+			end )
+		end,
+	},
+	["CheckBox"] = {
+		init = function( panel, el, config_value )
+			local checkbox = panel:CheckBox( el.name )
+			checkbox:SetValue( config_value or false )
+	
+			return checkbox
+		end,
+		get_value = function( self ) 
+			return self:GetChecked()
+		end,
+	},
+} 
 
 local function create_label_category( parent, text )
 	local label = parent:Add( "DLabel" )
@@ -460,8 +493,13 @@ function guthscp.config.populate_config( parent, config, switch_callback )
 	end
 	
 	--  create form
-	for iform, vform in ipairs( config.elements or {} ) do
-		form_vgui[vform.type]( parent, vform, config.id )
+	for i, form in ipairs( config.elements or {} ) do
+		local vgui_type = vguis_types[form.type]
+		if not vgui_type or not vgui_type.init then
+			guthscp.error( "guthscp.config", "element %q is not a recognized type!", el.type )
+		else
+			vgui_type.init( parent, form, config.id )
+		end
 	end
 end
 
