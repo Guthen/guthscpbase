@@ -5,10 +5,7 @@ local config = {}
 --  config
 function guthscp.config.add( id, tbl )
 	tbl.id = id
-	tbl.elements = guthscp.table.rehash( tbl.elements )
-	for i, form in ipairs( tbl.elements ) do
-		form.elements = guthscp.table.rehash( form.elements )
-	end
+	tbl.form = guthscp.table.rehash( tbl.form )
 	config[id] = tbl
 
 	guthscp.config.setup( id )
@@ -142,7 +139,6 @@ local function serialize_form( form )
 		if istable( v ) then
 			serialized[k] = serialize_form( v )
 		else
-			print( k, v )
 			--  use special serializors..
 			local vgui_type = vguis_types[v._type]
 			if vgui_type and vgui_type.get_value then
@@ -495,14 +491,10 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 	--  populate config
 	local config = config[id]
 	if config then
-		for i, form in ipairs( config.elements or {} ) do
-			local vgui_type = vguis_types[form.type]
-			if not vgui_type or not vgui_type.init then
-				guthscp.error( "guthscp.config", "element %q is not a recognized type!", el.type )
-			else
-				vgui_type.init( parent, form, config.id )
-			end
-		end
+		vguis_types["Form"].init( parent, {
+			name = "Configuration",
+			elements = config.form,
+		}, id )
 	end
 end
 

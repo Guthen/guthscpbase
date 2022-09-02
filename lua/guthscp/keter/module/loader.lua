@@ -142,19 +142,19 @@ function guthscp.module.init( id )
 
 	--  add config
 	if istable( module.menu ) and istable( module.menu.config ) then
+		guthscp.info( "guthscp.module", "registering the configuration" )
+		guthscp.print_tabs = guthscp.print_tabs + 1
+
+		--  register
 		guthscp.config.add( module.id, {
 			label = module.name,
 			icon = module.icon,
-			elements = {
-				{
-					type = "Form",
-					name = "Configuration",
-					elements = module.menu.config.form,
-				},
-			},
+			form = module.menu.config.form,
 			receive = module.menu.config.receive,
 			parse = module.menu.config.parse,
 		}, true )
+
+		guthscp.print_tabs = guthscp.print_tabs - 1
 	end
 
 	--  call init

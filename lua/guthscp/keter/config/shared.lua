@@ -63,9 +63,9 @@ end
 
 function guthscp.config.load_defaults( id )
 	local tbl = guthscp.config.get_all()[id]
-	if not tbl or not tbl.elements or not tbl.elements[1] or not tbl.elements[1].elements then return end --  yea rude
+	if not tbl or not tbl.form then return end
 
-	for i, v in ipairs( tbl.elements[1].elements ) do
+	for i, v in ipairs( tbl.form ) do
 		if v.id and v.default then
 			guthscp.configs[id][v.id] = v.default
 		end

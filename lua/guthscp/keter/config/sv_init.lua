@@ -3,15 +3,12 @@ guthscp.config = guthscp.config or {}
 local config = {}
 
 function guthscp.config.add( id, tbl, no_load )
-	--  ensure elements table is sequential 
-	tbl.elements = guthscp.table.rehash( tbl.elements )
-	for i, form in ipairs( tbl.elements ) do
-		form.elements = guthscp.table.rehash( form.elements )
-	end
+	--  ensure form table is sequential 
+	tbl.form = guthscp.table.rehash( tbl.form )
 
 	--  add config meta
 	config[id] = {
-		elements = tbl.elements,
+		form = tbl.form,
 		receive = tbl.receive,
 		parse = tbl.parse,
 	}
