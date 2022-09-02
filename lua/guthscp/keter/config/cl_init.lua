@@ -413,9 +413,8 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 				label_icon:SetIcon( v.icon )
 				label_icon:SetText( v.text )
 				label_icon:SetClickable( false )
-				label_icon:NoClipping( true )
 				function label_icon:Paint( w, h )
-					draw.RoundedBox( 2, -2, -2, w + 4, 16 + 4, ColorAlpha( Color( 242, 214, 85 ), math.abs( math.sin( CurTime() * 3 ) * 84 ) ) )
+					draw.RoundedBox( 2, 0, 0, w, 16, ColorAlpha( v.color, math.abs( math.sin( CurTime() * 3 ) * 84 ) ) )
 				end
 			end
 		end

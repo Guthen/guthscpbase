@@ -87,7 +87,7 @@ end
 
 --[[
 	@function MODULE:add_warning
-		| description: add a warning to the module which will be shown on its menu page
+		| description: add a warning message to the module which will be shown in its menu page
 		| params:
 			message: <string> warning message
 			...: <varargs?> message format arguments
@@ -100,6 +100,26 @@ function MODULE:add_warning( message, ... )
 	self._.warnings[#self._.warnings + 1] = {
 		text = message,
 		icon = "icon16/error.png",
+		color = Color( 242, 214, 85 ),
+	}
+end
+
+--[[
+	@function MODULE:add_error
+		| description: add an error message to the module which will be shown in its menu page
+		| params:
+			message: <string> warning message
+			...: <varargs?> message format arguments
+]]
+function MODULE:add_error( message, ... )
+	if ... then
+		message = message:format( ... )
+	end
+
+	self._.warnings[#self._.warnings + 1] = {
+		text = message,
+		icon = "icon16/cancel.png",
+		color = Color( 242, 85, 85 ),
 	}
 end
 

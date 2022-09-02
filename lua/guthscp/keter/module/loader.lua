@@ -99,6 +99,7 @@ function guthscp.module.init( id )
 		local dep_module = guthscp.modules[dep_id]
 		if not dep_module then
 			guthscp.error( "guthscp.module", "dependency %q can't be found, aborting initializing of %q", dep_id, id )  
+			module:add_error( "Dependency %q wasn't found, install its version v%s+!", dep_id, version )
 			return false
 		end
 
@@ -114,11 +115,12 @@ function guthscp.module.init( id )
 			end
 		--  warn for versions using development tag
 		elseif depth == 4 then
-			guthscp.warning( "guthscp.module", "dependency %q's is under a development version, beware, some features may be broken (current: v%s; required: v%s)", dep_id, dep_module.version, version )
+			guthscp.warning( "guthscp.module", "dependency %q is under a development version, beware, some features may be broken (current: v%s; required: v%s)", dep_id, dep_module.version, version )
 			module:add_warning( "Dependency %q is using a development version, some features may be broken!", dep_id )
 		--  version lower than required, failing!
 		else
-			guthscp.error( "guthscp.module", "dependency %q's version is lower than required, update it (current: v%s; required: v%s)", dep_id, dep_module.version, version )
+			guthscp.error( "guthscp.module", "dependency %q version is lower than required, update it (current: v%s; required: v%s)", dep_id, dep_module.version, version )
+			module:add_error( "Dependency %q version is lower than required, update it to v%s+!", dep_id, version )
 			module:error( "failed!" )
 			return false
 		end
