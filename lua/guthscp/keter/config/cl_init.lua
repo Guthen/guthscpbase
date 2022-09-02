@@ -357,9 +357,9 @@ local function create_label( parent, text )
 	return label
 end
 
-function guthscp.config.populate_config( parent, config, switch_callback )
+function guthscp.config.populate_config( parent, id, switch_callback )
 	--  populate module data
-	local module = guthscp.modules[config.id]
+	local module = guthscp.modules[id]
 	if module then
 		--  content
 		local category = parent:Add( "DCollapsibleCategory" )
@@ -492,15 +492,34 @@ function guthscp.config.populate_config( parent, config, switch_callback )
 		sidebar:SetWide( max_wide + 15 )
 	end
 	
-	--  create form
-	for i, form in ipairs( config.elements or {} ) do
-		local vgui_type = vguis_types[form.type]
-		if not vgui_type or not vgui_type.init then
-			guthscp.error( "guthscp.config", "element %q is not a recognized type!", el.type )
-		else
-			vgui_type.init( parent, form, config.id )
+	--  populate config
+	local config = config[id]
+	if config then
+		for i, form in ipairs( config.elements or {} ) do
+			local vgui_type = vguis_types[form.type]
+			if not vgui_type or not vgui_type.init then
+				guthscp.error( "guthscp.config", "element %q is not a recognized type!", el.type )
+			else
+				vgui_type.init( parent, form, config.id )
+			end
 		end
 	end
+end
+
+function guthscp.config.get_pages_ids()
+	local pages = {}
+	
+	--  add configs
+	for id, config in pairs( guthscp.config.get_all() ) do
+		pages[id] = config.label
+	end
+	
+	--  add modules
+	for id, module in pairs( guthscp.modules ) do
+		pages[id] = module.name
+	end
+
+	return pages
 end
 
 function guthscp.config.open_menu()
@@ -522,7 +541,7 @@ function guthscp.config.open_menu()
 	frame:SetSize( w, h )
 	frame:Center()
 	frame:SetDraggable( false )
-	frame:SetTitle( "GuthSCP Configuration" )
+	frame:SetTitle( "GuthSCP Menu" )
 	frame:MakePopup()
 	guthscp.config.menu = frame
 
@@ -543,8 +562,10 @@ function guthscp.config.open_menu()
 		guthscp.config.sheet:SetActiveTab( guthscp.config.sheets[id].Tab )
 	end
 
-	--  create configs
-	for i, v in SortedPairsByMemberValue( config, "name" ) do
+	--  create pages
+	for id, name in SortedPairsByValue( guthscp.config.get_pages_ids() ) do
+		local data = guthscp.modules[id] or config[id]
+
 		local panel = sheet:Add( "DPanel" )
 		panel:DockPadding( 5, 5, 5, 5 )
 
@@ -553,10 +574,10 @@ function guthscp.config.open_menu()
 		panel.scroll_panel = scroll_panel
 
 		--  populate
-		guthscp.config.populate_config( scroll_panel, v, switch_callback )
+		guthscp.config.populate_config( scroll_panel, id, switch_callback )
 
 		--  add sheet
-		guthscp.config.sheets[v.id] = sheet:AddSheet( v.label or v.id, panel, v.icon )
+		guthscp.config.sheets[id] = sheet:AddSheet( name or id, panel, data.icon )
 
 		--  size to children
 		scroll_panel:InvalidateLayout( true )

@@ -61,8 +61,8 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 	local entity_node = tree:AddNode( "Entities", "icon16/bricks.png" )
 	add_entity_node_doclick( panel, entity_node, guthscp.spawnmenu.entities, "entity" )
 
-	--  configuration
-	local config_node = tree:AddNode( "Configuration", "icon16/wrench.png" )
+	--  modules
+	local config_node = tree:AddNode( "Modules", "icon16/wrench.png" )
 	config_node:SetExpanded( true, true )  --  instant expand
 	config_node.nodes = {}
 
@@ -74,9 +74,12 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 		node:InternalDoClick()
 	end
 
-	--  populating configs
-	for i, config in SortedPairsByMemberValue( guthscp.config.get_all(), "name" ) do
-		local node = config_node:AddNode( config.label, config.icon )
+	--  populating modules
+	for id, name in SortedPairsByValue( guthscp.config.get_pages_ids() ) do
+		local data = guthscp.modules[id] or guthscp.config.get_all()[id]
+
+		--  creating node
+		local node = config_node:AddNode( name, data.icon )
 		function node:DoPopulate()
 			--  create parent
 			local container = panel:Add( "DPanel" )
@@ -87,7 +90,7 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 			scroll_panel:Dock( FILL )
 	
 			--  populate
-			guthscp.config.populate_config( scroll_panel, config, switch_callback )
+			guthscp.config.populate_config( scroll_panel, id, switch_callback )
 			
 			--  register
 			self.container = container
@@ -103,7 +106,7 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 		end
 
 		--  register node
-		config_node.nodes[config.id] = node
+		config_node.nodes[id] = node
 	end
 
 	guthscp.spawnmenu.config_node = config_node
