@@ -502,7 +502,7 @@ function guthscp.config.get_pages_ids()
 	
 	--  add configs
 	for id, config in pairs( guthscp.config.get_all() ) do
-		pages[id] = config.label
+		pages[id] = config.name
 	end
 	
 	--  add modules

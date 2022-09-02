@@ -151,7 +151,7 @@ function guthscp.module.init( id )
 
 		--  register
 		guthscp.config.add( module.id, {
-			label = module.name,
+			name = module.name,
 			icon = module.icon,
 			form = module.menu.config.form,
 			receive = module.menu.config.receive,
