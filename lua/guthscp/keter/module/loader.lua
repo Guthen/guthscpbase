@@ -78,6 +78,7 @@ function guthscp.module.init( id )
 		return false
 	end
 
+	local old_tabs = guthscp.print_tabs
 	guthscp.info( "guthscp.module", "%q (v%s)", id, module.version )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 
@@ -98,8 +99,9 @@ function guthscp.module.init( id )
 		--  ensure dependency is registered
 		local dep_module = guthscp.modules[dep_id]
 		if not dep_module then
-			guthscp.error( "guthscp.module", "dependency %q can't be found, aborting initializing of %q", dep_id, id )  
+			guthscp.error( "guthscp.module", "dependency %q can't be found", dep_id )  
 			module:add_error( "Dependency %q wasn't found, install its version v%s+!", dep_id, version )
+			guthscp.print_tabs = old_tabs
 			return false
 		end
 
@@ -121,7 +123,7 @@ function guthscp.module.init( id )
 		else
 			guthscp.error( "guthscp.module", "dependency %q version is lower than required, update it (current: v%s; required: v%s)", dep_id, dep_module.version, version )
 			module:add_error( "Dependency %q version is lower than required, update it to v%s+!", dep_id, version )
-			module:error( "failed!" )
+			guthscp.print_tabs = old_tabs
 			return false
 		end
 	end
@@ -210,6 +212,8 @@ function guthscp.module.hot_reload( id )
 	if guthscp.module.is_loading then return end  --  avoid stack overflow
 	guthscp.module.is_loading = true
 
+	local old_module = guthscp.modules[id]
+
 	guthscp.info( "guthscp.module", "hot reloading %q..", id )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 
@@ -232,11 +236,18 @@ function guthscp.module.hot_reload( id )
 	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  load config
-	if guthscp.modules[id].config then
+	local module = guthscp.modules[id]
+	if module.config then
 		guthscp.info( "guthscp.module", "config.." )
 		guthscp.print_tabs = guthscp.print_tabs + 1
 		guthscp.config.load( id )
 		guthscp.print_tabs = guthscp.print_tabs - 1
+	end
+
+	--  append version check
+	if old_module then
+		module._.version_check = old_module._.version_check
+		module._.online_version = old_module._.online_version
 	end
 
 	guthscp.print_tabs = guthscp.print_tabs - 1
