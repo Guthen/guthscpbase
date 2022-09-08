@@ -68,6 +68,7 @@ MODULE.menu = {
 				default = true,
 			},
 			guthscp.config.create_apply_button(),
+			guthscp.config.create_reset_button(),
 		},
 		receive = function( form )
 			form.scp_teams = guthscp.config.receive_teams( form.scp_teams )

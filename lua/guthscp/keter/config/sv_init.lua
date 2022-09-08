@@ -44,6 +44,7 @@ end
 --  edit config 
 util.AddNetworkString( "guthscp.config:send" )
 util.AddNetworkString( "guthscp.config:receive" )
+util.AddNetworkString( "guthscp.config:reset" )
 
 net.Receive( "guthscp.config:send", function( len, ply )
 	if not ply:IsSuperAdmin() then 
@@ -73,4 +74,32 @@ net.Receive( "guthscp.config:receive", function( len, ply )
 	for k, v in pairs( guthscp.configs ) do
 		guthscp.config.sync( k, v, ply )
 	end
+end )
+
+--  reset config
+net.Receive( "guthscp.config:reset", function( len, ply )
+	if not ply:IsSuperAdmin() then 
+		guthscp.warning( "guthscp.config", "%s (%s) tried to reset a config but he doesn't have the permission!", ply:GetName(), ply:SteamID() )
+		return 
+	end
+
+	--  get config id
+	local config_id = net.ReadString()
+	if not guthscp.configs[config_id] then 
+		guthscp.warning( "guthscp.config", "%s (%s) tried to reset %q config which doesn't exist!", ply:GetName(), ply:SteamID(), config_id )
+		return 
+	end
+
+	--  load defaults
+	guthscp.config.load_defaults( config_id )
+	
+	--  delete config file
+	guthscp.data.delete( guthscp.config.path .. config_id .. ".json" )
+
+	--  network changes
+	guthscp.config.apply( config_id, guthscp.configs[config_id], { 
+		network = true,
+	} )
+
+	guthscp.info( "guthscp.config", "%q config has been reset by %s (%s)", config_id, ply:GetName(), ply:SteamID() )
 end )

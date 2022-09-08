@@ -71,6 +71,30 @@ function guthscp.config.create_apply_button()
 	}
 end
 
+function guthscp.config.create_reset_button()
+	return {
+		type = "Button",
+		name = "Reset to Default",
+		action = function( form )
+			Derma_Query( 
+				"Are you really sure to reset the actual configuration to its default settings? This will delete the existing configuration file.", "Reset Configuration", 
+				"Yes", function()
+					--  queue menu refreshing on next sync
+					guthscp.config.on_config_sync( form._id, function()
+						guthscp.config.open_menu()
+					end, true )
+
+					--  send reset to server
+					net.Start( "guthscp.config:reset" )
+						net.WriteString( form._id )
+					net.SendToServer()
+				end,
+				"No", nil
+			)
+		end,
+	}
+end
+
 --  receivers
 function guthscp.config.receive_teams( teams )
 	assert( istable( teams ), "'teams' is not a table" )
