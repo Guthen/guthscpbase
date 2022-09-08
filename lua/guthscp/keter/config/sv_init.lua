@@ -46,7 +46,10 @@ util.AddNetworkString( "guthscp.config:send" )
 util.AddNetworkString( "guthscp.config:receive" )
 
 net.Receive( "guthscp.config:send", function( len, ply )
-	if not ply:IsSuperAdmin() then return end
+	if not ply:IsSuperAdmin() then 
+		guthscp.warning( "guthscp.config", "%s (%s) tried to apply a config but he doesn't have the permission!", ply:GetName(), ply:SteamID() )
+		return 
+	end
 
 	--  check config id
 	local config_id = net.ReadString()

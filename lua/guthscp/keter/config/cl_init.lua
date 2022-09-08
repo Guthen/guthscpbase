@@ -545,7 +545,10 @@ function guthscp.config.get_pages_ids()
 end
 
 function guthscp.config.open_menu()
-	if not LocalPlayer():IsSuperAdmin() then return end
+	if not LocalPlayer():IsSuperAdmin() then 
+		guthscp.warning( "guthscp.config", "you are not part of the \"superadmin\" usergroup!" )
+		return 
+	end
 
 	--  refresh menu and select previous tab
 	local tab_id = 1
