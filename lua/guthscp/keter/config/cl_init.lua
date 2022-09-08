@@ -161,14 +161,14 @@ local function create_array_vguis( panel, el, config_value, add_func )
 	return vguis
 end
 
-local function serialize_form( form )
+function guthscp.config.serialize_form( form )
 	local serialized = {}
 
 	for k, v in pairs( form ) do
 		if k == "_type" or k == "_id" then continue end  --  ignore '_type' & '_id' property
 
 		if istable( v ) then
-			serialized[k] = serialize_form( v )
+			serialized[k] = guthscp.config.serialize_form( v )
 		else
 			--  use special serializors..
 			local vgui_type = vguis_types[v._type]
@@ -264,7 +264,7 @@ vguis_types = {
 		init = function( panel, el, config_value, form )
 			local button = panel:Button( el.name )
 			function button:DoClick()
-				el.action( form, serialize_form( form ) )
+				el.action( form )
 			end
 
 			return button

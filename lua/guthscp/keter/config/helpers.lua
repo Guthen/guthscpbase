@@ -65,8 +65,8 @@ function guthscp.config.create_apply_button()
 	return {
 		type = "Button",
 		name = "Apply",
-		action = function( form, serialize_form )
-			guthscp.config.send( form._id, serialize_form )
+		action = function( form )
+			guthscp.config.send( form._id, guthscp.config.serialize_form( form ) )
 		end,
 	}
 end
