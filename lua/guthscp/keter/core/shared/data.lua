@@ -32,6 +32,16 @@ function guthscp.data.save_to_json( path, tbl, is_pretty_print )
 end
 
 --[[ 
+	@function guthscp.data.delete
+		| description: delete a data file relative to 'guthscp/'
+		| params:
+			path: <string> file path
+]]
+function guthscp.data.delete( path )
+	file.Delete( guthscp.data.path .. path )
+end
+
+--[[ 
 	@function guthscp.data.exists
 		| description: check if a data file relative to 'guthscp/' exists
 		| params:
