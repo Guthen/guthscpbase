@@ -192,8 +192,8 @@ vguis_types = {
 	["Form"] = {
 		init = function( parent, el, config_id )
 			local panel = parent:Add( "DForm" )
-			panel:Dock( FILL )
-			panel:DockMargin( 0, 0, 5, 0 )
+			panel:Dock( TOP )
+			panel:DockMargin( 0, 0, 5, 5 )
 			panel:SetName( el.name )
 
 			local config_value = guthscp.configs[config_id]
@@ -236,8 +236,7 @@ vguis_types = {
 					end
 				end
 			end
-
-			panel:Help( "" )  --  attempt to fix content size
+			
 			return form
 		end,
 	},
@@ -396,7 +395,7 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 
 		local container = vgui.Create( "DSizeToContents", category )
 		container:Dock( TOP )
-		container:DockPadding( 10, 10, 10, 10 )
+		container:DockPadding( 10, 10, 10, 5 )
 	
 		--  description
 		create_label_category( container, "Description" )
@@ -516,7 +515,21 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 		end
 
 		sidebar:SetWide( max_wide + 15 )
+
+		--  populate pages
+		if module.menu and module.menu.pages then
+			for i, v in ipairs( module.menu.pages ) do
+				local form = parent:Add( "DForm" )
+				form:Dock( TOP )
+				form:DockMargin( 0, 0, 5, 5 )
+				form:DockPadding( 0, 0, 0, 10 )  --  more bottom-space when shown
+				form:SetName( "Page " .. i )
+
+				v( form )
+			end
+		end
 	end
+
 	
 	--  populate config
 	local config = config[id]
