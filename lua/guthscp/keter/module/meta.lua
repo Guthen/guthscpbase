@@ -1,5 +1,3 @@
-guthscp.module = guthscp.module or {}
-
 local MODULE = {
 	--  internal
 	--  contain all module states
@@ -30,8 +28,6 @@ local MODULE = {
 MODULE.__index = MODULE
 
 
-
-
 --  methods
 
 --[[ 
@@ -46,29 +42,6 @@ end
 		| description: Called after all modules have been loaded
 ]]
 function MODULE:init()
-end
-
---[[ 
-	@function MODULE:info
-		| description: Log a module information to console
-		| params:
-			message: string Message to log
-			...: varargs Values to format into message 
-]]
-function MODULE:info( message, ... )
-	guthscp.info( "guthscp/" .. self.id, message, ... )
-end
-
-function MODULE:error( message, ... )
-	guthscp.error( "guthscp/" .. self.id, message, ... )
-end
-
-function MODULE:warning( message, ... )
-	guthscp.warning( "guthscp/" .. self.id, message, ... )
-end
-
-function MODULE:debug( message, ... )
-	guthscp.debug( "guthscp/" .. self.id, message, ... )
 end
 
 --[[ 
@@ -123,4 +96,5 @@ function MODULE:add_error( message, ... )
 	}
 end
 
+guthscp.helpers.define_print_methods( MODULE, "modules" )
 guthscp.module.meta = MODULE

@@ -106,3 +106,40 @@ function guthscp.helpers.compare_versions( current_version, extern_version )
 
 	return 0, -1
 end
+
+
+function guthscp.helpers.define_print_methods( class, prefix )
+	function class:info( message, ... )
+		guthscp.info( prefix .. "/" .. self.id, message, ... )
+	end
+	
+	function class:error( message, ... )
+		guthscp.error( prefix .. "/" .. self.id, message, ... )
+	end
+	
+	function class:warning( message, ... )
+		guthscp.warning( prefix .. "/" .. self.id, message, ... )
+	end
+	
+	function class:debug( message, ... )
+		guthscp.debug( prefix .. "/" .. self.id, message, ... )
+	end
+end
+
+function guthscp.helpers.use_meta( tbl, meta )
+	--  copy variables (preventing editing meta)
+	for k, v in pairs( meta ) do
+		if k:StartWith( "__" ) or tbl[k] then continue end
+		if isfunction( v ) then continue end
+		
+		--  copy element
+		if istable( v ) then
+			tbl[k] = table.Copy( v )
+		else
+			tbl[k] = v
+		end
+	end
+	
+	--  inherit meta
+	setmetatable( tbl, meta )
+end

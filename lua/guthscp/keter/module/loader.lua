@@ -20,37 +20,23 @@ function guthscp.module.construct( id )
 	--  check required properties
 	local failed = false
 	if not isstring( module.name ) or #module.name == 0 then
-		failed = true
 		guthscp.error( "guthscp.module", "%q must have the 'name' property of type 'string'", id )
+		guthscp.print_tabs = guthscp.print_tabs - 1
+		return false
 	end
 	if not isstring( module.author ) or #module.author == 0 then
-		failed = true 
 		guthscp.error( "guthscp.module", "%q must have the 'author' property of type 'string'", id )
+		guthscp.print_tabs = guthscp.print_tabs - 1
+		return false
 	end
 	if not isstring( module.version ) or not guthscp.helpers.split_version( module.version ) then
-		failed = true
 		guthscp.error( "guthscp.module", "%q must have the 'version' property of type 'string'", id )
-	end
-
-	if failed then
 		guthscp.print_tabs = guthscp.print_tabs - 1
 		return false
 	end
 
-	--  copy variables (preventing editing meta)
-	for k, v in pairs( guthscp.module.meta ) do
-		if k:StartWith( "__" ) or module[k] then continue end
-		if isfunction( v ) then continue end
-		
-		--  copy element
-		if istable( v ) then
-			module[k] = table.Copy( v )
-		else
-			module[k] = v
-		end
-	end
-	--  inherit @'meta.lua'
-	setmetatable( module, guthscp.module.meta )
+	--  inherit meta
+	guthscp.helpers.use_meta( module, guthscp.module.meta )
 
 	--  construct
 	module:info( "module constructing.." )
