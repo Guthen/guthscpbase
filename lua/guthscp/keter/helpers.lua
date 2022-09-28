@@ -108,26 +108,39 @@ function guthscp.helpers.compare_versions( current_version, extern_version )
 end
 
 
---  TODO: doc
-function guthscp.helpers.define_print_methods( class, prefix )
-	function class:info( message, ... )
+--[[ 
+	@function guthscp.helpers.define_print_methods
+		| description: define class methods `info`, `error`, `warning` & `debug` for printings messages to console;
+					   note that the `id` parameter must be defined on your objects
+		| params:
+			meta: <table> meta table to define methods on
+			prefix: <string> prefix message to append in the print title
+]]
+function guthscp.helpers.define_print_methods( meta, prefix )
+	function meta:info( message, ... )
 		guthscp.info( prefix .. "/" .. self.id, message, ... )
 	end
 	
-	function class:error( message, ... )
+	function meta:error( message, ... )
 		guthscp.error( prefix .. "/" .. self.id, message, ... )
 	end
 	
-	function class:warning( message, ... )
+	function meta:warning( message, ... )
 		guthscp.warning( prefix .. "/" .. self.id, message, ... )
 	end
 	
-	function class:debug( message, ... )
+	function meta:debug( message, ... )
 		guthscp.debug( prefix .. "/" .. self.id, message, ... )
 	end
 end
 
---  TODO: doc
+--[[ 
+	@function guthscp.helpers.use_meta
+		| description: set the metatable of a table and copy all its variables; useful for instancing a class object
+		| params:
+			tbl: <table> object instance
+			meta: <table> meta table
+]]
 function guthscp.helpers.use_meta( tbl, meta )
 	--  copy variables (preventing editing meta)
 	for k, v in pairs( meta ) do

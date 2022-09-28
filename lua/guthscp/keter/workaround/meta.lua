@@ -12,11 +12,24 @@ WORKAROUND.__index = WORKAROUND
 
 --  methods
 
+--[[ 
+	@function WORKAROUND:init
+		| description: called when the workaround is initialized during the hook `InitPostEntity`; 
+					   the returned value will be used to set @`WORKAROUND._is_active`, controlling if the workaround could be enabled later on
+		| return: <bool> is_active
+]]
 function WORKAROUND:init()
 	return true
 end
 
---  TODO: doc
+--[[ 
+	@function WORKAROUND:get_hook
+		| description: try to retrieve the specified hook, if found, will set the `_former_callback` parameter to its current callback
+		| params:
+			name: <string> hook name
+			id: <any> hook identifier
+		| return: <bool> is_found
+]]
 function WORKAROUND:get_hook( name, id )
 	--  list all hooks
 	local hooks = hook.GetTable()[name]
@@ -43,6 +56,14 @@ function WORKAROUND:is_active()
 	return self._is_active
 end
 
+--[[ 
+	@function WORKAROUND:set_enabled
+		| description: changes enabled state if the workaround is active; WILL do nothing if the new state is the same than the last one
+					   if the current realm matches, it WILL call the @`WORKAROUND:on_enabled` or @`WORKAROUND:on_disabled` functions depending of the new state;
+					   WILL NOT automatically sync or save to disk, if you want these effects, you should respectively call @`WORKAROUND:sync` & @`guthscp.workaround.save`
+		| params:
+			is_enabled: <bool> state
+]]
 function WORKAROUND:set_enabled( is_enabled )
 	--  checks
 	if not self._is_active then 
@@ -64,9 +85,6 @@ function WORKAROUND:set_enabled( is_enabled )
 			self:info( "disabled!" )
 		end
 	end 
-	
-	--  sync
-	--self:sync()
 end
 
 function WORKAROUND:sync( ply )

@@ -32,14 +32,14 @@ MODULE.__index = MODULE
 
 --[[ 
 	@function MODULE:construct
-		| description: Called when the module is loaded by the manager; do not ensure all modules are loaded 
+		| description: called when the module is loaded by the manager; do not ensure all modules are loaded 
 ]]
 function MODULE:construct() 
 end
 
 --[[ 
 	@function MODULE:init
-		| description: Called after all modules have been loaded
+		| description: called after all modules have been loaded
 ]]
 function MODULE:init()
 end

@@ -6,10 +6,21 @@ guthscp.REALMS = {
 	SHARED = 2,
 }
 
+--[[ 
+	@function guthscp.get_current_realm
+		| description: get the realm the current code is executing in, as a @`guthscp.REALMS` enum-value
+		| return: <@guthscp.REALMS> current_realm 
+]]
 function guthscp.get_current_realm()
 	return SERVER and guthscp.REALMS.SERVER or guthscp.REALMS.CLIENT
 end
 
+--[[ 
+	@function guthscp.is_same_realm
+		| description: compare two @`guthscp.REALMS` values and returns if they are equivalent; 
+					   if one realm is set to @`guthscp.REALMS.SHARED`, then `true` will be returned
+		| return: <bool> 
+]]
 function guthscp.is_same_realm( realm_a, realm_b )
 	--  shared include both realms
 	if realm_a == guthscp.REALMS.SHARED or realm_b == guthscp.REALMS.SHARED then
