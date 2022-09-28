@@ -80,10 +80,13 @@ function WORKAROUND:sync( ply )
 	--  send message
 	if CLIENT then
 		net.SendToServer()
+		self:info( "sync changes to server" )
 	elseif ply == nil then
 		net.Broadcast()
+		self:info( "sync to everyone" )
 	else
 		net.Send( ply )
+		self:info( "sync to %q", ply:GetName() )
 	end
 end
 

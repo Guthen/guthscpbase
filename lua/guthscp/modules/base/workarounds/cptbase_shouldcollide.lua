@@ -4,6 +4,7 @@ local WORKAROUND = {
 }
 
 function WORKAROUND:init()
+	--  find the hook (since its ID is randomly generated)
 	for k, v in pairs( hook.GetTable()["ShouldCollide"] ) do
         if k:find( "CPTBase" ) then
 			self._hook_id = k
@@ -25,6 +26,7 @@ function WORKAROUND:on_enabled()
 end
 
 function WORKAROUND:on_disabled()
+	--  restore former callback
 	hook.Add( "ShouldCollide", self._hook_id, self._former_callback )
 end
 

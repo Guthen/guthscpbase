@@ -102,14 +102,12 @@ MODULE.menu = {
 			local button = form:Button( "Apply" )
 			function button:DoClick()
 				for k, v in pairs( checkboxes ) do
-					local is_checked = v:GetChecked()
 					local workaround = guthscp.workarounds[k]
 					if workaround:is_active() then
-						print(k, is_checked)
-	
 						--  only sync changes
+						local is_checked = v:GetChecked()
 						if not ( workaround:is_enabled() == is_checked ) then
-							workaround:set_enabled(is_checked)
+							workaround:set_enabled( is_checked )
 							workaround:sync()
 						end
 					end
