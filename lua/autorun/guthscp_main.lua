@@ -6,6 +6,24 @@ guthscp.REALMS = {
 	SHARED = 2,
 }
 
+function guthscp.get_current_realm()
+	return SERVER and guthscp.REALMS.SERVER or guthscp.REALMS.CLIENT
+end
+
+function guthscp.is_same_realm( realm_a, realm_b )
+	--  shared include both realms
+	if realm_a == guthscp.REALMS.SHARED or realm_b == guthscp.REALMS.SHARED then
+		return true
+	end
+	
+	--  check for equal
+	if realm_a == realm_b then 
+		return true 
+	end
+
+	return false
+end
+
 --  logs
 local info_color = SERVER and Color( 156, 241, 255 ) or Color( 255, 241, 122 )
 local error_color = Color( 222, 88, 88 )

@@ -13,12 +13,11 @@ It also includes:
 ─ some useful functions for managing file data, getting a list of living NPCs, manipulating Lua tables..]],
 	icon = "icon16/bricks.png",
 	version_url = "https://raw.githubusercontent.com/Guthen/guthscpbase/remaster-as-modules-based/lua/guthscp/modules/base/main.lua",
-	--[[
-	--  unit test
 	requires = {
-		["unit_test.lua"] = guthscp.REALMS.SHARED,
+		--["unit_test.lua"] = guthscp.REALMS.SHARED,
+		["workarounds/"] = guthscp.REALMS.SHARED,
 	} 
-	]]
+	
 }
 
 MODULE.menu = {
@@ -80,6 +79,42 @@ MODULE.menu = {
 		end,
 		parse = function( form )
 			form.scp_teams = guthscp.config.parse_teams( form.scp_teams )
+		end,
+	},
+	--  pages
+	pages = {
+		--  workaround
+		function( form )
+			form:SetName( "Work-Arounds" )
+
+			form:Help( "This is where you can toggle fixes of other addons" )
+
+			--  populate workarounds
+			local checkboxes = {}
+			for k, v in pairs( guthscp.workarounds ) do
+				local checkbox = form:CheckBox( v.name )
+				checkbox:SetChecked( v:is_enabled() )
+				checkbox:SetDisabled( not v:is_active() )
+				checkboxes[k] = checkbox
+			end
+
+			--  apply changes
+			local button = form:Button( "Apply" )
+			function button:DoClick()
+				for k, v in pairs( checkboxes ) do
+					local is_checked = v:GetChecked()
+					local workaround = guthscp.workarounds[k]
+					if workaround:is_active() then
+						print(k, is_checked)
+	
+						--  only sync changes
+						if not ( workaround:is_enabled() == is_checked ) then
+							workaround:set_enabled(is_checked)
+							workaround:sync()
+						end
+					end
+				end
+			end
 		end,
 	},
 	--  details

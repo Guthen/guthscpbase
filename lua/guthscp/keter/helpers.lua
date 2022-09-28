@@ -108,6 +108,7 @@ function guthscp.helpers.compare_versions( current_version, extern_version )
 end
 
 
+--  TODO: doc
 function guthscp.helpers.define_print_methods( class, prefix )
 	function class:info( message, ... )
 		guthscp.info( prefix .. "/" .. self.id, message, ... )
@@ -126,6 +127,7 @@ function guthscp.helpers.define_print_methods( class, prefix )
 	end
 end
 
+--  TODO: doc
 function guthscp.helpers.use_meta( tbl, meta )
 	--  copy variables (preventing editing meta)
 	for k, v in pairs( meta ) do
