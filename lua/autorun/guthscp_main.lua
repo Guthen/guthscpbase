@@ -6,6 +6,9 @@ guthscp.REALMS = {
 	SHARED = 2,
 }
 
+--  network bits
+guthscp.NETWORK_PLAYERS_BITS = math.ceil( math.log( game.MaxPlayers() + 1, 2 ) )  --  compute number of bits for players count
+
 --[[ 
 	@function guthscp.get_current_realm
 		| description: get the realm the current code is executing in, as a @`guthscp.REALMS` enum-value
