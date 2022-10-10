@@ -113,6 +113,28 @@ function guthscp.module.init( id )
 			return false
 		end
 	end
+	
+	--  add config
+	if istable( module.menu ) and istable( module.menu.config ) then
+		guthscp.info( "guthscp.module", "registering the configuration" )
+		guthscp.print_tabs = guthscp.print_tabs + 1
+
+		--  register
+		guthscp.config.add( module.id, {
+			name = module.name,
+			icon = module.icon,
+			form = module.menu.config.form,
+			receive = module.menu.config.receive or function( form )
+				guthscp.config.apply( module.id, form, {
+					network = true,
+					save = true,
+				} )
+			end,
+			parse = module.menu.config.parse,
+		}, true )
+
+		guthscp.print_tabs = guthscp.print_tabs - 1
+	end
 
 	--  load requires
 	for path, realm in pairs( module.requires ) do
@@ -128,23 +150,6 @@ function guthscp.module.init( id )
 		else
 			guthscp.require_file( current_path, realm )
 		end
-	end
-
-	--  add config
-	if istable( module.menu ) and istable( module.menu.config ) then
-		guthscp.info( "guthscp.module", "registering the configuration" )
-		guthscp.print_tabs = guthscp.print_tabs + 1
-
-		--  register
-		guthscp.config.add( module.id, {
-			name = module.name,
-			icon = module.icon,
-			form = module.menu.config.form,
-			receive = module.menu.config.receive,
-			parse = module.menu.config.parse,
-		}, true )
-
-		guthscp.print_tabs = guthscp.print_tabs - 1
 	end
 
 	--  call init
