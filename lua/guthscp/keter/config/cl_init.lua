@@ -281,10 +281,30 @@ vguis_types = {
 	},
 	["NumWang"] = {
 		init = function( panel, el, config_value )
-			local numwang, label = panel:NumberWang( el.name, nil, el.min or -math.huge, el.max or math.huge, el.decimals or 0 )
+			local numwang, label = panel:NumberWang( el.name, nil, -math.huge, math.huge )
 			numwang:SetValue( config_value or el.default or 0 )
-			numwang.y = 10
+			numwang:SetY( 10 )  --  default Y-pos is bad
 			
+			--  set min-max
+			if el.min then
+				local min = el.min
+				
+				if isfunction( el.min ) then
+					min = el:min( numwang )
+				end
+			
+				numwang:SetMin( min )
+			end
+			if el.max then
+				local max = el.max
+				
+				if isfunction( el.max ) then
+					max = el:max( numwang )
+				end
+			
+				numwang:SetMax( max )
+			end
+
 			return numwang
 		end,
 	},
