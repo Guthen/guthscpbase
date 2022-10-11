@@ -4,8 +4,11 @@ local WORKAROUND = {
 }
 
 function WORKAROUND:init()
+	local hooks = hook.GetTable()["ShouldCollide"]
+	if not istable( hooks ) then return false end
+
 	--  find the hook (since its ID is randomly generated)
-	for k, v in pairs( hook.GetTable()["ShouldCollide"] ) do
+	for k, v in pairs( hooks ) do
         if k:find( "CPTBase" ) then
 			self._hook_id = k
             self._former_callback = v
