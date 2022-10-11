@@ -134,7 +134,7 @@ if SERVER then
 		net.WriteString( self.id )
 		
 		--  players
-		net.WriteUInt( self.players_count, guthscp.NETWORK_PLAYERS_BITS )
+		net.WriteUInt( self.players_count, guthscp.NET_PLAYERS_UBITS )
 		for ply in pairs( self.players ) do
 			net.WriteEntity( ply )
 		end
@@ -170,7 +170,7 @@ else
 		end
 
 		--  retrieve count
-		local count = net.ReadUInt( guthscp.NETWORK_PLAYERS_BITS )
+		local count = net.ReadUInt( guthscp.NET_PLAYERS_UBITS )
 		
 		--  retrieve players
 		filter:clear()

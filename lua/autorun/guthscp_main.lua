@@ -6,9 +6,6 @@ guthscp.REALMS = {
 	SHARED = 2,
 }
 
---  network bits
-guthscp.NETWORK_PLAYERS_BITS = math.ceil( math.log( game.MaxPlayers() + 1, 2 ) )  --  compute number of bits for players count
-
 --[[ 
 	@function guthscp.get_current_realm
 		| description: get the realm the current code is executing in, as a @`guthscp.REALMS` enum-value
@@ -159,3 +156,6 @@ MsgC( info_color, [[
 print("\n")
 guthscp.require_folder( "guthscp/keter/", true )
 guthscp.module.require()
+
+--  network bits
+guthscp.NET_PLAYERS_UBITS = guthscp.helpers.number_of_ubits( game.MaxPlayers() )  --  compute number of bits for players count

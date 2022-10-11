@@ -158,3 +158,14 @@ function guthscp.helpers.use_meta( tbl, meta )
 	--  inherit meta
 	setmetatable( tbl, meta )
 end
+
+--[[ 
+	@function guthscp.helpers.number_of_ubits
+		| description: compute the [number of unsigned bits](https://wiki.facepunch.com/gmod/net.WriteUInt) required to contain the given number
+		| params:
+			number: <int> unsigned/positive number
+		| return: <int> u_bits 
+]]
+function guthscp.helpers.number_of_ubits( number )
+	return math.ceil( math.log( number + 1, 2 ) )
+end
