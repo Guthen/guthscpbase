@@ -169,3 +169,53 @@ end
 function guthscp.helpers.number_of_ubits( number )
 	return math.ceil( math.log( number + 1, 2 ) )
 end
+
+--[[ 
+	@function guthscp.helpers.format_message
+		| description: format a message using a key-value table of arguments, useful to avoid argument order as `string.format` need;
+					   to specify an argument in your message, you must enclose it with '{}' and this argument should be defined in the arguments table
+		| params:
+			msg: <string> message to format
+			args: const <table[string, any]> table of arguments, the values will be used with `tostring`
+		| return: <string> formatted_text
+]]
+function guthscp.helpers.format_message( msg, args )
+	local formatted_text = ""
+
+	local function format_word( word )
+		--  replace potentially found argument
+		local key = word:match( "^{(.+)}$" )
+		if key then
+			word = tostring( args[key] or "?" )
+		end
+
+		--  append word
+		formatted_text = formatted_text .. word
+	end
+
+	--  loop over all letters
+	local word = ""
+	for l in msg:gmatch( "." ) do
+		--  format starting argument
+		if l == "{" and #word > 0 then
+			format_word( word )
+			word = ""
+		end
+		
+		--  append letter to word
+		word = word .. l
+
+		--  format ending argument
+		if l == " " or l == "}" then
+			format_word( word )
+			word = ""
+		end
+	end
+
+	--  format last remaining word
+	if #word > 0 then
+		format_word( word )
+	end
+
+	return formatted_text
+end
