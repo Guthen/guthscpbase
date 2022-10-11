@@ -267,8 +267,10 @@ vguis_types = {
 	["Button"] = {
 		init = function( panel, el, config_value, form )
 			local button = panel:Button( el.name )
+
+			--  link action
 			function button:DoClick()
-				el.action( form )
+				el:action( form )
 			end
 
 			return button
