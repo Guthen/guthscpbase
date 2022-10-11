@@ -228,7 +228,7 @@ function guthscp.module.hot_reload( id )
 
 	--  load config
 	local module = guthscp.modules[id]
-	if module.config then
+	if istable( module.menu ) and istable( module.menu.config ) then
 		guthscp.info( "guthscp.module", "config.." )
 		guthscp.print_tabs = guthscp.print_tabs + 1
 		guthscp.config.load( id )

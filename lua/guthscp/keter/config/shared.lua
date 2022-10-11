@@ -51,7 +51,10 @@ function guthscp.config.load( id )
 	
 	--  load from data file
 	local tbl = guthscp.data.load_from_json( guthscp.config.path .. id .. ".json" )
-	if not tbl then return false end
+	if not tbl then 
+		guthscp.info( "guthscp.config", "failed to load data for %q config", id )
+		return false 
+	end
 
 	--  apply data
 	guthscp.config.apply( id, table.Merge( guthscp.configs[id] or {}, tbl ), {
