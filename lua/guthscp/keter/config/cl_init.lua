@@ -211,7 +211,12 @@ vguis_types = {
 					local child = vgui_type.init( panel, el, config_value[id], form )
 					child._type = el.type  --  store type for further use
 					form[id] = child
-
+					
+					--  set disabled
+					if isfunction( el.is_disabled ) then 
+						child:SetDisabled( el:is_disabled( child ) )
+					end
+					
 					--  middle click: reset to default
 					if IsValid( child ) and config_value[id] then
 						local mouse_pressed = child.OnMousePressed
