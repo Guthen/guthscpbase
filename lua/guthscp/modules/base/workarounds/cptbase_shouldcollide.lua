@@ -4,24 +4,13 @@ local WORKAROUND = {
 }
 
 function WORKAROUND:init()
-	local hooks = hook.GetTable()["ShouldCollide"]
-	if not istable( hooks ) then return false end
-
-	--  find the hook (since its ID is randomly generated)
-	for k, v in pairs( hooks ) do
-        if k:find( "CPTBase" ) then
-			self._hook_id = k
-            self._former_callback = v
-           	return true
-        end
-    end
-
-	self:warning( "hook 'ShouldCollide' of 'CPTBase' wasn't found!" )
-	return false
+	return self:find_hook( "ShouldCollide", function( id, callback )
+		return id:find( "CPTBase" )
+	end )
 end
 
 function WORKAROUND:on_enabled()
-	hook.Add( "ShouldCollide", self._hook_id, function( ent1, ent2 )
+	self:override_hook( 1, function( ent1, ent2 )
 		if ent1:GetClass() == "cpt_ai_pathfinding" and ent2 == ent1:GetOwner() then
 			return false
 		end
@@ -29,8 +18,7 @@ function WORKAROUND:on_enabled()
 end
 
 function WORKAROUND:on_disabled()
-	--  restore former callback
-	hook.Add( "ShouldCollide", self._hook_id, self._former_callback )
+	self:restore_hook( 1 )
 end
 
 guthscp.workaround.register( "cptbase_shouldcollide", WORKAROUND )

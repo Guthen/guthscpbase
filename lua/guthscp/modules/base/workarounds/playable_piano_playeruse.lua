@@ -4,12 +4,13 @@ local WORKAROUND = {
 }
 
 function WORKAROUND:init()
-	return self:get_hook( "PlayerUse", "InstrumentChairModelHook" )
+	return self:register_hook( "PlayerUse", "InstrumentChairModelHook" )
 end
 
 function WORKAROUND:on_enabled()
+	--  the workshop version of the piano addon didn't implement the fix:
 	--  https://github.com/macdguy/playablepiano/blob/master/lua/entities/gmt_instrument_base/init.lua#L108-L131
-	hook.Add( "PlayerUse", "InstrumentChairModelHook", function( ply, ent )
+	self:override_hook( 1, function( ply, ent )
 		local inst = ent:GetOwner()
 	
 		if IsValid( inst ) and inst.Base == "gmt_instrument_base" then
@@ -22,12 +23,11 @@ function WORKAROUND:on_enabled()
 				end
 			end
 		end
-	end)
+	end )
 end
 
 function WORKAROUND:on_disabled()
-	--  restore former callback
-	hook.Add( "PlayerUse", "InstrumentChairModelHook", self._former_callback )
+	self:restore_hook( 1 )
 end
 
 guthscp.workaround.register( "playable_piano_playeruse", WORKAROUND )
