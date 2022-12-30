@@ -67,7 +67,7 @@ hook.Add( "InitPostEntity", "guthscp:cache_teams_keynames", function()
 		if keyname then continue end
 
 		guthscp.warning( "guthscp", "%q doesn't have an unique 'TEAM_' name, this could lead to inability to save this team in the configuration!", v.Name )
-		guthscp.modules.base:add_warning( "%q is not set to a unique 'TEAM_' name in the code, this could prevent you from using it in modules configurations!", v.Name )
+		guthscp.modules.base:add_warning( "%q is not set to an unique 'TEAM_' name in the code, this could prevent you from using it in modules configurations!", v.Name )
 	end
 end )
 
