@@ -155,7 +155,7 @@ function WORKAROUND:set_enabled( is_enabled )
 	self._is_enabled = is_enabled
 
 	--  invoke event
-	if self.realm == guthscp.get_current_realm() then
+	if guthscp.is_same_realm( self.realm, guthscp.get_current_realm() ) then
 		if self._is_enabled then
 			self:on_enabled()
 			self:info( "enabled!" )

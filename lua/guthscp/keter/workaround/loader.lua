@@ -93,12 +93,16 @@ hook.Add( "InitPostEntity", "guthscp.workaround:init", function()
 		if guthscp.is_same_realm( workaround.realm, current_realm ) then
 			workaround:info( "initializing.." )
 			workaround._is_active = workaround:init()
+		elseif SERVER then
+			--  activate client workarounds on server 
+			workaround:info( "forced active" )
+			workaround._is_active = true
 		else
 			workaround:info( "wrong realm, skipping initialization" )
 		end
 	end
 
-	--  mark workaround as loaded
+	--  mark workarounds as initialized
 	guthscp.workaround.is_initialized = true
 
 	--  retrieve workarounds states 
