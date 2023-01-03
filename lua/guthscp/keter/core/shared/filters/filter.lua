@@ -10,6 +10,7 @@ FILTER._ubits = 16
 function FILTER:new( id )
 	local obj = {
 		id = id,
+		name = id,
 		global_id = "guthscp." .. self._key .. "/" .. id,
 
 		count = 0,
@@ -164,7 +165,7 @@ else
 			filter:add( net.ReadEntity() )
 		end
 
-		guthscp.debug( filter.global_id, "received %d players", count )
+		guthscp.debug( filter.global_id, "received %d entities", count )
 	end )
 
 	--  sync on connection
