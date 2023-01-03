@@ -156,6 +156,3 @@ MsgC( info_color, [[
 print("\n")
 guthscp.require_folder( "guthscp/keter/", true )
 guthscp.module.require()
-
---  network bits
-guthscp.NET_PLAYERS_UBITS = guthscp.helpers.number_of_ubits( game.MaxPlayers() )  --  compute number of bits for players count
