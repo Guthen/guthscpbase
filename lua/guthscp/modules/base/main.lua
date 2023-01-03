@@ -17,6 +17,7 @@ It also includes:
 	requires = {
 		--["unit_test.lua"] = guthscp.REALMS.SHARED,
 		["workarounds/"] = guthscp.REALMS.SHARED,
+		["sv_entity_breaking.lua"] = guthscp.REALMS.SERVER,
 	} 
 	
 }
@@ -165,6 +166,9 @@ MODULE.menu = {
 function MODULE:init()
 	--  porting old config file 
 	self:port_old_config_file( "guthscpbase/guthscpbase.json" )
+
+	--  create filter
+	guthscp.entity_breaking_filter = guthscp.map_entities_filter:new( "guthscp_entity_breaking" )
 end
 
 guthscp.module.hot_reload( "base" )

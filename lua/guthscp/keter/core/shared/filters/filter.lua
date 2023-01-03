@@ -36,7 +36,7 @@ function FILTER:add( ent )
 	self.count = self.count + 1
 	self.event_added:invoke( ent )
 
-	guthscp.debug( self.global_id, "added %q (%s)", ent:GetName(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )
+	guthscp.debug( self.global_id, "added %q (%s)", ent:IsPlayer() and ent:GetName() or ent:GetClass(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )
 
 	--  schedule sync
 	if SERVER then
@@ -54,7 +54,7 @@ function FILTER:remove( ent )
 	self.count = self.count - 1
 	self.event_removed:invoke( ent )
 
-	guthscp.debug( self.global_id, "removed %q (%s)", ent:GetName(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )
+	guthscp.debug( self.global_id, "removed %q (%s)", ent:IsPlayer() and ent:GetName() or ent:GetClass(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )
 
 	--  schedule sync
 	if SERVER then

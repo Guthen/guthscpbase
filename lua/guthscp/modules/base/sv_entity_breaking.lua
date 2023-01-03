@@ -4,10 +4,9 @@ local no_debris_classes = {
 	["func_door_rotating"] = true,
 }
 
-local entity_blacklist = {}
-
 local breaked_entities = {}
 function guthscp.break_entity( ent, velocity )
+	if guthscp.entity_breaking_filter:is_in( ent ) then return false end  --  avoid filtered entities
 	if IsValid( ent.guthscp_breakable_phys ) or ent.guthscp_breakable_phys_base then return false end --  avoid to break already broken entities
 
 	if not no_debris_classes[ent:GetClass()] then
