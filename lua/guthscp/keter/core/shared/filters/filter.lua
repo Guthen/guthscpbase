@@ -176,6 +176,8 @@ if SERVER then
 		local count = 0
 
 		for id, filter in pairs( guthscp.filter.all ) do
+			if filter:get_count() == 0 then continue end
+
 			filter:sync( ply )
 			count = count + 1
 		end
