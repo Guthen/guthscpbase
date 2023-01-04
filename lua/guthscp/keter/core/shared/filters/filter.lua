@@ -1,5 +1,6 @@
 guthscp.filter = guthscp.filter or {}
 guthscp.filter.all = guthscp.filter.all or {}
+guthscp.filter.path = "filters/"
 
 local FILTER = guthscp.filter
 FILTER.__index = FILTER
@@ -103,6 +104,38 @@ function FILTER:is_in( ent )
 	return self.container[ent] or false
 end
 
+--  saving
+function FILTER:serialize()
+	return nil
+end
+
+function FILTER:un_serialize( data )
+end
+
+function FILTER:save()
+	--  serialize data
+	local data = self:serialize()
+	if not data then 
+		return guthscp.error( "guthscp.filter", "failed to serialize %q, either failed or not implemented", self.global_id )
+	end
+
+	--  saving to file
+	guthscp.data.save_to_json( guthscp.filter.path .. self.id .. ".json", data, true )
+
+	guthscp.debug( "guthscp.filter", "saved filter %q", self.global_id )
+end
+
+function FILTER:load()
+	--  read data
+	local data = guthscp.data.load_from_json( guthscp.filter.path .. self.id .. ".json" )
+	if not data then return end
+
+	--  load data
+	self:clear()
+	self:un_serialize( data )
+
+	guthscp.debug( "guthscp.filter", "loaded filter %q", self.global_id )
+end
 
 --  sync to client
 if SERVER then
