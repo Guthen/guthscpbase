@@ -77,6 +77,11 @@ function FILTER:clear( is_not_silent )
 	--  clear
 	self.container = {}
 	self.count = 0
+
+	--  schedule sync
+	if SERVER then
+		self:safe_sync()
+	end
 end
 
 function FILTER:filter( ent )
