@@ -66,12 +66,10 @@ function FILTER:remove( ent )
 	return true
 end
 
-function FILTER:clear( is_not_silent )
-	if not is_not_silent then
-		--  call remove events
-		for ent in pairs( self.container ) do
-			self.event_removed:invoke( ent )
-		end
+function FILTER:clear()
+	--  call remove events
+	for ent in pairs( self.container ) do
+		self.event_removed:invoke( ent )
 	end
 
 	--  clear
@@ -197,10 +195,22 @@ else
 		--  retrieve count
 		local count = net.ReadUInt( filter._ubits )
 		
-		--  retrieve players
-		filter:clear()
+		--  retrieve entities
+		local entities = {}
 		for i = 1, count do
-			filter:add( net.ReadEntity() )
+			entities[net.ReadEntity()] = true
+		end
+
+		--  add entities
+		for ent in pairs( entities ) do
+			filter:add( ent )
+		end
+
+		--  remove not contained entities
+		for ent in pairs( filter.container ) do
+			if entities[ent] then continue end
+
+			filter:remove( ent )
 		end
 
 		guthscp.debug( filter.global_id, "received %d entities", count )
