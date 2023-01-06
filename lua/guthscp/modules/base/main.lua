@@ -171,9 +171,6 @@ function MODULE:init()
 	guthscp.entity_breaking_filter = guthscp.map_entities_filter:new( "guthscp_entity_breaking" )
 	guthscp.entity_breaking_filter.name = "GuthSCP Entity Breaking"
 
-	if SERVER then
-		guthscp.entity_breaking_filter:load()
-	end
 end
 
 guthscp.module.hot_reload( "base" )

@@ -44,17 +44,9 @@ if CLIENT then
 		end
 
 		--  save & load
-		cpanel:AddControl( "Label", { 
-			Text = "#tool.guthscp_map_entities_filter_configurator.io",
-		} )
-		cpanel:AddControl( "Button", { 
-			Label = "#tool.guthscp_map_entities_filter_configurator.save", 
-			Command = "guthscp_keycards_save",
-		} )
-		cpanel:AddControl( "Button", { 
-			Label = "#tool.guthscp_map_entities_filter_configurator.load", 
-			Command = "guthscp_keycards_load",
-		} )
+		cpanel:Help( "#tool.guthscp_map_entities_filter_configurator.io" )
+		cpanel:Button( "#tool.guthscp_map_entities_filter_configurator.save" )
+		cpanel:Button( "#tool.guthscp_map_entities_filter_configurator.load" )
 	end
 
 	hook.Add( "PreDrawHalos", "guthscp:map_entities_filter_configurator", function()

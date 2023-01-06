@@ -25,3 +25,11 @@ function FILTER:un_serialize( data )
 		self:add( ent )
 	end
 end
+
+hook.Add( "InitPostEntity", "guthscp:load_map_entities_filters", function()
+	for id, filter in pairs( guthscp.filter.all ) do
+		if not ( filter._key == FILTER._key ) then continue end 
+
+		filter:load()
+	end
+end )
