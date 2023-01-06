@@ -168,9 +168,7 @@ function MODULE:init()
 	self:port_old_config_file( "guthscpbase/guthscpbase.json" )
 
 	--  create filter
-	guthscp.entity_breaking_filter = guthscp.map_entities_filter:new( "guthscp_entity_breaking" )
-	guthscp.entity_breaking_filter.name = "GuthSCP Entity Breaking"
-
+	guthscp.entity_breaking_filter = guthscp.map_entities_filter:new( "guthscp_entity_breaking", "GuthSCP Entity Breaking" )
 end
 
 guthscp.module.hot_reload( "base" )

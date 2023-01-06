@@ -8,10 +8,10 @@ FILTER._key = "filter"
 FILTER._ubits = 16
 
 --  new
-function FILTER:new( id )
+function FILTER:new( id, name )
 	local obj = {
 		id = id,
-		name = id,
+		name = name or id,
 		global_id = "guthscp." .. self._key .. "/" .. id,
 
 		count = 0,
