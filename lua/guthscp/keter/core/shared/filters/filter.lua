@@ -1,5 +1,5 @@
 guthscp.filter = guthscp.filter or {}
-guthscp.filter.all = guthscp.filter.all or {}
+guthscp.filters = guthscp.filters or {}
 guthscp.filter.tool_mode = guthscp.filter.tool_mode or nil  --  auto-filled in the tool script
 guthscp.filter.path = "filters/"
 
@@ -24,7 +24,7 @@ function FILTER:new( id, name )
 	}
 
 	--  register
-	guthscp.filter.all[id] = obj
+	guthscp.filters[id] = obj
 
 	guthscp.debug( "guthscp.filter", "new filter %q", obj.global_id )
 	return setmetatable( obj, { __index = self } )
@@ -189,7 +189,7 @@ if SERVER then
 	net.Receive( "guthscp.filter:sync", function( len, ply )
 		local count = 0
 
-		for id, filter in pairs( guthscp.filter.all ) do
+		for id, filter in pairs( guthscp.filters ) do
 			if filter:get_count() == 0 then continue end
 
 			filter:sync( ply )
@@ -207,7 +207,7 @@ if SERVER then
 
 		--  get filter
 		local filter_id = net.ReadString()
-		local filter = guthscp.filter.all[filter_id]
+		local filter = guthscp.filters[filter_id]
 		if not filter then return end
 
 		--  save or load
@@ -230,7 +230,7 @@ else
 	net.Receive( "guthscp.filter:sync", function( len )
 		--  get filter
 		local id = net.ReadString()
-		local filter = guthscp.filter.all[id]
+		local filter = guthscp.filters[id]
 		if not filter then 
 			guthscp.warning( "guthscp.filter", "failed to sync %q: filter not found!", id )
 			return 

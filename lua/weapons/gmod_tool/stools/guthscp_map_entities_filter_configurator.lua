@@ -38,7 +38,7 @@ if CLIENT then
 
 		--  filters
 		local filter_combobox = cpanel:ComboBox( "#tool.guthscp_map_entities_filter_configurator.filter", guthscp.filter.tool_mode .. "_" .. "filter_id" )
-		for id, filter in pairs( guthscp.filter.all ) do
+		for id, filter in pairs( guthscp.filters ) do
 			if not ( filter._key == guthscp.map_entities_filter._key ) then continue end
 
 			filter_combobox:AddChoice( filter.name, id )
@@ -59,7 +59,7 @@ if CLIENT then
 		
 		local load_button = cpanel:Button( "#tool.guthscp_map_entities_filter_configurator.load" )
 		function load_button:DoClick()
-			local tool = LocalPlayer()q:GetTool( guthscp.filter.tool_mode )
+			local tool = LocalPlayer():GetTool( guthscp.filter.tool_mode )
 			if not tool then return end
 
 			net.Start( "guthscp.filter:io" )
@@ -88,7 +88,7 @@ function TOOL:LeftClick( tr )
 	
 	--  get filter
 	local filter_id = self:GetClientInfo( "filter_id" )
-	local filter = guthscp.filter.all[filter_id]
+	local filter = guthscp.filters[filter_id]
 	if not filter then return false end
 
 	--  check compatible entity
@@ -108,7 +108,7 @@ function TOOL:RightClick( tr )
 
 	--  get filter
 	local filter_id = self:GetClientInfo( "filter_id" )
-	local filter = guthscp.filter.all[filter_id]
+	local filter = guthscp.filters[filter_id]
 	if not filter then return false end
 
 	--  check compatible entity
