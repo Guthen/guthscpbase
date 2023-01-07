@@ -4,6 +4,7 @@ local FILTER = guthscp.map_entities_filter
 guthscp.helpers.use_meta( FILTER, guthscp.filter )
 FILTER._key = "map_entities_filter"
 FILTER._ubits = 16
+FILTER._use_map_name = true
 
 function FILTER:filter( ent )
 	return CLIENT or ent:CreatedByMap()

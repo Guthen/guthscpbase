@@ -6,6 +6,7 @@ local FILTER = guthscp.filter
 FILTER.__index = FILTER
 FILTER._key = "filter"
 FILTER._ubits = 16
+FILTER._use_map_name = false
 
 --  new
 function FILTER:new( id, name )
@@ -115,6 +116,14 @@ end
 function FILTER:un_serialize( data )
 end
 
+function FILTER:get_save_file_path()
+	if self._use_map_name then
+		return guthscp.filter.path .. game.GetMap() .. "/" .. self.id .. ".json"
+	end
+
+	return guthscp.filter.path .. self.id .. ".json"
+end
+
 function FILTER:save()
 	--  serialize data
 	local data = self:serialize()
@@ -123,14 +132,14 @@ function FILTER:save()
 	end
 
 	--  saving to file
-	guthscp.data.save_to_json( guthscp.filter.path .. self.id .. ".json", data, true )
+	guthscp.data.save_to_json( self:get_save_file_path(), data, true )
 
 	guthscp.debug( "guthscp.filter", "saved filter %q", self.global_id )
 end
 
 function FILTER:load()
 	--  read data
-	local data = guthscp.data.load_from_json( guthscp.filter.path .. self.id .. ".json" )
+	local data = guthscp.data.load_from_json( self:get_save_file_path() )
 	if not data then return end
 
 	--  load data
