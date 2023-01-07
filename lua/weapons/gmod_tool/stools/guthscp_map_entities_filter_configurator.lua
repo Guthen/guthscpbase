@@ -7,6 +7,8 @@ TOOL.ClientConVar = {
 	filter_id = "",
 }
 
+guthscp.filter.tool_mode = TOOL:GetMode()
+
 --  languages
 if CLIENT then
 	--  information
@@ -31,12 +33,11 @@ if CLIENT then
 	language.Add( "tool.guthscp_map_entities_filter_configurator.load", "Load Data" )
 
 	--  context panel
-	local mode = TOOL:GetMode()
 	function TOOL.BuildCPanel( cpanel ) 
 		cpanel:AddControl( "Header", { Description = "#tool.guthscp_map_entities_filter_configurator.desc" } )
 
 		--  filters
-		local filter_combobox = cpanel:ComboBox( "#tool.guthscp_map_entities_filter_configurator.filter", mode .. "_" .. "filter_id" )
+		local filter_combobox = cpanel:ComboBox( "#tool.guthscp_map_entities_filter_configurator.filter", guthscp.filter.tool_mode .. "_" .. "filter_id" )
 		for id, filter in pairs( guthscp.filter.all ) do
 			if not ( filter._key == guthscp.map_entities_filter._key ) then continue end
 
@@ -45,8 +46,27 @@ if CLIENT then
 
 		--  save & load
 		cpanel:Help( "#tool.guthscp_map_entities_filter_configurator.io" )
-		cpanel:Button( "#tool.guthscp_map_entities_filter_configurator.save" )
-		cpanel:Button( "#tool.guthscp_map_entities_filter_configurator.load" )
+		local save_button = cpanel:Button( "#tool.guthscp_map_entities_filter_configurator.save" )
+		function save_button:DoClick()
+			local tool = LocalPlayer():GetTool( guthscp.filter.tool_mode )
+			if not tool then return end
+
+			net.Start( "guthscp.filter:io" )
+				net.WriteString( tool:GetClientInfo( "filter_id" ) )
+				net.WriteBool( true )
+			net.SendToServer()
+		end
+		
+		local load_button = cpanel:Button( "#tool.guthscp_map_entities_filter_configurator.load" )
+		function load_button:DoClick()
+			local tool = LocalPlayer()q:GetTool( guthscp.filter.tool_mode )
+			if not tool then return end
+
+			net.Start( "guthscp.filter:io" )
+				net.WriteString( tool:GetClientInfo( "filter_id" ) )
+				net.WriteBool( false )
+			net.SendToServer()
+		end
 	end
 
 	hook.Add( "PreDrawHalos", "guthscp:map_entities_filter_configurator", function()
@@ -55,7 +75,7 @@ if CLIENT then
 		local active_weapon = ply:GetActiveWeapon()
 		if not IsValid( active_weapon ) or not ( active_weapon:GetClass() == "gmod_tool" ) then return end
 
-		local tool = ply:GetTool( mode )
+		local tool = ply:GetTool( guthscp.filter.tool_mode )
 		if not tool then return end
 
 		halo.Add( guthscp.entity_breaking_filter:get_list(), Color( 255, 0, 0 ), 2, 2, 1, true, true )

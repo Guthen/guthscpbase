@@ -1,5 +1,6 @@
 guthscp.filter = guthscp.filter or {}
 guthscp.filter.all = guthscp.filter.all or {}
+guthscp.filter.tool_mode = guthscp.filter.tool_mode or nil  --  auto-filled in the tool script
 guthscp.filter.path = "filters/"
 
 local FILTER = guthscp.filter
@@ -127,31 +128,35 @@ end
 function FILTER:save()
 	--  serialize data
 	local data = self:serialize()
-	if not data then 
-		return guthscp.error( "guthscp.filter", "failed to serialize %q, either failed or not implemented", self.global_id )
+	if not data then
+		guthscp.error( "guthscp.filter", "failed to serialize %q, either failed or not implemented", self.global_id ) 
+		return false
 	end
 
 	--  saving to file
 	guthscp.data.save_to_json( self:get_save_file_path(), data, true )
 
 	guthscp.debug( "guthscp.filter", "saved filter %q", self.global_id )
+	return true
 end
 
 function FILTER:load()
 	--  read data
 	local data = guthscp.data.load_from_json( self:get_save_file_path() )
-	if not data then return end
+	if not data then return false end
 
 	--  load data
 	self:clear()
 	self:un_serialize( data )
 
 	guthscp.debug( "guthscp.filter", "loaded filter %q", self.global_id )
+	return true
 end
 
 --  sync to client
 if SERVER then
 	util.AddNetworkString( "guthscp.filter:sync" )
+	util.AddNetworkString( "guthscp.filter:io" )
 	
 	function FILTER:safe_sync( receiver )
 		timer.Create( self.global_id .. ":sync", .5, 1, function()
@@ -192,6 +197,34 @@ if SERVER then
 		end
 
 		guthscp.debug( "guthscp.filter", "send %d filters to %q", count, ply:GetName() )
+	end )
+
+	net.Receive( "guthscp.filter:io", function( len, ply )
+		if not hook.Run( "CanTool", ply, ply:GetEyeTrace(), guthscp.filter.tool_mode, ply:GetTool( guthscp.filter.tool_mode ), 1 ) then 
+			guthscp.warning( "guthscp.filter", "failed to save/load by %q (%s): not authorized", ply:GetName(), ply:SteamID() )
+			return 
+		end
+
+		--  get filter
+		local filter_id = net.ReadString()
+		local filter = guthscp.filter.all[filter_id]
+		if not filter then return end
+
+		--  save or load
+		local is_save = net.ReadBool()
+		if is_save then
+			if filter:save() then
+				ply:ChatPrint( ( "Filter %q has been succesfully saved!" ):format( filter_id ) )	
+			else 
+				ply:ChatPrint( ( "Filter %q has failed to save, probably failed to serialize or not implemented." ):format( filter_id ) )
+			end
+		else
+			if filter:load() then
+				ply:ChatPrint( ( "Filter %q has been succesfully loaded!" ):format( filter_id ) )
+			else
+				ply:ChatPrint( ( "Filter %q has failed to load, no save file found." ):format( filter_id ) )
+			end
+		end
 	end )
 else
 	net.Receive( "guthscp.filter:sync", function( len )
