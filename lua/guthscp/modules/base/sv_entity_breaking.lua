@@ -4,7 +4,7 @@ local no_debris_classes = {
 	["func_door_rotating"] = true,
 }
 
-local breaked_entities = {}
+guthscp.breaked_entities = {}
 function guthscp.break_entity( ent, velocity )
 	if guthscp.entity_breaking_filter:is_in( ent ) then return false end  --  avoid filtered entities
 	if IsValid( ent.guthscp_breakable_phys ) or ent.guthscp_breakable_phys_base then return false end --  avoid to break already broken entities
@@ -56,7 +56,7 @@ function guthscp.break_entity( ent, velocity )
 	ent:Extinguish()
 	ent:SetNoDraw( true )
 	ent:SetNotSolid( true )
-	breaked_entities[ent] = true
+	guthscp.breaked_entities[ent] = true
 
 	--  auto-respawn
 	if guthscp.configs.base.enable_respawn then
@@ -91,7 +91,7 @@ function guthscp.repair_entity( ent )
 		ent.guthscp_breakable_phys = nil
 	end
 
-	breaked_entities[ent] = nil
+	guthscp.breaked_entities[ent] = nil
 end
 
 function guthscp.break_entities_at_player_trace( ply, break_force )
@@ -113,7 +113,7 @@ end
 
 --  concommands
 concommand.Add( "guthscp_repair_entities", function()
-	for ent in pairs( breaked_entities ) do
+	for ent in pairs( guthscp.breaked_entities ) do
 		guthscp.repair_entity( ent )
 	end
 end )
