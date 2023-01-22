@@ -78,7 +78,7 @@ if CLIENT then
 		local tool = ply:GetTool( guthscp.filter.tool_mode )
 		if not tool then return end
 
-		halo.Add( guthscp.entity_breaking_filter:get_list(), Color( 255, 0, 0 ), 2, 2, 1, true, true )
+		halo.Add( guthscp.entity_breaking_filter:get_entities(), Color( 255, 0, 0 ), 2, 2, 1, true, true )
 	end )
 end
 

@@ -32,16 +32,27 @@ end
 
 --  setters
 function FILTER:add( ent )
-	if self.container[ent] then return false end
 	if not ( IsValid( ent ) and self:filter( ent ) ) then return false end
-	
+	return self:add_id( ent:EntIndex() )
+end
+
+function FILTER:add_id( id )
+	if self.container[id] then return false end
+
 	--  update
-	self.container[ent] = true
+	self.container[id] = true
 	self.count = self.count + 1
-	self.event_added:invoke( ent )
 
-	guthscp.debug( self.global_id, "added %q (%s)", ent:IsPlayer() and ent:GetName() or ent:GetClass(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )
+	--  call event
+	local ent = Entity( id )
+	if IsValid( ent ) then
+		self.event_added:invoke( ent )
 
+		guthscp.debug( self.global_id, "added %q (%s)", ent:IsPlayer() and ent:GetName() or ent:GetClass(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )
+	else
+		guthscp.debug( self.global_id, "added ID:%s", id )
+	end
+	
 	--  schedule sync
 	if SERVER then
 		self:safe_sync()
@@ -51,14 +62,26 @@ function FILTER:add( ent )
 end
 
 function FILTER:remove( ent )
-	if not self.container[ent] then return false end
-	
-	--  update
-	self.container[ent] = nil
-	self.count = self.count - 1
-	self.event_removed:invoke( ent )
+	if not IsValid( ent ) then return false end
+	return self:remove_id( ent:EntIndex() )
+end
 
-	guthscp.debug( self.global_id, "removed %q (%s)", ent:IsPlayer() and ent:GetName() or ent:GetClass(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )
+function FILTER:remove_id( id )
+	if not self.container[id] then return false end
+
+	--  update
+	self.container[id] = nil
+	self.count = self.count - 1
+
+	--  call event
+	local ent = Entity( id )
+	if IsValid( ent ) then
+		self.event_removed:invoke( ent )
+
+		guthscp.debug( self.global_id, "removed %q (%s)", ent:IsPlayer() and ent:GetName() or ent:GetClass(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )	
+	else
+		guthscp.debug( self.global_id, "removed ID:%s", id )
+	end
 
 	--  schedule sync
 	if SERVER then
@@ -89,16 +112,17 @@ function FILTER:filter( ent )
 end
 
 --  getters
-function FILTER:get_list()
-	local list = {}
+function FILTER:get_entities()
+	local entities = {}
 	
-	for ent in pairs( self.container ) do
+	for id in pairs( self.container ) do
+		local ent = Entity( id )
 		if IsValid( ent ) then
-			list[#list + 1] = ent
+			entities[#entities + 1] = ent
 		end
 	end
 	
-	return list
+	return entities
 end
 
 function FILTER:get_count()
@@ -106,7 +130,7 @@ function FILTER:get_count()
 end
 
 function FILTER:is_in( ent )
-	return self.container[ent] or false
+	return IsValid( ent ) and self.container[ent:EntIndex()] or false
 end
 
 --  saving
@@ -172,8 +196,8 @@ if SERVER then
 		
 		--  players
 		net.WriteUInt( self.count, self._ubits )
-		for ply in pairs( self.container ) do
-			net.WriteEntity( ply )
+		for id in pairs( self.container ) do
+			net.WriteUInt( id, 16 )
 		end
 
 		--  send
@@ -240,21 +264,22 @@ else
 		local count = net.ReadUInt( filter._ubits )
 		
 		--  retrieve entities
-		local entities = {}
+		local indexes = {}
 		for i = 1, count do
-			entities[net.ReadEntity()] = true
+			local id = net.ReadUInt( 16 )
+			indexes[id] = true
 		end
 
-		--  add entities
-		for ent in pairs( entities ) do
-			filter:add( ent )
+		--  add indexes
+		for id in pairs( indexes ) do
+			filter:add_id( id )
 		end
 
-		--  remove not contained entities
-		for ent in pairs( filter.container ) do
-			if entities[ent] then continue end
+		--  remove not contained indexes
+		for id in pairs( filter.container ) do
+			if indexes[id] then continue end
 
-			filter:remove( ent )
+			filter:remove_id( id )
 		end
 
 		guthscp.debug( filter.global_id, "received %d entities", count )
