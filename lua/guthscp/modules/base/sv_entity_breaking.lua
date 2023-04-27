@@ -112,18 +112,38 @@ function guthscp.break_entities_at_player_trace( ply, break_force )
 end
 
 --  concommands
-concommand.Add( "guthscp_repair_entities", function()
+concommand.Add( "guthscp_repair_entities", function( ply )
+	if IsValid( ply ) and not ply:IsSuperAdmin() then 
+		ply:PrintMessage( HUD_PRINTCONSOLE, "You can't use this superadmin command!" )
+		return 
+	end
+
+	--  repair
+	local count = 0
 	for ent in pairs( guthscp.breaked_entities ) do
 		guthscp.repair_entity( ent )
+		count = count + 1
+	end
+
+	--  print to player
+	local text = "You repaired " .. count .. " entities!"
+	if IsValid( ply ) then
+		ply:PrintMessage( HUD_PRINTCONSOLE, text )
+	else
+		print( text )
 	end
 end )
 
 concommand.Add( "guthscp_debug_break_at_trace", function( ply )
-	if not IsValid( ply ) then return print( "The player wasn't found!" ) end
-
-	if guthscp.break_entities_at_player_trace( ply ) > 0 then
-		print( "badaboum" )
-	else
-		print( "nothing broke" )
+	if not IsValid( ply ) then 
+		return print( "You can't use this non-console command!" ) 
 	end
+	if not ply:IsSuperAdmin() then
+		ply:PrintMessage( HUD_PRINTCONSOLE, "You can't use this superadmin command!" )
+		return
+	end
+
+	--  break
+	local count = guthscp.break_entities_at_player_trace( ply )
+	ply:PrintMessage( HUD_PRINTCONSOLE, count > 0 and "You destroyed " .. count .. " entities!" or "Nothing has been destroyed!" )
 end )
