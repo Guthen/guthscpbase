@@ -113,35 +113,39 @@ function GuthSCP.breakEntitiesAtPlayerTrace( ply, break_force )
     return count
 end
 
---[[ hook.Add( "InitPostEntity", "guthscpbase:load_entity_blacklist", function()
-    local content = file.Read( "guthscpbase/guthscpbase_entity_blacklist.json" )
-    if not content then return end
-
-    
-end ) ]]
-
 --  concommands
-concommand.Add( "guthscpbase_repair_entities", function()
-    for ent in pairs( breaked_entities ) do
-        GuthSCP.repairEntity( ent )
-    end
+concommand.Add( "guthscpbase_repair_entities", function( ply )
+    if IsValid( ply ) and not ply:IsSuperAdmin() then 
+		ply:PrintMessage( HUD_PRINTCONSOLE, "You can't use this superadmin command!" )
+		return 
+	end
+
+	--  repair
+	local count = 0
+	for ent in pairs( breaked_entities ) do
+		GuthSCP.repairEntity( ent )
+		count = count + 1
+	end
+
+	--  print to player
+	local text = "You repaired " .. count .. " entities!"
+	if IsValid( ply ) then
+		ply:PrintMessage( HUD_PRINTCONSOLE, text )
+	else
+		print( text )
+	end
 end )
 
---[[ concommand.Add( "guthscpbase_prevent_break_at_trace", function( ply )
-    if not IsValid( ply ) then return print( "The player wasn't found!" ) end
-
-    local ent = ply:GetEyeTrace().Entity
-    if not IsValid( ent ) then return ply:ChatPrint( "Invalid entity, please look at an entity to blacklist." ) end
-
-
-end ) ]]
-
 concommand.Add( "guthscpbase_debug_break_at_trace", function( ply )
-    if not IsValid( ply ) then return print( "The player wasn't found!" ) end
+    if not IsValid( ply ) then 
+		return print( "You can't use this non-console command!" ) 
+	end
+	if not ply:IsSuperAdmin() then
+		ply:PrintMessage( HUD_PRINTCONSOLE, "You can't use this superadmin command!" )
+		return
+	end
 
-    if GuthSCP.breakEntitiesAtPlayerTrace( ply ) > 0 then
-        print( "badaboum" )
-    else
-        print( "nothing broke" )
-    end
+	--  break
+	local count = GuthSCP.breakEntitiesAtPlayerTrace( ply )
+	ply:PrintMessage( HUD_PRINTCONSOLE, count > 0 and "You destroyed " .. count .. " entities!" or "Nothing has been destroyed!" )
 end )
