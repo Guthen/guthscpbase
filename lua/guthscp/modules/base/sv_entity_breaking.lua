@@ -6,7 +6,7 @@ local no_debris_classes = {
 
 guthscp.breaked_entities = {}
 function guthscp.break_entity( ent, velocity )
-	if guthscp.entity_breaking_filter:is_in( ent ) then return false end  --  avoid filtered entities
+	if not guthscp.is_breakable_entity( ent ) then return false end  --  avoid non-breakable entities
 	if IsValid( ent.guthscp_breakable_phys ) or ent.guthscp_breakable_phys_base then return false end --  avoid to break already broken entities
 
 	if not no_debris_classes[ent:GetClass()] then
@@ -77,8 +77,12 @@ local breakable_classes = {
 	["prop_physics"] = true,
 	["func_door"] = true,
 }
+function guthscp.is_breakable_class( class )
+	return breakable_classes[class]
+end
+
 function guthscp.is_breakable_entity( ent )
-	return breakable_classes[ent:GetClass()]
+	return guthscp.is_breakable_class( ent:GetClass() ) and not guthscp.entity_breaking_filter:is_in( ent )
 end
 
 function guthscp.repair_entity( ent )
