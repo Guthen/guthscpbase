@@ -16,3 +16,24 @@ function guthscp.world.is_ground( pos )
 
     return tr.HitWorld
 end
+
+--[[ 
+    @function guthscp.world.player_trace_attack
+        | description: perform a hull trace on the given player for weapons attack purpose
+        | params:
+            ply: <Player> attacking player
+            max_dist: <number> maximum trace distance
+            bounds: <Vector> minimums & maximums of hull
+        | return: <TraceResult> tr
+]]
+function guthscp.world.player_trace_attack( ply, max_dist, bounds )
+    local start_pos = ply:EyePos()
+	return util.TraceHull( {
+		start = start_pos,
+		endpos = start_pos + ply:GetAimVector() * max_dist,
+		filter = ply,
+		mins = -bounds,
+		maxs = bounds,
+		mask = MASK_SHOT_HULL,
+	} )
+end
