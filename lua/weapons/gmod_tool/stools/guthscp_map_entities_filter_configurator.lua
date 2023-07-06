@@ -94,6 +94,7 @@ function TOOL:LeftClick( tr )
 	--  check compatible entity
 	local ent = tr.Entity
 	if not IsValid( ent ) then return false end
+	if not filter:filter( ent ) then return false end
 	
 	if SERVER then
 		filter:add( ent )
@@ -114,6 +115,7 @@ function TOOL:RightClick( tr )
 	--  check compatible entity
 	local ent = ply:GetEyeTrace().Entity
 	if not IsValid( ent ) then return false end
+	if not filter:filter( ent ) then return false end
 
 	if SERVER then
 		filter:remove( ent )

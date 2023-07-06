@@ -7,7 +7,7 @@ FILTER._ubits = 16
 FILTER._use_map_name = true
 
 function FILTER:filter( ent )
-	return CLIENT or ent:CreatedByMap()
+	return ent:CreatedByMap()
 end
 
 function FILTER:serialize()
