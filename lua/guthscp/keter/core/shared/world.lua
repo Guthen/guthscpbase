@@ -28,7 +28,9 @@ end
 ]]
 function guthscp.world.player_trace_attack( ply, max_dist, bounds )
     local start_pos = ply:EyePos()
-	return util.TraceHull( {
+
+    --  perform trace
+    local tr = util.TraceHull( {
 		start = start_pos,
 		endpos = start_pos + ply:GetAimVector() * max_dist,
 		filter = ply,
@@ -36,4 +38,19 @@ function guthscp.world.player_trace_attack( ply, max_dist, bounds )
 		maxs = bounds,
 		mask = MASK_SHOT_HULL,
 	} )
+
+    --  debug render:
+    --  convar 'developer' should be greater or equal 1
+    --  you must also be in a singleplayer game (a dedicated server won't work)
+    if SERVER and ply:IsListenServerHost() then
+        local lifetime = 2.5
+        local target = tr.Entity
+        debugoverlay.SweptBox( start_pos, tr.HitPos, -bounds, bounds, angle_zero, lifetime, IsValid( target ) and Color( 255, 0, 0 ) or color_white )
+
+        if IsValid( target ) then
+            debugoverlay.BoxAngles( target:GetPos(), target:OBBMins(), target:OBBMaxs(), target:GetAngles(), lifetime, Color( 255, 0, 0, 64 ) )
+        end
+    end
+
+	return tr 
 end
