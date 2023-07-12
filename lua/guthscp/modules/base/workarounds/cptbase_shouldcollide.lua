@@ -4,7 +4,7 @@ local WORKAROUND = {
 }
 
 function WORKAROUND:init()
-	return self:find_hook( "ShouldCollide", function( id, callback )
+	return self:find_hook( 1, "ShouldCollide", function( id, callback )
 		return id:find( "CPTBase" )
 	end )
 end

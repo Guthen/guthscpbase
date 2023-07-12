@@ -4,7 +4,7 @@ local WORKAROUND = {
 }
 
 function WORKAROUND:init()
-	return self:register_hook( "PlayerUse", "InstrumentChairModelHook" )
+	return self:register_hook( 1, "PlayerUse", "InstrumentChairModelHook" )
 end
 
 function WORKAROUND:on_enabled()

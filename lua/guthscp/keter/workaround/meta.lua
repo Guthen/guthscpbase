@@ -28,12 +28,12 @@ end
 	@function WORKAROUND:register_hook
 		| description: try to retrieve the specified hook, if found, will set the `_former_callback` parameter to its current callback
 		| params:
+			slot: <any> hook index in the register
 			name: <string> hook name
 			id: <any> hook identifier
-			idx: <int?> hook index in the register
 		| return: <bool> is_found_and_registered
 ]]
-function WORKAROUND:register_hook( name, id, idx )
+function WORKAROUND:register_hook( slot, name, id )
 	--  list all hooks
 	local hooks = hook.GetTable()[name]
 
@@ -50,7 +50,7 @@ function WORKAROUND:register_hook( name, id, idx )
 	end
 
 	--  register hook
-	self.hooks[idx or #self.hooks + 1] = {
+	self.hooks[slot] = {
 		name = name,
 		id = id,
 		callback = callback,
@@ -62,19 +62,19 @@ end
 	@function WORKAROUND:find_hook
 		| description: try to find a hook via a custom callback, if found, will call @`WORKAROUND:register_hook` with its identifier
 		| params:
+			slot: <any> hook index in the register
 			name: <string> hook name
-			find_callback: <function( string id, function callback )> callback called on each hook of the event, must return a boolean for registering
-			idx: <int?> hook index in the register
+			condition: <function( string id, function callback )> callback called on each hook of the event, must return a boolean for registering
 		| return: <bool> is_found_and_registered
 ]]
-function WORKAROUND:find_hook( name, find_callback, idx )
+function WORKAROUND:find_hook( slot, name, condition )
 	local hooks = hook.GetTable()[name]
 	if not istable( hooks ) then return false end
 
 	--  find the hook
 	for id, callback in pairs( hooks ) do
-        if find_callback( id, callback ) then
-           	return self:register_hook( name, id, idx )
+        if condition( id, callback ) then
+           	return self:register_hook( slot, name, id )
         end
     end
 
@@ -85,12 +85,12 @@ end
 	@function WORKAROUND:override_hook
 		| description: override a registered hook callback
 		| params:
-			idx: <int> hook index in the register
+			slot: <any> hook index in the register
 			callback: <function> new callback
 		| return: <bool> is_success
 ]]
-function WORKAROUND:override_hook( idx, callback )
-	local _hook = self.hooks[idx]
+function WORKAROUND:override_hook( slot, callback )
+	local _hook = self.hooks[slot]
 	if not _hook then return false end
 
 	hook.Add( _hook.name, _hook.id, callback )
@@ -101,11 +101,11 @@ end
 	@function WORKAROUND:remove_hook
 		| description: delete the callback of a registered hook from the game event system
 		| params:
-			idx: <int> hook index in the register
+			slot: <any> hook index in the register
 		| return: <bool> is_success
 ]]
-function WORKAROUND:remove_hook( idx )
-	local _hook = self.hooks[idx]
+function WORKAROUND:remove_hook( slot )
+	local _hook = self.hooks[slot]
 	if not _hook then return end
 
 	hook.Remove( _hook.name, _hook.id )
@@ -116,11 +116,11 @@ end
 	@function WORKAROUND:restore_hook
 		| description: restore the first callback of a registered hook
 		| params:
-			idx: <int> hook index in the register
+			slot: <any> hook index in the register
 		| return: <bool> is_success
 ]]
-function WORKAROUND:restore_hook( idx )
-	local _hook = self.hooks[idx]
+function WORKAROUND:restore_hook( slot )
+	local _hook = self.hooks[slot]
 	if not _hook then return end
 
 	hook.Add( _hook.name, _hook.id, _hook.callback )
