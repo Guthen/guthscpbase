@@ -139,6 +139,11 @@ MODULE.menu = {
 			icon = "icon16/brick_add.png",
 			url = "https://github.com/Guthen/guthscpbase/wiki/Creating-your-own-module",
 		},
+		{
+			text = "Creating your own workaround",
+			icon = "icon16/folder_wrench.png",
+			url = "https://github.com/Guthen/guthscpbase/wiki/Creating-your-own-workaround",
+		},
 		"Social",
 		{
 			text = "Github",
