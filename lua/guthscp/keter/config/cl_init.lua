@@ -452,7 +452,7 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 		local sidebar = parent:GetParent():Add( "DScrollPanel" )
 		sidebar:Dock( RIGHT )
 		sidebar:DockMargin( 10, 0, 0, 0 )
-		sidebar:GetCanvas():DockPadding( 5, 0, 0, 0 )
+		sidebar:GetCanvas():DockPadding( 4, 0, 0, 0 )
 		function sidebar:Paint( w, h )
 			surface.SetDrawColor( 200, 200, 200 )
 			surface.DrawLine( 0, 5, 0, h - 5 )
@@ -483,7 +483,7 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 			table.Add( data, module.menu.details )
 		end
 
-		local max_wide = 150
+		local max_wide = 100
 		for i, v in ipairs( data ) do
 			if isstring( v ) then
 				create_label_category( sidebar, v )
@@ -513,7 +513,7 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 			end
 		end
 
-		sidebar:SetWide( max_wide + 15 )
+		sidebar:SetWide( max_wide + 24 )
 
 		--  populate pages
 		if module.menu and module.menu.pages then
