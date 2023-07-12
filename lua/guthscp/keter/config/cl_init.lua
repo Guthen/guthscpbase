@@ -26,15 +26,6 @@ function guthscp.config.send( id, form )
 	net.SendToServer()
 end
 
-local syncing_listeners = {}
-function guthscp.config.on_config_sync( id, callback, is_oneshot )
-	syncing_listeners[#syncing_listeners + 1] = {
-		id = id,
-		callback = callback,
-		is_oneshot = is_oneshot,
-	}
-end
-
 net.Receive( "guthscp.config:send", function( len, ply )
 	local id = net.ReadString()
 
@@ -50,25 +41,6 @@ net.Receive( "guthscp.config:send", function( len, ply )
 
 	--  apply config
 	guthscp.config.apply( id, tbl )
-
-	--  refresh on syncing
-	if #syncing_listeners > 0 then
-		--  fancy loop to handle dynamic deletion on iteration since for-loops can't allow this 
-		--  (here repeat-until-loop can be replaced w/ a while-loop, just personal preference ya know)
-		local i = 1
-		repeat
-			local listener = syncing_listeners[i]
-			if listener.id == id then
-				listener.callback()
-				if listener.is_oneshot then
-					table.remove( syncing_listeners, i )
-					i = i - 1
-				end
-			end
-
-			i = i + 1
-		until i > #syncing_listeners
-	end
 end )
 
 function guthscp.config.sync() 
