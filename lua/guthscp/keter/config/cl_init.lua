@@ -563,9 +563,9 @@ function guthscp.config.open_menu()
 	end
 
 	--  refresh menu and select previous tab
-	local tab_id = 1
+	local tab_id = nil
 	if IsValid( guthscp.config.menu ) then
-		if guthscp.config.menu.sheet then 
+		if IsValid( guthscp.config.menu.sheet ) then 
 			tab_id = guthscp.config.menu.sheet.tab_id 
 		end
 		guthscp.config.menu:Remove() 
@@ -586,17 +586,19 @@ function guthscp.config.open_menu()
 	local sheet = frame:Add( "DPropertySheet" )
 	sheet:Dock( FILL )
 	function sheet:OnActiveTabChanged( old, new )
+		self.tab_id = new:GetPanel().tab_id
+
 		--  somehow, the scroll vbar is showing incorrectly when there is not enough space to scroll, so here's my fix..
 		timer.Simple( .1, function()
 			new:GetPanel().scroll_panel:InvalidateLayout()
 		end )
 	end
-	guthscp.config.sheet = sheet
-	guthscp.config.sheets = {}
+	guthscp.config.menu.sheet = sheet
+	guthscp.config.menu.sheets = {}
 
 	--  callback for switching panel (e.g. dependencies hyperlinks)
 	local function switch_callback( id )
-		guthscp.config.sheet:SetActiveTab( guthscp.config.sheets[id].Tab )
+		guthscp.config.menu.sheet:SetActiveTab( guthscp.config.menu.sheets[id].Tab )
 	end
 
 	--  create pages
@@ -605,6 +607,7 @@ function guthscp.config.open_menu()
 
 		local panel = sheet:Add( "DPanel" )
 		panel:DockPadding( 5, 5, 5, 5 )
+		panel.tab_id = id
 
 		local scroll_panel = panel:Add( "DScrollPanel" )
 		scroll_panel:Dock( FILL )
@@ -614,7 +617,7 @@ function guthscp.config.open_menu()
 		guthscp.config.populate_config( scroll_panel, id, switch_callback )
 
 		--  add sheet
-		guthscp.config.sheets[id] = sheet:AddSheet( name or id, panel, data.icon )
+		guthscp.config.menu.sheets[id] = sheet:AddSheet( name or id, panel, data.icon )
 
 		--  size to children
 		scroll_panel:InvalidateLayout( true )
@@ -622,9 +625,18 @@ function guthscp.config.open_menu()
 			v:SetTall( v:GetTall() + 5 )
 		end
 	end
+
+	if tab_id then
+		switch_callback( tab_id )
+	end
 end
 concommand.Add( "guthscp_menu", guthscp.config.open_menu )
 concommand.Add( "guthscpbase", guthscp.config.open_menu )
+
+hook.Add( "guthscp.config:applied", "guthscp.menu:reload_config", function( id, config )
+	if not IsValid( guthscp.config.menu ) then return end
+	guthscp.config.open_menu()
+end )
 
 --  hot reload
 if guthscp.config.menu then 
