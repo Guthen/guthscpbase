@@ -9,6 +9,13 @@ function guthscp.break_entity( ent, velocity )
 	if not guthscp.is_breakable_entity( ent ) then return false end  --  avoid non-breakable entities
 	if IsValid( ent.guthscp_breakable_phys ) or ent.guthscp_breakable_phys_base then return false end --  avoid to break already broken entities
 
+	--  break 'func_breakable's
+	if ent:GetClass() == "func_breakable" then
+		ent:Fire( "Break" )
+		return true
+	end
+
+	--  create a flying prop debris
 	if not no_debris_classes[ent:GetClass()] then
 		local phys_ent = ents.Create( "prop_physics" )
 		phys_ent:SetCollisionGroup( COLLISION_GROUP_INTERACTIVE )
@@ -76,6 +83,7 @@ local breakable_classes = {
 	["prop_dynamic"] = true,
 	["prop_physics"] = true,
 	["func_door"] = true,
+	["func_breakable"] = true,
 }
 function guthscp.is_breakable_class( class )
 	return breakable_classes[class]
@@ -105,10 +113,8 @@ function guthscp.break_entities_at_player_trace( ply, break_force )
 	local tr = IsValid( ply ) and ply:GetEyeTrace() or ply
 
 	for i, v in ipairs( ents.FindInSphere( tr.HitPos, 32 ) ) do
-		if guthscp.is_breakable_entity( v ) then
-			if guthscp.break_entity( v, tr.Normal * guthscp.configs.base.ent_break_force * break_force ) then
-				count = count + 1
-			end
+		if guthscp.break_entity( v, tr.Normal * guthscp.configs.base.ent_break_force * break_force ) then
+			count = count + 1
 		end
 	end
 
