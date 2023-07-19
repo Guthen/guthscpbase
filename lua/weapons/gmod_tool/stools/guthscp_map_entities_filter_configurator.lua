@@ -75,8 +75,8 @@ if CLIENT then
 		local active_weapon = ply:GetActiveWeapon()
 		if not IsValid( active_weapon ) or not ( active_weapon:GetClass() == "gmod_tool" ) then return end
 
-		local tool = ply:GetTool( guthscp.filter.tool_mode )
-		if not tool then return end
+		local tool = ply:GetTool()
+		if not ( tool.Mode == guthscp.filter.tool_mode ) then return end
 
 		halo.Add( guthscp.entity_breaking_filter:get_entities(), Color( 255, 0, 0 ), 2, 2, 1, true, true )
 	end )
