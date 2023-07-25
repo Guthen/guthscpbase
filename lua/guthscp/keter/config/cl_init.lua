@@ -53,6 +53,24 @@ concommand.Add( "guthscp_sync", guthscp.config.sync )
 --  config vgui
 local vguis_types  --  required in order to use it in the functions
 
+local function install_reset_input( el, panel, get_value )
+	local mouse_pressed = panel.OnMousePressed
+	panel:SetMouseInputEnabled( true )
+	function panel:OnMousePressed( mouse_button )
+		--  add a menu
+		if mouse_button == MOUSE_MIDDLE then
+			local menu = DermaMenu( nil, self )
+			menu:AddOption( "Reset to default", function()
+				self:SetValue( get_value and get_value( el.default ) or el.default )
+			end ):SetMaterial( "icon16/arrow_refresh.png" )
+			menu:Open()
+			return
+		end
+
+		mouse_pressed( self, mouse_button )
+	end
+end
+
 local function create_array_vguis( panel, el, config_value, add_func )
 	local vguis = {}
 
@@ -67,7 +85,7 @@ local function create_array_vguis( panel, el, config_value, add_func )
 	local label = Label( el.name, scroll_panel )
 	label:Dock( TOP )
 	label:DockMargin( 5, 0, 0, 0 )
-	label:SetTextColor( Color( 0, 0, 0 ) )
+	label:SetDark( true )
 
 	local function add_vgui( value, key )
 		local child = add_func( scroll_panel, value, key )
@@ -133,6 +151,45 @@ local function create_array_vguis( panel, el, config_value, add_func )
 	return vguis
 end
 
+local function create_axes_vgui( panel, el, config_value, axes )
+	--  container
+	local container = vgui.Create( "DPanel", panel )
+	container:Dock( TOP )
+
+	--  name
+	local title = Label( el.name, container )
+	title:SetDark( true )
+
+	for i, axis in ipairs( axes ) do
+		--  label
+		local label = Label( axis:sub( 1, 1 ):upper() .. axis:sub( 2 ), container )
+		label:Dock( LEFT )
+		label:DockMargin( 0, 0, -16, 0 )
+		label:SetDark( true )
+		
+		--  number
+		local wang = container:Add( "DNumberWang" )
+		wang:Dock( LEFT )
+		wang:DockMargin( 0, 0, 16, 0 )
+		wang:SetMinMax( -math.huge, math.huge )
+		wang:SetValue( config_value[axis] or 0 )
+		install_reset_input( el, wang, function( value )
+			return value[axis]
+		end )
+
+		container["axis_" .. axis] = wang 
+	end
+
+	function container:SetValue( value )
+		for i, axis in ipairs( axes ) do
+			container["axis_" .. axis]:SetValue( value[axis] )
+		end
+	end
+
+	panel:AddItem( title, container )
+	return container
+end
+
 function guthscp.config.serialize_form( form )
 	local serialized = {}
 
@@ -187,24 +244,6 @@ vguis_types = {
 					--  set disabled
 					if isfunction( el.is_disabled ) then 
 						child:SetDisabled( el:is_disabled( child ) )
-					end
-					
-					--  middle click: reset to default
-					if IsValid( child ) and config_value[id] then
-						local mouse_pressed = child.OnMousePressed
-						child:SetMouseInputEnabled( true )
-						function child:OnMousePressed( mouse_button )
-							--  add a menu
-							if mouse_button == MOUSE_MIDDLE then
-								local menu = DermaMenu( nil, self )
-								menu:AddOption( "Reset to default", function()
-									self:SetValue( el.default )
-								end ):SetMaterial( "icon16/arrow_refresh.png" )
-								menu:Open()
-							end
-
-							mouse_pressed( self, mouse_button )
-						end
 					end
 
 					--  create description
@@ -277,6 +316,7 @@ vguis_types = {
 				numwang:SetMax( max )
 			end
 
+			install_reset_input( el, numwang )
 			return numwang
 		end,
 	},
@@ -285,6 +325,7 @@ vguis_types = {
 			local textentry = panel:TextEntry( el.name )
 			textentry:SetValue( config_value or el.default or "" )
 
+			install_reset_input( el, textentry )
 			return textentry
 		end,
 	},
@@ -311,6 +352,7 @@ vguis_types = {
 				combobox:AddChoice( v.value, v.data, v.value == value )
 			end
 
+			install_reset_input( el, combobox )
 			return combobox
 		end,
 		get_value = function( self ) 
@@ -353,10 +395,27 @@ vguis_types = {
 			local checkbox = panel:CheckBox( el.name )
 			checkbox:SetValue( config_value or false )
 	
+			install_reset_input( el, checkbox )
 			return checkbox
 		end,
 		get_value = function( self ) 
 			return self:GetChecked()
+		end,
+	},
+	["Vector"] = {
+		init = function( panel, el, config_value )
+			return create_axes_vgui( panel, el, config_value, { "x", "y", "z" } )
+		end,
+		get_value = function( self )
+			return Vector( self.axis_x:GetValue(), self.axis_y:GetValue(), self.axis_z:GetValue() )
+		end,
+	},
+	["Angle"] = {
+		init = function( panel, el, config_value )
+			return create_axes_vgui( panel, el, config_value, { "pitch", "yaw", "roll" } )
+		end,
+		get_value = function( self )
+			return Angle( self.axis_pitch:GetValue(), self.axis_yaw:GetValue(), self.axis_roll:GetValue() )
 		end,
 	},
 } 
