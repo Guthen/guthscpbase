@@ -33,7 +33,7 @@ MODULE.menu = {
 			guthscp.config.create_teams_element( {
 				name = "SCP Teams",
 				id = "scp_teams",
-				desc = "All teams which represents a SCP team should be added in the list. These teams may not trigger SCPs behaviours.",
+				desc = "All teams which represents a SCP team. These teams may not trigger SCPs behaviours.",
 				default = {},
 			} ),
 			{
@@ -71,17 +71,6 @@ MODULE.menu = {
 			guthscp.config.create_apply_button(),
 			guthscp.config.create_reset_button(),
 		},
-		receive = function( form )
-			form.scp_teams = guthscp.config.receive_teams( form.scp_teams )
-		
-			guthscp.config.apply( MODULE.id, form, {
-				network = true,
-				save = true,
-			} )
-		end,
-		parse = function( form )
-			form.scp_teams = guthscp.config.parse_teams( form.scp_teams )
-		end,
 	},
 	--  pages
 	pages = {

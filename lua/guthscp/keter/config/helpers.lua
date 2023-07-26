@@ -3,26 +3,9 @@ guthscp.config = guthscp.config or {}
 --  creators
 function guthscp.config.create_teams_element( element )
 	return table.Merge( {
-		type = "ComboBox[]",
+		type = "Teams",
 		name = "Teams",
 		id = "teams",
-		value = function( config_value, config_key )
-			id = isnumber( config_key ) and config_key or isstring( config_key ) and _G[config_key]
-			return id and team.GetName( id ) or false
-		end,
-		choice = function()
-			local teams = {}
-
-			for k, v in pairs( team.GetAllTeams() ) do
-				if not v.Joinable then continue end
-				teams[#teams + 1] = {
-					value = v.Name,
-					data = guthscp.get_team_keyname( k ),
-				}
-			end
-
-			return teams
-		end,
 	}, element or {} )
 end
 

@@ -414,6 +414,102 @@ vguis_types = {
 			return self:GetChecked()
 		end,
 	},
+	["Teams"] = {
+		init = function( panel, meta, config_value )
+			--  container
+			local container = vgui.Create( "DPanel", panel )
+			container:Dock( TOP )
+			container:SetPaintBackground( false )
+
+			--  name
+			local title = Label( meta.name, container )
+			title:Dock( TOP )
+			title:SetDark( true )
+
+			print()
+			--  retrieve teams
+			local teams, count = {}, 0
+			for team_id, team_info in pairs( team.GetAllTeams() ) do
+				if team_id == TEAM_SPECTATOR then continue end
+				if not team_info.Joinable then continue end
+
+				teams[team_id] = team_info
+				count = count + 1
+			end
+			
+			local current_line = 1
+			local column, lines_per_column = nil, math.ceil( count / 3 )
+			local column_wide, column_tall = 0, 0
+			local function finish_column()
+				column:SetWide( column_wide )
+				column:InvalidateLayout( true )
+				
+				--  compute columns height
+				local last_child = column:GetChild( column:ChildCount() - 1 )
+				column_tall = math.max( column_tall, last_child:GetY() + last_child:GetTall() )
+			end
+			
+			--  populate with teams
+			local form = {}
+			for team_id, team_info in SortedPairsByMemberValue( teams, "Name" ) do
+				--  create column container
+				if column == nil then
+					column = container:Add( "DPanel" )
+					column:Dock( LEFT )
+					column:DockMargin( 0, 0, 128, 0 )
+					column:SetPaintBackground( false )
+				end
+
+				--  create checkbox
+				local checkbox = column:Add( "DCheckBoxLabel" )
+				checkbox:Dock( TOP )
+				checkbox:DockMargin( 0, 0, 0, 4 )
+				checkbox:SetText( team_info.Name )
+				checkbox:SetDark( true )
+				column_wide = math.max( column_wide, checkbox.Label:GetX() + checkbox.Label:GetContentSize() )
+				
+				--  check config
+				local team_keyname = guthscp.get_team_keyname( team_id )
+				if config_value[team_keyname] then
+					checkbox:SetChecked( true )
+				end
+
+				--  assign to form
+				form[team_keyname] = checkbox
+				
+				--  handle layout
+				current_line = current_line + 1
+				if current_line > lines_per_column then
+					finish_column()
+					
+					current_line = 1
+					column_wide = 0
+					column = nil
+				end
+			end
+			container.form = form
+
+			finish_column()
+			container:SetTall( column_tall + 4 )
+
+			function container:SetValue()
+				print( "TODO" )
+			end
+	
+			panel:AddItem( container )
+			return container
+		end,
+		get_value = function( self )
+			local data = {}
+
+			for team_keyname, checkbox in pairs( self.form ) do
+				if not checkbox:GetChecked() then continue end
+				data[team_keyname] = true
+			end
+
+			return data
+		end,
+	},
 	["Vector"] = {
 		init = function( panel, meta, config_value )
 			return create_axes_vgui( panel, meta, config_value, { "x", "y", "z" } )

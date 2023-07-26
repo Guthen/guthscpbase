@@ -111,3 +111,6 @@ function guthscp.get_team_keyname( team_id )
 	return keynames_teams[team_id]
 end
 
+function guthscp.get_team_id( team_keyname )
+	return teams_keynames[team_keyname]
+end
