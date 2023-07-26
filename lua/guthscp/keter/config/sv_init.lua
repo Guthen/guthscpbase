@@ -1,13 +1,12 @@
 guthscp.config = guthscp.config or {}
-
-local config = {}
+guthscp.config_metas = guthscp.config_metas or {}
 
 function guthscp.config.add( id, tbl, no_load )
 	--  ensure form table is sequential 
 	tbl.form = guthscp.table.rehash( tbl.form )
 
 	--  add config meta
-	config[id] = {
+	guthscp.config_metas[id] = {
 		form = tbl.form,
 		receive = tbl.receive,
 		parse = tbl.parse,
@@ -24,21 +23,17 @@ function guthscp.config.add( id, tbl, no_load )
 	end
 end 
 
-function guthscp.config.get_all()
-	return config
-end
-
-function guthscp.config.sync( id, tbl, target )
+function guthscp.config.sync( id, config, receiver )
 	net.Start( "guthscp.config:send" )
 		net.WriteString( id )
-		net.WriteTable( tbl )
-	if IsValid( target ) then
-		net.Send( target )
+		net.WriteTable( config )
+	if IsValid( receiver ) then
+		net.Send( receiver )
 	else
 		net.Broadcast()
 	end
 
-	guthscp.info( "guthscp.config", "networked %q config to %s", id, IsValid( target ) and "'" .. target:GetName() .. "'" or "everyone" )
+	guthscp.info( "guthscp.config", "networked %q config to %s", id, IsValid( receiver ) and "'" .. receiver:GetName() .. "'" or "everyone" )
 end
 
 --  edit config 
@@ -54,18 +49,18 @@ net.Receive( "guthscp.config:send", function( len, ply )
 
 	--  check config id
 	local config_id = net.ReadString()
-	if not config[config_id] then 
+	if not guthscp.config_metas[config_id] then 
 		return guthscp.error( "guthscp.config", "%q (%s) sent config of %q which isn't registered!", ply:GetName(), ply:SteamID(), config_id )
 	end
 
 	--  check data
-	local form = net.ReadTable()
-	if table.Count( form ) <= 0 then 
+	local config = net.ReadTable()
+	if table.Count( config ) <= 0 then 
 		return guthscp.error( "guthscp.config", "%q (%s) sent config of %q which has no data!", ply:GetName(), ply:SteamID(), config_id )
 	end
 
 	--  config callback
-	config[config_id].receive( form )
+	guthscp.config_metas[config_id].receive( config )
 	guthscp.info( "guthscp.config", "%q (%s) applied %q config!", ply:GetName(), ply:SteamID(), config_id )
 end )
 

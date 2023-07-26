@@ -2,20 +2,20 @@ guthscp.config = guthscp.config or {}
 guthscp.config.path = "configs/"
 guthscp.configs = guthscp.configs or {}
 
-function guthscp.config.apply( id, tbl, options )
-	local config = guthscp.config.get_all()[id]
-	if not config then 
+function guthscp.config.apply( id, config, options )
+	local config_meta = guthscp.config_metas[id]
+	if not config_meta then 
 		return guthscp.error( "guthscp.config", "trying to apply config %q which isn't registered!", id )
 	end
 
 	--  parse
-	if config.parse then 
-		config.parse( tbl ) 
+	if config_meta.parse then 
+		config_meta.parse( config ) 
 	end
 
 	--  apply data
 	guthscp.configs[id] = guthscp.configs[id] or {}
-	for k, v in pairs( tbl ) do
+	for k, v in pairs( config ) do
 		guthscp.configs[id][k] = v
 	end
 
@@ -25,14 +25,14 @@ function guthscp.config.apply( id, tbl, options )
 		if SERVER and options.network then
 			if player.GetCount() > 0 then  --  only sync if players are in-game
 				timer.Simple( 0, function() 
-					guthscp.config.sync( id, tbl ) 
+					guthscp.config.sync( id, config ) 
 				end )
 			end
 		end
 
 		--  save to json
 		if options.save then
-			guthscp.data.save_to_json( guthscp.config.path .. id .. ".json", tbl, true )
+			guthscp.data.save_to_json( guthscp.config.path .. id .. ".json", config, true )
 		end
 	end
 
@@ -50,14 +50,14 @@ function guthscp.config.load( id )
 	guthscp.config.setup( id )
 	
 	--  load from data file
-	local tbl = guthscp.data.load_from_json( guthscp.config.path .. id .. ".json" )
-	if not tbl then 
+	local config = guthscp.data.load_from_json( guthscp.config.path .. id .. ".json" )
+	if not config then 
 		guthscp.info( "guthscp.config", "failed to load data for %q config", id )
 		return false 
 	end
 
 	--  apply data
-	guthscp.config.apply( id, table.Merge( guthscp.configs[id] or {}, tbl ), {
+	guthscp.config.apply( id, table.Merge( guthscp.configs[id] or {}, config ), {
 		network = true,
 	} )
 	guthscp.info( "guthscp.config", "loaded data to %q config", id )
@@ -65,10 +65,10 @@ function guthscp.config.load( id )
 end
 
 function guthscp.config.load_defaults( id )
-	local tbl = guthscp.config.get_all()[id]
-	if not tbl or not tbl.form then return end
+	local config_meta = guthscp.config_metas[id]
+	if not config_meta or not config_meta.form then return end
 
-	for i, v in ipairs( tbl.form ) do
+	for i, v in ipairs( config_meta.form ) do
 		if v.id and v.default then
 			guthscp.configs[id][v.id] = v.default
 		end

@@ -76,7 +76,7 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 
 	--  populating modules
 	for id, name in SortedPairsByValue( guthscp.config.get_pages_ids() ) do
-		local data = guthscp.modules[id] or guthscp.config.get_all()[id]
+		local data = guthscp.modules[id] or guthscp.config_metas[id]
 
 		--  creating node
 		local node = config_node:AddNode( name, data.icon )
