@@ -626,29 +626,16 @@ function guthscp.config.get_pages_ids()
 	return pages
 end
 
-function guthscp.config.open_menu()
-	if not LocalPlayer():IsSuperAdmin() then 
-		guthscp.warning( "guthscp.config", "you are not part of the \"superadmin\" usergroup!" )
-		return 
-	end
-
-	--  refresh menu and select previous tab
-	local tab_id = nil
-	if IsValid( guthscp.config.menu ) then
-		if IsValid( guthscp.config.menu.sheet ) then 
-			tab_id = guthscp.config.menu.sheet.tab_id 
-		end
-		guthscp.config.menu:Remove() 
-	end
-
+local function create_menu()
 	local w, h = ScrW() * .6, ScrH() * .65
 
 	--  create frame
 	local frame = vgui.Create( "DFrame" )
 	frame:SetSize( w, h )
 	frame:Center()
-	frame:SetDraggable( false )
+	frame:SetDraggable( true )
 	frame:SetTitle( "GuthSCP Menu" )
+	frame:SetDeleteOnClose( false )
 	frame:MakePopup()
 	guthscp.config.menu = frame
 
@@ -693,9 +680,26 @@ function guthscp.config.open_menu()
 			v:SetTall( v:GetTall() + 5 )
 		end
 	end
+end
 
-	if tab_id then
-		switch_callback( tab_id )
+local should_hot_reload = true
+function guthscp.config.open_menu()
+	if not LocalPlayer():IsSuperAdmin() then 
+		guthscp.warning( "guthscp.config", "you are not part of the \"superadmin\" usergroup!" )
+		return 
+	end
+
+	--  hot reload: refresh menu
+	if should_hot_reload and IsValid( guthscp.config.menu ) then
+		guthscp.config.menu:Remove()
+	end
+	should_hot_reload = false
+
+	--  create or show menu
+	if not IsValid( guthscp.config.menu ) then
+		create_menu()
+	else
+		guthscp.config.menu:Show()
 	end
 end
 concommand.Add( "guthscp_menu", guthscp.config.open_menu )
@@ -703,12 +707,21 @@ concommand.Add( "guthscpbase", guthscp.config.open_menu )
 
 hook.Add( "guthscp.config:applied", "guthscp.menu:reload_config", function( id, config )
 	if not IsValid( guthscp.config.menu ) then return end
-	guthscp.config.open_menu()
+	if not guthscp.config.menu.sheets or not guthscp.config.menu.sheets[id] then return end
+
+	--  update config form
+	local panel = guthscp.config.menu.sheets[id].Panel
+	local scroll_panel = panel.scroll_panel
+	local form = scroll_panel.form
+	for id, panel in pairs( form ) do
+		if id:StartsWith( "_" ) then continue end
+		
+		panel:SetValue( config[id] )
+	end
 end )
 
 --  hot reload
-if guthscp.config.menu then 
+if IsValid( guthscp.config.menu ) then
 	guthscp.module.require()
-	guthscp.config.sync()
-	timer.Simple( .5, guthscp.config.open_menu )
+	guthscp.config.sync()  --  this will eventually call the above hook
 end
