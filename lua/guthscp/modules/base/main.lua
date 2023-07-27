@@ -119,19 +119,19 @@ MODULE.menu = {
 			url = "https://github.com/Guthen/guthscpbase/blob/master/README.md",
 		},
 		{
-			text = "API",
+			text = "Wiki",
 			icon = "icon16/script_code.png",
-			url = "https://github.com/Guthen/guthscpbase/wiki/API",
+			url = "https://guthen.gitbook.io/guthscp/",
 		},
 		{
-			text = "Creating your own module",
+			text = "Creating a module",
 			icon = "icon16/brick_add.png",
-			url = "https://github.com/Guthen/guthscpbase/wiki/Creating-your-own-module",
+			url = "https://guthen.gitbook.io/guthscp/tutorials/creating-a-module",
 		},
 		{
-			text = "Creating your own workaround",
+			text = "Creating a workaround",
 			icon = "icon16/folder_wrench.png",
-			url = "https://github.com/Guthen/guthscpbase/wiki/Creating-your-own-workaround",
+			url = "https://guthen.gitbook.io/guthscp/tutorials/creating-a-workaround",
 		},
 		"Social",
 		{
