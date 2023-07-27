@@ -30,12 +30,13 @@ MODULE.menu = {
 				type = "Category",
 				name = "General",
 			},
-			guthscp.config.create_teams_element( {
+			{
+				type = "Teams",
 				name = "SCP Teams",
 				id = "scp_teams",
 				desc = "All teams which represents a SCP team. These teams may not trigger SCPs behaviours.",
 				default = {},
-			} ),
+			},
 			{
 				type = "Category",
 				name = "Entity Breaking",
