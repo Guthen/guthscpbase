@@ -496,8 +496,10 @@ vguis_types = {
 			--  update size
 			container:SetTall( title:GetTall() + column_tall + 4 )
 
-			function container:SetValue()
-				print( "TODO" )
+			function container:SetValue( data )
+				for team_keyname, checkbox in pairs( self.form ) do
+					checkbox:SetValue( data[team_keyname] or false )
+				end
 			end
 	
 			panel:AddItem( container )
