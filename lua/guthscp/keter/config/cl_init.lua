@@ -48,7 +48,9 @@ concommand.Add( "guthscp_sync", guthscp.config.sync )
 --  config vgui
 local vguis_types  --  required in order to use it in the functions
 
-local function install_reset_input( meta, panel, get_value )
+local function install_reset_input( meta, panel, get_value, set_value_obj )
+	set_value_obj = set_value_obj or panel
+
 	local mouse_pressed = panel.OnMousePressed
 	panel:SetMouseInputEnabled( true )
 	function panel:OnMousePressed( mouse_button )
@@ -56,7 +58,7 @@ local function install_reset_input( meta, panel, get_value )
 		if mouse_button == MOUSE_MIDDLE then
 			local menu = DermaMenu( nil, self )
 			menu:AddOption( "Reset to default", function()
-				self:SetValue( get_value and get_value( meta.default ) or meta.default )
+				set_value_obj:SetValue( get_value and get_value( meta.default ) or meta.default )
 			end ):SetMaterial( "icon16/arrow_refresh.png" )
 			menu:Open()
 			return
@@ -156,6 +158,7 @@ local function create_array_vguis( panel, meta, config_value, add_func )
 			add_vgui( v, k )
 		end
 	end
+	install_reset_input( meta, scroll_panel, nil, vguis )
 
 	return vguis
 end
