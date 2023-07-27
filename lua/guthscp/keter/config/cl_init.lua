@@ -437,7 +437,7 @@ vguis_types = {
 			end
 			
 			local current_line = 1
-			local column, lines_per_column = nil, math.ceil( count / 3 )
+			local column, lines_per_column = nil, math.ceil( count / 4 )
 			local column_wide, column_tall = 0, 0
 			local function finish_column()
 				column:SetWide( column_wide )
