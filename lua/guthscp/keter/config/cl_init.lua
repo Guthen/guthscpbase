@@ -79,7 +79,6 @@ local function create_array_vguis( panel, meta, config_value, add_func )
 	--  name
 	local label = Label( meta.name, scroll_panel )
 	label:Dock( TOP )
-	label:DockMargin( 5, 0, 0, 0 )
 	label:SetDark( true )
 
 	local function add_vgui( value, key )
