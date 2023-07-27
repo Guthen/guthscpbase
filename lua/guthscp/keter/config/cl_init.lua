@@ -68,6 +68,7 @@ end
 
 local function create_array_vguis( panel, meta, config_value, add_func )
 	local vguis = {}
+	vguis._meta = meta
 
 	--  scroll panel
 	local scroll_panel = vgui.Create( "DScrollPanel", panel )
@@ -159,6 +160,20 @@ local function create_array_vguis( panel, meta, config_value, add_func )
 	return vguis
 end
 
+local function get_array_vguis_value( panel )
+	local data = {}
+	
+	for i, child in ipairs( panel ) do
+		if panel._meta.is_set then
+			data[child:GetValue()] = true
+		else
+			data[i] = child:GetValue()
+		end
+	end
+
+	return data
+end
+
 local function create_axes_vgui( panel, meta, config_value, axes )
 	--  container
 	local container = vgui.Create( "DPanel", panel )
@@ -205,20 +220,16 @@ function guthscp.config.serialize_form( form )
 		if isstring( k ) and k:StartsWith( "_" ) then continue end  --  ignore '_type' & '_id' property
 		if isfunction( v ) then continue end
 
-		if istable( v ) then  --  recursive (support 'create_array_vguis')
-			config[k] = guthscp.config.serialize_form( v )
-		else
-			--  use special serializors..
-			local vgui_type = vguis_types[v._type]
-			if vgui_type and vgui_type.get_value then
-				local value = vgui_type.get_value( v )
-				if not ( value == nil ) then
-					config[k] = value
-				end
-			--  or value
-			else
-				config[k] = v:GetValue()
+		--  use special serializors..
+		local vgui_type = vguis_types[v._type]
+		if vgui_type and vgui_type.get_value then
+			local value = vgui_type.get_value( v )
+			if not ( value == nil ) then
+				config[k] = value
 			end
+		--  or value
+		else
+			config[k] = v:GetValue()
 		end
 	end
 
@@ -346,11 +357,20 @@ vguis_types = {
 				local textentry = parent:Add( "DTextEntry" )
 				textentry:Dock( TOP )
 				textentry:DockMargin( 25, 5, 5, 0 )
-				textentry:SetValue( meta.value and meta.value( value, key ) or isstring( value ) and value or "" )
+
+				--  set value
+				if key ~= nil and value ~= nil then
+					if meta.is_set then
+						textentry:SetValue( key )
+					else
+						textentry:SetValue( value )
+					end
+				end
 		
 				return textentry
 			end )
 		end,
+		get_value = get_array_vguis_value,
 	},
 	["ComboBox"] = {
 		init = function( panel, meta, config_value )
@@ -400,6 +420,7 @@ vguis_types = {
 				return combobox
 			end )
 		end,
+		get_value = get_array_vguis_value,
 	},
 	["CheckBox"] = {
 		init = function( panel, meta, config_value )
