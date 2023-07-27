@@ -450,13 +450,14 @@ vguis_types = {
 			
 			--  populate with teams
 			local form = {}
+			local columns = {}
 			for team_id, team_info in SortedPairsByMemberValue( teams, "Name" ) do
 				--  create column container
 				if column == nil then
 					column = container:Add( "DPanel" )
 					column:Dock( LEFT )
-					column:DockMargin( 0, 0, 128, 0 )
 					column:SetPaintBackground( false )
+					columns[#columns + 1] = column
 				end
 
 				--  create checkbox
@@ -495,6 +496,20 @@ vguis_types = {
 
 			--  update size
 			container:SetTall( title:GetTall() + column_tall + 4 )
+			function container:PerformLayout( w, h )
+				--  compute used width
+				local columns_wide = 0
+				for i, column in ipairs( columns ) do
+					columns_wide = columns_wide + column:GetWide()
+				end
+
+				--  apply margin
+				local margin = math.floor( ( w - columns_wide ) / ( #columns - 1 ) )
+				for i = 1, #columns - 1 do
+					columns[i]:DockMargin( 0, 0, margin, 0 )
+				end
+				--print( w, columns_wide, margin )
+			end
 
 			function container:SetValue( data )
 				for team_keyname, checkbox in pairs( self.form ) do
