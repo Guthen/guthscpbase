@@ -546,6 +546,20 @@ vguis_types = {
 			return Angle( self.axis_pitch:GetValue(), self.axis_yaw:GetValue(), self.axis_roll:GetValue() )
 		end,
 	},
+	["InputKey"] = {
+		init = function( panel, meta, config_value )
+			--  binder
+			local binder = vgui.Create( "DBinder", panel )
+			binder:SetValue( isnumber( config_value ) and config_value or meta.default )
+
+			--  name
+			local title = Label( meta.name, panel )
+			title:SetDark( true )
+
+			panel:AddItem( title, binder )
+			return binder
+		end,
+	}
 } 
 
 local function create_label_category( parent, text )
