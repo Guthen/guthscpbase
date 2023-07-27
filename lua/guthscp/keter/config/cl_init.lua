@@ -426,7 +426,6 @@ vguis_types = {
 			title:Dock( TOP )
 			title:SetDark( true )
 
-			print()
 			--  retrieve teams
 			local teams, count = {}, 0
 			for team_id, team_info in pairs( team.GetAllTeams() ) do
@@ -489,8 +488,13 @@ vguis_types = {
 			end
 			container.form = form
 
-			finish_column()
-			container:SetTall( column_tall + 4 )
+			--  finish column
+			if IsValid( column ) then
+				finish_column()
+			end
+
+			--  update size
+			container:SetTall( title:GetTall() + column_tall + 4 )
 
 			function container:SetValue()
 				print( "TODO" )
