@@ -21,13 +21,13 @@ end
 	@function guthscp.table.create_set
 		| description: creates a set table (https://www.lua.org/pil/11.5.html) out of the given table's values
 		| params:
-			tbl: const <table> sequential table to use
+			tbl: const <table> table to use
 		| return: <table> new_tbl
 ]]
 function guthscp.table.create_set( tbl )
 	local new_tbl = {}
 
-	for i, v in ipairs( tbl ) do
+	for k, v in pairs( tbl ) do
 		new_tbl[v] = true
 	end
 
