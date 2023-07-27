@@ -798,6 +798,11 @@ local function create_menu()
 	end
 end
 
+function guthscp.config.remove_menu()
+	if not IsValid( guthscp.config.menu ) then return end
+	guthscp.config.menu:Remove()
+end
+
 local should_hot_reload = true
 function guthscp.config.open_menu()
 	if not LocalPlayer():IsSuperAdmin() then 
@@ -806,8 +811,8 @@ function guthscp.config.open_menu()
 	end
 
 	--  hot reload: refresh menu
-	if should_hot_reload and IsValid( guthscp.config.menu ) then
-		guthscp.config.menu:Remove()
+	if should_hot_reload then
+		guthscp.config.remove_menu()
 	end
 	should_hot_reload = false
 

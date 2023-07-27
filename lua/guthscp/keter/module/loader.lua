@@ -241,6 +241,11 @@ function guthscp.module.hot_reload( id )
 		module._.online_version = old_module._.online_version
 	end
 
+	--  reload menu
+	if CLIENT then
+		guthscp.config.remove_menu()
+	end
+
 	guthscp.print_tabs = guthscp.print_tabs - 1
 	print()
 
