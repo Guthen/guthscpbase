@@ -382,7 +382,15 @@ vguis_types = {
 			local combobox = panel:ComboBox( meta.name )
 			combobox:SetValue( isstring( value ) and value or "" )
 
-			for i, v in ipairs( meta.choice and meta.choice() or {} ) do
+			--  get choices
+			local choices = {}
+			if isfunction( meta.choice ) then
+				choices = meta.choice()
+			elseif istable( meta.choice ) then
+				choices = meta.choice
+			end
+
+			for i, v in ipairs( choices ) do
 				combobox:AddChoice( v.value, v.data, v.value == value )
 			end
 
@@ -416,7 +424,15 @@ vguis_types = {
 				combobox:DockMargin( 25, 5, 5, 0 )
 				combobox:SetValue( isstring( value ) and value or "" )
 
-				for i, v in ipairs( meta.choice and meta.choice() or {} ) do
+				--  get choices
+				local choices = {}
+				if isfunction( meta.choice ) then
+					choices = meta.choice()
+				elseif istable( meta.choice ) then
+					choices = meta.choice
+				end
+
+				for i, v in ipairs( choices ) do
 					combobox:AddChoice( v.value, v.data )
 				end
 		
