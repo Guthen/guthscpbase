@@ -219,3 +219,7 @@ function guthscp.helpers.format_message( msg, args )
 
 	return formatted_text
 end
+
+function guthscp.helpers.stringify_enum_key( str )
+	return str:sub( 1, 1 ):upper() .. str:sub( 2 ):lower()
+end

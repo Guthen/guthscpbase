@@ -453,6 +453,33 @@ vguis_types = {
 			return self:GetChecked()
 		end,
 	},
+	["Enum"] = {
+		init = function( panel, meta, config_value )
+			local combobox = panel:ComboBox( meta.name )
+			combobox:SetValue( isstring( value ) and value or "" )
+
+			--  populate choices
+			local choices = {}
+			for k, v in pairs( meta.enum ) do
+				choices[v] = combobox:AddChoice( guthscp.helpers.stringify_enum_key( k ), v, v == config_value )
+			end
+
+			function combobox:SetValue( value )
+				local idx = choices[value]
+				if not isnumber( idx ) then return end
+				
+				--  select corresponding choice
+				self:ChooseOptionID( idx )
+			end
+
+			install_reset_input( meta, combobox )
+			return combobox
+		end,
+		get_value = function( self ) 
+			local text, data = self:GetSelected()
+			return data
+		end,
+	},
 	["Teams"] = {
 		init = function( panel, meta, config_value )
 			--  container
@@ -599,7 +626,7 @@ vguis_types = {
 			panel:AddItem( title, binder )
 			return binder
 		end,
-	}
+	},
 } 
 
 local function create_label_category( parent, text )
