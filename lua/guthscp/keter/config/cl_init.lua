@@ -480,6 +480,41 @@ vguis_types = {
 			return data
 		end,
 	},
+	["Team"] = {
+		init = function( panel, meta, config_value )
+			local combobox = panel:ComboBox( meta.name )
+			combobox:SetValue( isstring( value ) and value or "" )
+
+			--  populate choices
+			local choices = {}
+			choices["nil"] = combobox:AddChoice( "None", "TEAM_NIL" )
+
+			for team_id, team_info in pairs( guthscp.get_usable_teams() ) do
+				local keyname = guthscp.get_team_keyname( team_id )
+				choices[keyname] = combobox:AddChoice( team_info.Name, keyname )
+			end
+
+			--  auto-select
+			combobox:ChooseOptionID( choices[config_value] or choices["nil"] )
+
+			function combobox:SetValue( value )
+				local idx = choices[value]
+				if not isnumber( idx ) then
+					idx = choices["nil"]
+				end
+				
+				--  select corresponding choice
+				self:ChooseOptionID( idx )
+			end
+
+			install_reset_input( meta, combobox )
+			return combobox
+		end,
+		get_value = function( self ) 
+			local text, data = self:GetSelected()
+			return data
+		end,
+	},
 	["Teams"] = {
 		init = function( panel, meta, config_value )
 			--  container
@@ -493,14 +528,7 @@ vguis_types = {
 			title:SetDark( true )
 
 			--  retrieve teams
-			local teams, count = {}, 0
-			for team_id, team_info in pairs( team.GetAllTeams() ) do
-				if team_id == TEAM_SPECTATOR then continue end
-				if not team_info.Joinable then continue end
-
-				teams[team_id] = team_info
-				count = count + 1
-			end
+			local teams, count = guthscp.get_usable_teams()
 			
 			local current_line = 1
 			local column, lines_per_column = nil, math.ceil( count / 4 )

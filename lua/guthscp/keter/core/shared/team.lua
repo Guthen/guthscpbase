@@ -114,3 +114,17 @@ end
 function guthscp.get_team_id( team_keyname )
 	return teams_keynames[team_keyname]
 end
+
+function guthscp.get_usable_teams()
+	local teams, count = {}, 0
+	
+	for team_id, team_info in pairs( team.GetAllTeams() ) do
+		if team_id == TEAM_SPECTATOR then continue end
+		if not team_info.Joinable then continue end
+
+		teams[team_id] = team_info
+		count = count + 1
+	end
+
+	return teams, count
+end
