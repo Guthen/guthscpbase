@@ -255,6 +255,14 @@ vguis_types = {
 			for i, meta in ipairs( meta.elements or {} ) do
 				local id = meta.id
 
+				--  convert strings into categories
+				if isstring( meta ) then
+					meta = {
+						type = "Category",
+						name = meta,
+					}
+				end
+
 				local vgui_type = vguis_types[meta.type]
 				if not vgui_type or not vgui_type.init then
 					guthscp.error( "guthscp.config", "element %q is not a recognized type!", meta.type )

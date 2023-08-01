@@ -26,10 +26,7 @@ MODULE.menu = {
 	--  config
 	config = {
 		form = {
-			{
-				type = "Category",
-				name = "General",
-			},
+			"General",
 			{
 				type = "Teams",
 				name = "SCP Teams",
@@ -37,10 +34,7 @@ MODULE.menu = {
 				desc = "All teams which represents a SCP team. These teams may not trigger SCPs behaviours.",
 				default = {},
 			},
-			{
-				type = "Category",
-				name = "Entity Breaking",
-			},
+			"Entity Breaking",
 			{
 				type = "NumWang",
 				name = "Respawn Time",
