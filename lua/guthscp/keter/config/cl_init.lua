@@ -323,7 +323,7 @@ vguis_types = {
 			return nil  --  skip buttons serializing
 		end,
 	},
-	["NumWang"] = {
+	["Number"] = {
 		init = function( panel, meta, config_value )
 			local numwang = panel:NumberWang( meta.name, nil, -math.huge, math.huge, nil )
 			numwang:SetValue( config_value or meta.default or 0 )
@@ -353,7 +353,7 @@ vguis_types = {
 			return numwang
 		end,
 	},
-	["TextEntry"] = {
+	["String"] = {
 		init = function( panel, meta, config_value )
 			local textentry = panel:TextEntry( meta.name )
 			textentry:SetValue( config_value or meta.default or "" )
@@ -362,7 +362,7 @@ vguis_types = {
 			return textentry
 		end,
 	},
-	["TextEntry[]"] = {
+	["String[]"] = {
 		init = function( panel, meta, config_value )
 			return create_array_vguis( panel, meta, config_value, function( parent, value, key )
 				local textentry = parent:Add( "DTextEntry" )
@@ -449,7 +449,7 @@ vguis_types = {
 		end,
 		get_value = get_array_vguis_value,
 	},
-	["CheckBox"] = {
+	["Bool"] = {
 		init = function( panel, meta, config_value )
 			local checkbox = panel:CheckBox( meta.name )
 			checkbox:SetValue( config_value or false )
