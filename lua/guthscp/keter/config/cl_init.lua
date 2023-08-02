@@ -764,14 +764,25 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 
 		local data = {
 			"Details",
-			{
-				text = module.author,
-				icon = "icon16/user_gray.png",
-			},
-			{
-				text = "v" .. module.version,
-				icon = "icon16/drive_go.png",
-			},
+		}
+
+		--  debug: add module's id
+		if guthscp.is_debug() then
+			data[#data + 1] = {
+				text = module.id,
+				icon = "icon16/script_code.png"
+			}
+		end
+
+		--  add author
+		data[#data + 1] = {
+			text = module.author,
+			icon = "icon16/user_gray.png",
+		}
+		--  add local version
+		data[#data + 1] = {
+			text = "v" .. module.version,
+			icon = "icon16/drive_go.png",
 		}
 
 		--  add online version
