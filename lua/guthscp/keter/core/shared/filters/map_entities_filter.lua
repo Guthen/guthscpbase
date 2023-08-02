@@ -13,7 +13,13 @@ end
 function FILTER:serialize()
 	local data = {}
 
-	for ent in pairs( self.container ) do
+	for id in pairs( self.container ) do
+		local ent = Entity( id )
+		if not IsValid( ent ) then
+			guthscp.warning( "guthscp.filter", "failed to retrieve entity (ID: %d) for serializing", id )
+			continue
+		end
+
 		data[#data + 1] = ent:MapCreationID()
 	end
 
