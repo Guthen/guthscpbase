@@ -245,15 +245,15 @@ if SERVER then
 		local is_save = net.ReadBool()
 		if is_save then
 			if filter:save() then
-				ply:ChatPrint( ( "Filter %q has been succesfully saved!" ):format( filter_id ) )	
+				ply:ChatPrint( ( "Filter %q has been succesfully saved!" ):format( filter.name ) )	
 			else 
-				ply:ChatPrint( ( "Filter %q has failed to save, probably failed to serialize or not implemented." ):format( filter_id ) )
+				ply:ChatPrint( ( "Filter %q has failed to save, probably failed to serialize or not implemented." ):format( filter.name ) )
 			end
 		else
 			if filter:load() then
-				ply:ChatPrint( ( "Filter %q has been succesfully loaded!" ):format( filter_id ) )
+				ply:ChatPrint( ( "Filter %q has been succesfully loaded!" ):format( filter.name ) )
 			else
-				ply:ChatPrint( ( "Filter %q has failed to load, no save file found." ):format( filter_id ) )
+				ply:ChatPrint( ( "Filter %q has failed to load, no save file found." ):format( filter.name ) )
 			end
 		end
 	end )
