@@ -78,7 +78,13 @@ if CLIENT then
 		local tool = ply:GetTool()
 		if not ( tool.Mode == guthscp.filter.tool_mode ) then return end
 
-		halo.Add( guthscp.entity_breaking_filter:get_entities(), Color( 255, 0, 0 ), 2, 2, 1, true, true )
+		--  get filter
+		local filter_id = tool:GetClientInfo( "filter_id" )
+		local filter = guthscp.filters[filter_id]
+		assert( filter, "Filter '" .. filter_id .. "' doesn't exists!" )
+
+		--  draw halos
+		halo.Add( filter:get_entities(), Color( 255, 0, 0 ), 2, 2, 1, true, true )
 	end )
 end
 
