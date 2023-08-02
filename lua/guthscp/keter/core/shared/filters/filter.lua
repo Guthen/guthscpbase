@@ -23,6 +23,13 @@ function FILTER:new( id, name )
 		event_removed = guthscp.event_handler:new(),
 	}
 
+	--  hot reload
+	local old_filter = guthscp.filters[id]
+	if old_filter then
+		obj.count = old_filter.count
+		obj.container = old_filter.container
+	end
+
 	--  register
 	guthscp.filters[id] = obj
 
