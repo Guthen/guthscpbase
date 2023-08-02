@@ -72,17 +72,18 @@ local function create_array_vguis( panel, meta, config_value, add_func )
 	local vguis = {}
 	vguis._meta = meta
 
+	--  name
+	local label = Label( meta.name, panel )
+	label:Dock( TOP )
+	label:DockMargin( 8, 8, 0, -8 )
+	label:SetDark( true )
+
 	--  scroll panel
 	local scroll_panel = vgui.Create( "DScrollPanel", panel )
 	panel:AddItem( scroll_panel )
 
 	panel:InvalidateLayout( true )
 	scroll_panel:SetTall( 150 )
-
-	--  name
-	local label = Label( meta.name, scroll_panel )
-	label:Dock( TOP )
-	label:SetDark( true )
 
 	local function add_vgui( value, key )
 		local child = add_func( scroll_panel, value, key )
