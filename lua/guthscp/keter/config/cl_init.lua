@@ -636,7 +636,18 @@ vguis_types = {
 	},
 	["Vector"] = {
 		init = function( panel, meta, config_value )
-			return create_axes_vgui( panel, meta, config_value, { "x", "y", "z" } )
+			local container = create_axes_vgui( panel, meta, config_value, { "x", "y", "z" } )
+			
+			if meta.show_usepos then
+				local button_usepos = container:Add( "DButton" )
+				button_usepos:Dock( RIGHT )
+				button_usepos:SetText( "Use Pos" )
+				function button_usepos:DoClick()
+					container:SetValue( LocalPlayer():GetPos() )
+				end
+			end
+			
+			return container
 		end,
 		get_value = function( self )
 			return Vector( self.axis_x:GetValue(), self.axis_y:GetValue(), self.axis_z:GetValue() )
