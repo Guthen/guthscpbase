@@ -11,6 +11,7 @@ function guthscp.module.construct( id )
 	local module = guthscp.require_file( guthscp.module.path .. id .. "/main.lua", guthscp.REALMS.SHARED )
 	if not module then
 		guthscp.error( "guthscp.module", "failed to construct module %q (\"main.lua\" not found)!", id )  
+		guthscp.print_tabs = guthscp.print_tabs - 1
 		return false
 	end
 
