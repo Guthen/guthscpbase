@@ -665,7 +665,14 @@ vguis_types = {
 		init = function( panel, meta, config_value )
 			--  binder
 			local binder = vgui.Create( "DBinder", panel )
-			binder:SetValue( isnumber( config_value ) and config_value or meta.default )
+			function binder:SetValue( value )
+				if not isnumber( value ) then
+					value = meta.default
+				end
+
+				self:SetSelectedNumber( value )
+			end
+			binder:SetValue( config_value )
 
 			--  name
 			local title = Label( meta.name, panel )
