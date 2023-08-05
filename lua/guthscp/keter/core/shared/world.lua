@@ -54,3 +54,7 @@ function guthscp.world.player_trace_attack( ply, max_dist, bounds )
 
 	return tr 
 end
+
+function guthscp.world.is_living_entity( ent )
+    return ent:IsPlayer() or ent:IsNPC() or ent:IsNextBot()
+end
