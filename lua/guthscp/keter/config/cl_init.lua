@@ -640,7 +640,7 @@ vguis_types = {
 			
 			if meta.show_usepos then
 				local button_usepos = container:Add( "DButton" )
-				button_usepos:Dock( RIGHT )
+				button_usepos:Dock( LEFT )
 				button_usepos:SetText( "Use Pos" )
 				function button_usepos:DoClick()
 					container:SetValue( LocalPlayer():GetPos() )
