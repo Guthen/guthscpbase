@@ -76,7 +76,7 @@ if CLIENT then
 		if not IsValid( active_weapon ) or not ( active_weapon:GetClass() == "gmod_tool" ) then return end
 
 		local tool = ply:GetTool()
-		if not ( tool.Mode == guthscp.filter.tool_mode ) then return end
+		if tool and not ( tool.Mode == guthscp.filter.tool_mode ) then return end
 
 		--  get filter
 		local filter_id = tool:GetClientInfo( "filter_id" )
