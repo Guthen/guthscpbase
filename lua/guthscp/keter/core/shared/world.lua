@@ -18,6 +18,26 @@ function guthscp.world.is_ground( pos )
 end
 
 --[[ 
+    @function guthscp.world.safe_entity_trace
+        | description: trace at the given position to check safe placement for the entity
+        | params:
+            ent: <Entity> entity to use
+            pos: <Vector?> position to check, default to entity's position
+            end_pos: <Vector?> end-position to check, default to 'pos'
+        | return: <TraceResult> trace
+]]
+function guthscp.world.safe_entity_trace( ent, pos, end_pos )
+    pos = pos or ent:GetPos()
+    end_pos = end_pos or pos
+
+    return util.TraceEntity( {
+        start = pos,
+        endpos = end_pos,
+        filter = ent,
+    }, ent )
+end
+
+--[[ 
     @function guthscp.world.player_trace_attack
         | description: perform a hull trace on the given player for weapons attack purpose
         | params:
