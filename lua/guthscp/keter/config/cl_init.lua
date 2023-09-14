@@ -551,6 +551,13 @@ vguis_types = {
 				column_tall = math.max( column_tall, last_child:GetY() + last_child:GetTall() )
 			end
 			
+			if count == 0 then
+				local label = container:Add( Label( "No teams are available..", container ) )
+				label:Dock( TOP )
+				label:SetTextColor( Color( 100, 100, 100 ) )
+				column_tall = column_tall + label:GetTall()
+			end
+
 			--  populate with teams
 			local form = {}
 			local columns = {}
