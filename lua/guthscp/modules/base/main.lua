@@ -7,7 +7,7 @@ local MODULE = {
 It comes with everything considered useful for making SCPs addons work together in harmony.
 The base allows easy module creation with their own in-game configuration usable anywhere in the code.
 It also includes:
-─ its own spawnmenu for referencing all SCPs Weapons, Entities and the Configurations
+─ its own spawnmenu category for referencing all SCPs Weapons, Entities, the Modules and their Configurations
 ─ a workaround system for fixing conflicts & issues with external addons
 ─ a custom shared sound system for easily playing looping and 3D-spatialized sounds
 ─ an entity breaking system, useful for throwing doors and chairs at your victims while playing as SCP-096
