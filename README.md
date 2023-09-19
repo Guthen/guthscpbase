@@ -12,7 +12,7 @@ Type `guthscp_menu` in your game's console to open the configuration panel.
 
 This addon is available on the Workshop [here](https://steamcommunity.com/sharedfiles/filedetails/?id=3034737316)!
 
-## Content
+## Features
 + Allow an easy in-game configuration system (`guthscp_menu` in your client console)
 + Base entity to derive from **\***
 + Its own spawnmenu category for referencing all SCPs Weapons, Entities, the Modules and their Configurations
@@ -20,16 +20,18 @@ This addon is available on the Workshop [here](https://steamcommunity.com/shared
 + **Custom shared sound system** for easily playing looping and 3D-spatialized sounds **\***
 + **Entity breaking system**, useful for throwing doors and chairs at your victims while playing as SCP-096 **\***
 + Some useful functions for managing file data, getting a list of living NPCs, manipulating Lua tables.. **\***
++ **Tool** for configuring modules to the map: Map Entities Filter Configurator
++ **Requires a Sandbox-based gamemode** (e.g. Sandbox, DarkRP) for tool use 
 
 **\*** These features are only effective on addons (mostly mine) using this base, this will do nothing if you don't have any.
 
 ## Commands
-+ `guthscp_repair_entities`: *server*; repair all broken entities
-+ `guthscp_debug_break_at_trace`: *client (`superadmin`)*; destroy the looked entities
-+ `guthscp_stop_channel_sounds`: *client*; stop and remove all sound channels currently playing
-+ `guthscp_print_channel_sounds`: *client*; print all the existing sound channels 
-+ `guthscp_sync`: *client*; retrieve all configs from the server
-+ `guthscp_menu`: *client (`superadmin`)*; the **must-have console command** of this addon! it shows the configuration panel and allow you to edit all available settings of installed compatible addons
++ `guthscp_repair_entities` (server): repair all broken entities
++ `guthscp_debug_break_at_trace` (client as `superadmin`): destroy the looked entities
++ `guthscp_stop_channel_sounds` (client): stop and remove all sound channels currently playing
++ `guthscp_print_channel_sounds` (client): print all the existing sound channels 
++ `guthscp_sync` (client): retrieve all configs from the server
++ `guthscp_menu` (client as `superadmin`): the **must-have console command** of this addon! it shows the configuration panel and allow you to edit all available settings of installed compatible addons
 
 ## Modules
 *Wanna see addons which use this one?* 
