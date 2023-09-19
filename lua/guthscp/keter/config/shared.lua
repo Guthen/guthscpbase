@@ -69,7 +69,7 @@ function guthscp.config.load_defaults( id )
 	if not config_meta or not config_meta.form then return end
 
 	for i, v in ipairs( config_meta.form ) do
-		if v.id and v.default then
+		if v.id and v.default ~= nil then
 			guthscp.configs[id][v.id] = v.default
 		end
 	end
