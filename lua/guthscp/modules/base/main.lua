@@ -1,7 +1,7 @@
 local MODULE = {
 	name = "Base",
 	author = "Guthen",
-	version = "2.0.0-dev",
+	version = "2.0.0-beta",
 	description = [[The must-have addon that allows you to see this interface (and surely more)!
 
 It comes with everything considered useful for making SCPs addons work together in harmony.
