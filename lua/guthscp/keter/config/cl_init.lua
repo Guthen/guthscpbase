@@ -689,6 +689,124 @@ vguis_types = {
 			return binder
 		end,
 	},
+	["Color"] = {
+		init = function( panel, meta, config_value )
+			local container = vgui.Create( "DPanel", panel )
+			container:Dock( TOP )
+			container:SetPaintBackground( false )
+			container:SetTall( 20 )
+
+			--  name
+			local title = Label( meta.name, panel )
+			title:SetDark( true )
+
+			--  color preview
+			local preview = container:Add( "DPanel" )
+			preview:Dock( LEFT )
+			preview:SetWide( container:GetTall() )
+
+			--  hexadecimal entry
+			local entry = container:Add( "DTextEntry" )
+			entry:Dock( LEFT )
+			entry:DockMargin( 4, 0, 0, 0 )
+			entry:SetWide( 64 )
+			entry:SetDrawLanguageID( false )
+			entry:SetPlaceholderText( " #ffffffff" )
+			--entry:SetValue( " #eb3c07" )
+			function entry:AllowInput( char )
+				return char:match( "[a-fA-F%d%s#]" ) == nil
+			end
+			function entry:OnChange()
+				local text = self:GetValue()
+				text = text:gsub( "[%s#]*", "" )
+				if #text < 6 then return end
+
+				--  split components
+				local r, g, b, a = text:sub( 1, 2 ), text:sub( 3, 4 ), text:sub( 5, 6 ), text:sub( 7, 8 )
+				--print( r, g, b, a )
+
+				--  convert from hexadecimal
+				r = tonumber( r, 16 )
+				g = tonumber( g, 16 )
+				b = tonumber( b, 16 )
+				a = tonumber( a, 16 ) or 255
+				--print( r, g, b, a )
+
+				--  set color
+				local color = Color( r, g, b, a )
+				container:SetValue( color )
+			end
+			function entry:SetToColor( color )
+				local text = " #"
+				text = text .. bit.tohex( color.r, 2 ) 
+							.. bit.tohex( color.g, 2 ) 
+							.. bit.tohex( color.b, 2 ) 
+							.. bit.tohex( color.a, 2 )
+				
+				self:SetValue( text )
+			end
+
+			--  combo button
+			local combo = nil
+			local combo_button = container:Add( "DImageButton" )
+			combo_button:Dock( LEFT )
+			combo_button:DockMargin( 8, 2, 4, 2 )
+			combo_button:SetWide( 16 )
+			combo_button:SetText( "" )
+			combo_button:SetImage( "icon16/color_wheel.png" )
+			function combo_button:DoClick()
+				if IsValid( combo ) then
+					combo:Remove()
+				end
+
+				local HOVER_EXTENT = 16
+				local is_first_frame = true
+				local m_x, m_y = input.GetCursorPos()
+
+				--  create combo
+				combo = vgui.Create( "DColorCombo" )
+				combo:SetPos( m_x - 1, m_y - 1 )
+				combo:SetColor( container.color )
+				combo.Mixer:SetAlphaBar( true )
+				combo.Mixer:SetWangs( true )
+				combo:MakePopup()
+				function combo:Think()
+					--  avoid first frame to update local cursor position
+					if is_first_frame then
+						is_first_frame = false
+						return
+					end
+
+					--  check cursor within bounds
+					local m_x, m_y = self:LocalCursorPos()
+					if m_x > -HOVER_EXTENT and m_y > -HOVER_EXTENT and m_x < self:GetWide() + HOVER_EXTENT and m_y < self:GetTall() + HOVER_EXTENT then return end
+
+					self:Remove()
+				end
+				function combo:OnValueChanged( color )
+					container:SetValue( color )
+				end
+			end
+			function combo_button:OnRemove()
+				if IsValid( combo ) then
+					combo:Remove()
+				end
+			end
+
+			function container:SetValue( value )
+				preview:SetBackgroundColor( value )
+				entry:SetToColor( value )
+				container.color = value
+			end
+			container:SetValue( config_value )
+
+			panel:AddItem( title, container )
+			return container
+		end,
+		get_value = function( self )
+			return self.color
+		end,
+	},
 } 
 
 local function create_label_category( parent, text )
