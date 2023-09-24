@@ -672,6 +672,15 @@ vguis_types = {
 		init = function( panel, meta, config_value )
 			--  binder
 			local binder = vgui.Create( "DBinder", panel )
+			binder:SetWide( 120 )
+			function binder:UpdateText()
+				local str = input.GetKeyName( self:GetSelectedNumber() )
+				if ( !str ) then str = "NONE" end
+
+				str = language.GetPhrase( str )
+
+				self:SetText( str:upper() )
+			end
 			function binder:SetValue( value )
 				if not isnumber( value ) then
 					value = meta.default
