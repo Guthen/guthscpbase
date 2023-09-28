@@ -580,12 +580,17 @@ vguis_types = {
 				
 				--  check config
 				local team_keyname = guthscp.get_team_keyname( team_id )
-				if config_value[team_keyname] then
-					checkbox:SetChecked( true )
+				if team_keyname == nil then 
+					checkbox:SetDisabled( true )
+					guthscp.warning( "guthscp.config", "%q team doesn't have a unique 'TEAM_' name, disabling it..", team_info.Name )
+				else
+					if config_value[team_keyname] then
+						checkbox:SetChecked( true )
+					end
+	
+					--  assign to form
+					form[team_keyname] = checkbox
 				end
-
-				--  assign to form
-				form[team_keyname] = checkbox
 				
 				--  handle layout
 				current_line = current_line + 1
