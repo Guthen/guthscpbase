@@ -85,6 +85,7 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 			local container = panel:Add( "DPanel" )
 			container:DockPadding( 5, 5, 5, 5 )
 			container:SetVisible( false )
+			container:SetSkin( "Default" )  --  prevent Helix from making my menu uglier
 	
 			local scroll_panel = container:Add( "DScrollPanel" )
 			scroll_panel:Dock( FILL )

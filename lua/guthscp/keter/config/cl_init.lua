@@ -1038,6 +1038,7 @@ local function create_menu()
 	frame:SetDraggable( true )
 	frame:SetTitle( "GuthSCP Menu" )
 	frame:SetDeleteOnClose( false )
+	frame:SetSkin( "Default" )  --  prevent Helix from making my menu uglier
 	frame:MakePopup()
 	guthscp.config.menu = frame
 
