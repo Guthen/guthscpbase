@@ -47,7 +47,8 @@ function guthscp.cache_teams_keynames()
 
 	local count = 0
 	for k, v in pairs( _G ) do
-		if k:StartWith( "TEAM_" ) then
+		if k:StartWith( "TEAM_" ) or       --  DarkRP
+		   k:StartWith( "FACTION_" ) then  --  Helix
 			teams_keynames[k] = v
 			count = count + 1
 		end
