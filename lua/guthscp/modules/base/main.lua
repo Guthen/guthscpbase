@@ -1,7 +1,7 @@
 local MODULE = {
 	name = "Base",
 	author = "Guthen",
-	version = "2.1.4-beta",
+	version = "2.1.5-beta",
 	description = [[The must-have addon that allows you to see this interface (and surely more)!
 
 It comes with everything considered useful for making SCPs addons work together in harmony.
@@ -158,6 +158,15 @@ function MODULE:init()
 
 	--  create filter
 	guthscp.entity_breaking_filter = guthscp.map_entities_filter:new( "guthscp_entity_breaking", "GuthSCP Entity Breaking" )
+
+	--  warn to get rid of old base
+	timer.Simple( 0, function()
+		if GuthSCP and GuthSCP.Config then
+			local text = "The old base has been detected, please uninstall it and replace its addons by the new modules."
+			self:add_error( text )
+			self:error( text )
+		end
+	end )
 end
 
 guthscp.module.hot_reload( "base" )
