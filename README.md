@@ -5,6 +5,8 @@ The base allows easy module creation with their own in-game configuration usable
 
 Type `guthscp_menu` in your game's console to open the configuration panel.
 
+Do you need more informations or want to develop modules? Read the [wiki](https://guthen.gitbook.io/guthscp/)
+
 ## Steam Workshop
 ![Steam Views](https://img.shields.io/steam/views/3034737316?color=red&style=for-the-badge)
 ![Steam Downloads](https://img.shields.io/steam/downloads/3034737316?color=red&style=for-the-badge)
