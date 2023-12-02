@@ -22,15 +22,16 @@ if SERVER then
 			
 			self:remove( ply )
 		end )
+		hook.Add( "PlayerStripWeapons", self.global_id, function( ply )  --  this is a custom hook, read 'overrides.lua'
+			self:remove( ply )
+		end )
 		
-		local function remove_if_not_has_weapon( ply )
-			if not ply:HasWeapon( weapon_class ) then return end
-	
+		local function remove_player( ply )
 			self:remove( ply )
 		end
-		hook.Add( "DoPlayerDeath", self.global_id, remove_if_not_has_weapon )
-		hook.Add( "PlayerSilentDeath", self.global_id, remove_if_not_has_weapon )
-		hook.Add( "OnPlayerChangedTeam", self.global_id, remove_if_not_has_weapon )
+		--hook.Add( "PlayerSpawn", self.global_id, remove_player )
+		hook.Add( "DoPlayerDeath", self.global_id, remove_player )
+		hook.Add( "PlayerSilentDeath", self.global_id, remove_player )
 	end
 	
 	function FILTER:listen_disconnect()
