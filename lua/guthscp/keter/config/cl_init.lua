@@ -1007,10 +1007,47 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 	--  populate config
 	local config = guthscp.config_metas[id]
 	if config then
+		--  custom config
 		parent.form = vguis_types["Form"].init( parent, {
 			name = "Configuration",
 			elements = config.form,
 		}, id )
+
+		--  create bottom container
+		local container = parent:GetParent():Add( "DPanel" )
+		container:Dock( BOTTOM )
+		container:DockMargin( 0, 4, 0, 4 )
+
+		--  add apply button
+		local apply_button = container:Add( "DButton" )
+		apply_button:Dock( TOP )
+		apply_button:DockMargin( 0, 0, 0, 4 )
+		apply_button:SetText( "Apply" )
+		function apply_button:DoClick()
+			guthscp.config.send( id, guthscp.config.serialize_form( parent.form ) )
+		end
+
+		--  add reset button
+		local reset_button = container:Add( "DButton" )
+		reset_button:Dock( TOP )
+		reset_button:SetText( "Reset to Default" )
+		function reset_button:DoClick()
+			Derma_Query( 
+				"Are you really sure to reset the actual configuration to its default settings? This will delete the existing configuration file.", 
+				"Reset Configuration", 
+				"Yes", function()
+					--  send reset to server
+					net.Start( "guthscp.config:reset" )
+						net.WriteString( id )
+					net.SendToServer()
+				end,
+				"No", nil
+			)
+		end
+
+		--  size vertically to content
+		container:InvalidateLayout( true )
+		container:SizeToChildren( false, true )
 	end
 end
 
