@@ -2,6 +2,9 @@
 guthscp.player_speed_modifiers = guthscp.player_speed_modifiers or {}
 
 function guthscp.apply_player_speed_modifier( ply, id, scale, time )
+	--  avoid useless modifiers
+	if scale == 1.0 or time == 0.0 then return end
+
 	local timer_id = "guthscp:revert-player-speed-" .. id .. "-" .. ply:SteamID64()
 
 	guthscp.player_speed_modifiers[ply] = guthscp.player_speed_modifiers[ply] or {}
