@@ -329,6 +329,7 @@ vguis_types = {
 			local numwang = panel:NumberWang( meta.name, nil, -math.huge, math.huge, nil )
 			numwang:SetValue( config_value or meta.default or 0 )
 			numwang:SetY( 10 )  --  default Y-pos is bad
+			numwang:SetInterval( meta.interval or 1.0 )
 			
 			--  set min-max
 			if meta.min then
