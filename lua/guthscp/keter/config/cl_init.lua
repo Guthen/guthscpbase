@@ -182,6 +182,7 @@ local function create_axes_vgui( panel, meta, config_value, axes )
 	--  container
 	local container = vgui.Create( "DPanel", panel )
 	container:Dock( TOP )
+	container:SetPaintBackground( false )
 
 	--  name
 	local title = Label( meta.name, container )
