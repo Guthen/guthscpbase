@@ -70,6 +70,13 @@ function guthscp.update_player_speed( ply )
 	end
 end
 
+function guthscp.has_player_speed_modifier( ply, id )
+	local modifiers = guthscp.player_speed_modifiers[ply]
+	if not modifiers then return false end
+
+	return tobool( modifiers[id] )
+end
+
 function guthscp.clear_player_speed_modifiers( ply )
 	local modifiers = guthscp.player_speed_modifiers[ply]
 	if not modifiers then return end
