@@ -14,6 +14,11 @@ end
 
 local played_sounds = {}
 function guthscp.sound.play( ent, path, radius, looping, volume )
+	if istable( path ) then
+		--  choose a random sound path
+		path = path[math.random( #path )]
+	end
+
 	start_network_sound( ent, path, radius, looping, volume )
 	net.Broadcast()
 
