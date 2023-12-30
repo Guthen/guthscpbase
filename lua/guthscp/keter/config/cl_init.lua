@@ -254,7 +254,9 @@ vguis_types = {
 
 			local form = {}
 			form._id = config_id
-			for i, meta in ipairs( meta.elements or {} ) do
+
+			local last_category_name
+			local function populate_element( panel, meta )
 				local id = meta.id
 
 				--  convert strings into categories
@@ -265,6 +267,13 @@ vguis_types = {
 					}
 				end
 
+				--  mark as last category
+				if meta.type == "Category" then
+					last_category_name = meta.name
+					return
+				end
+
+				--  try populate vgui
 				local vgui_type = vguis_types[meta.type]
 				if not vgui_type or not vgui_type.init then
 					guthscp.error( "guthscp.config", "element %q is not a recognized type!", meta.type )
@@ -285,6 +294,35 @@ vguis_types = {
 					if meta.desc then
 						panel:ControlHelp( meta.desc ):DockMargin( 10, 0, 0, 15 )
 					end
+				end
+			end
+
+			--  populate elements
+			local current_panel = panel
+			for i, meta in ipairs( meta.elements or {} ) do
+				if isstring( last_category_name ) then
+					--  create form
+					local content = vgui.Create( "DForm", category )
+					content:SetLabel( last_category_name )
+					if meta.is_expanded ~= nil then
+						content:SetExpanded( meta.is_expanded )
+					end
+					panel:AddItem( content )
+
+					--  populate
+					if meta.type then
+						populate_element( content, meta )
+					else
+						for i, v in ipairs( meta ) do
+							populate_element( content, v )
+						end
+					end
+
+					--  mark as used
+					last_category_name = nil
+					current_panel = content
+				else
+					populate_element( current_panel, meta )
 				end
 			end
 			

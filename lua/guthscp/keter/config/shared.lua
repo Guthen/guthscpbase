@@ -68,9 +68,24 @@ function guthscp.config.load_defaults( id )
 	local config_meta = guthscp.config_metas[id]
 	if not config_meta or not config_meta.form then return end
 
-	for i, v in ipairs( config_meta.form ) do
-		if v.id and v.default ~= nil then
-			guthscp.configs[id][v.id] = v.default
+	local function try_set_default( meta )
+		if meta.id == nil or meta.default == nil then return end
+
+		guthscp.configs[id][meta.id] = meta.default
+	end
+
+	--  apply default in form
+	for i, meta in ipairs( config_meta.form ) do
+		if not istable( meta ) then continue end
+
+		--  check is an element
+		if meta.type then
+			try_set_default( meta )
+		else
+			--  consider as a group of elements
+			for j, meta2 in ipairs( meta ) do
+				try_set_default( meta2 )
+			end
 		end
 	end
 	guthscp.info( "guthscp.config", "loaded defaults to %q config", id )
