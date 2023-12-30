@@ -10,6 +10,13 @@ else
 end
 
 function guthscp.sound.play_client( ply, sound_path )
+	if istable( sound_path ) then
+		if #sound_path == 0 then return end
+		
+		--  choose a random sound path
+		sound_path = sound_path[math.random( #sound_path )]
+	end
+
 	if SERVER then
 		if #sound_path == 0 then return end
 

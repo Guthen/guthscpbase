@@ -58,6 +58,8 @@ function guthscp.sound.play( ent, path, radius, looping, volume )
 	if not IsValid( ent ) then return end
 
 	if istable( path ) then
+		if #path == 0 then return end
+		
 		--  choose a random sound path
 		path = path[math.random( #path )]
 	end
