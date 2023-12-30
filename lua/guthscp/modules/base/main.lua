@@ -63,8 +63,6 @@ MODULE.menu = {
 				desc = "When a door respawn, if checked, it will be open, otherwise its state won't change",
 				default = true,
 			},
-			guthscp.config.create_apply_button(),
-			guthscp.config.create_reset_button(),
 		},
 	},
 	--  pages
