@@ -210,10 +210,10 @@ if SERVER then
 		--  send
 		if receiver == nil then
 			net.Broadcast()
-			guthscp.debug( self._key .. "/" .. self.id, "send %d entities to everyone", self.count )
+			guthscp.debug( self.global_id, "send %d entities to everyone", self.count )
 		else
 			net.Send( receiver )
-			guthscp.debug( self._key .. "/" .. self.id, "send %d entities to %q", self.count, receiver:GetName() )
+			guthscp.debug( self.global_id, "send %d entities to %q", self.count, receiver:GetName() )
 		end
 	end
 
