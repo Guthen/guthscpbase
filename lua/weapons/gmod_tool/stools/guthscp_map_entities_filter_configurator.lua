@@ -80,6 +80,8 @@ if CLIENT then
 
 		--  get filter
 		local filter_id = tool:GetClientInfo( "filter_id" )
+		if #filter_id == 0 then return end
+
 		local filter = guthscp.filters[filter_id]
 		assert( filter, "Filter '" .. filter_id .. "' doesn't exists!" )
 
