@@ -14,6 +14,7 @@ end
 
 local played_sounds = {}
 function guthscp.sound.play( ent, path, radius, looping, volume )
+	if volume == 0.0 then return end
 	if istable( path ) then
 		if #path == 0 then return end
 		

@@ -56,7 +56,8 @@ end )
 
 function guthscp.sound.play( ent, path, radius, looping, volume )
 	if not IsValid( ent ) then return end
-
+	
+	if volume == 0.0 then return end
 	if istable( path ) then
 		if #path == 0 then return end
 		
