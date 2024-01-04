@@ -223,3 +223,12 @@ end
 function guthscp.helpers.stringify_enum_key( str )
 	return str:sub( 1, 1 ):upper() .. str:sub( 2 ):lower()
 end
+
+function guthscp.helpers.lerp_color( t, a, b, should_lerp_alpha )
+	return Color(
+		Lerp( t, a.r, b.r ),
+		Lerp( t, a.g, b.g ),
+		Lerp( t, a.b, b.b ),
+		should_lerp_alpha and Lerp( t, a.a, b.a ) or a.a
+	)
+end
