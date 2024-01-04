@@ -120,7 +120,7 @@ function GuthSCP.getTeamKeyname( team_id )
 end
 
 --  debug
-local convar_debug = CreateConVar( "guthscpbase_debug", "0", FCVAR_NONE, "Enables debug messages", "0", "1" )
+local convar_debug = CreateConVar( "guthscpbase_debug", "0", FCVAR_NONE, "Enables debug messages", 0, 1 )
 
 function GuthSCP.isDebug()
     return convar_debug:GetBool()
