@@ -853,7 +853,8 @@ vguis_types = {
 				container.color = value
 			end
 			container:SetValue( config_value )
-
+			install_reset_input( meta, entry, nil, container )
+			
 			panel:AddItem( title, container )
 			return container
 		end,
