@@ -365,7 +365,20 @@ vguis_types = {
 	},
 	["Number"] = {
 		init = function( panel, meta, config_value )
-			local numwang = panel:NumberWang( meta.name, nil, -math.huge, math.huge, nil )
+			--  container
+			local container = vgui.Create( "DPanel", panel )
+			container:Dock( TOP )
+			container:SetPaintBackground( false )
+
+			--  name
+			local title = Label( meta.name, container )
+			title:SetDark( true )
+
+			--  numwang
+			local numwang = vgui.Create( "DNumberWang", container )
+			numwang:Dock( LEFT )
+			numwang:DockMargin( 0, 0, 16, 0 )
+			numwang:SetMinMax( -math.huge, math.huge )
 			numwang:SetValue( config_value or meta.default or 0 )
 			numwang:SetY( 10 )  --  default Y-pos is bad
 			numwang:SetInterval( meta.interval or 1.0 )
@@ -390,6 +403,28 @@ vguis_types = {
 				numwang:SetMax( max )
 			end
 
+			if meta.show_use_entity_map_id then
+				local button = container:Add( "DButton" )
+				button:Dock( LEFT )
+				button:SetText( "Use Entity Map ID" )
+				button:SizeToContents()
+				function button:DoClick()
+					local ply = LocalPlayer()
+					local ent = ply:GetEyeTrace().Entity
+					if not IsValid( ent ) then 
+						ply:PrintMessage( HUD_PRINTTALK, "You must look at a valid entity!" )
+						return 
+					end
+					if not ent:CreatedByMap() then
+						ply:PrintMessage( HUD_PRINTTALK, "You must look at an entity created by the map!" )
+						return
+					end
+
+					numwang:SetValue( ent:MapCreationID() )
+				end
+			end
+
+			panel:AddItem( title, container )
 			install_reset_input( meta, numwang )
 			return numwang
 		end,
@@ -854,7 +889,7 @@ vguis_types = {
 			end
 			container:SetValue( config_value )
 			install_reset_input( meta, entry, nil, container )
-			
+
 			panel:AddItem( title, container )
 			return container
 		end,
