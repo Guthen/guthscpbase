@@ -1079,12 +1079,12 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 	end
 
 	--  populate config
-	local config = guthscp.config_metas[id]
-	if config then
+	local config_metas = guthscp.config_metas[id]
+	if config_metas then
 		--  custom config
 		parent.form = vguis_types["Form"].init( parent, {
 			name = "Configuration",
-			elements = config.form,
+			elements = config_metas.form,
 		}, id )
 
 		--  create bottom container
@@ -1101,9 +1101,25 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 			guthscp.config.send( id, guthscp.config.serialize_form( parent.form ) )
 		end
 
+		--  add undo button
+		local undo_button = container:Add( "DButton" )
+		undo_button:Dock( TOP )
+		undo_button:DockMargin( 0, 0, 0, 4 )
+		undo_button:SetText( "Refresh Configuration" )
+		function undo_button:DoClick()
+			local config = guthscp.configs[id]
+			if not config then return end
+
+			for id, panel in pairs( parent.form ) do
+				if id:StartsWith( "_" ) then continue end
+				panel:SetValue( config[id] )
+			end
+		end
+
 		--  add reset button
 		local reset_button = container:Add( "DButton" )
 		reset_button:Dock( TOP )
+		reset_button:DockMargin( 0, 0, 0, 4 )
 		reset_button:SetText( "Reset to Default" )
 		function reset_button:DoClick()
 			Derma_Query( 
