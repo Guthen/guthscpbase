@@ -9,7 +9,7 @@ function ENT:Initialize()
 	self:SetMoveType( MOVETYPE_VPHYSICS )
 	self:SetSolid( SOLID_VPHYSICS )
 
-    local phys = self:GetPhysicsObject()
+	local phys = self:GetPhysicsObject()
 	if IsValid( phys ) then
 		phys:Wake()
 	end
@@ -19,5 +19,5 @@ end
 
 function ENT:Pick()
 	self:EmitSound( "guthen_scp/interact/PickItem2.ogg" )
-    self:Remove()
+	self:Remove()
 end
