@@ -13,7 +13,7 @@ It also includes:
 ─ an entity breaking system, useful for throwing doors and chairs at your victims while playing as SCP-096
 ─ some useful functions for managing file data, getting a list of living NPCs, manipulating Lua tables..]],
 	icon = "icon16/bricks.png",
-	version_url = "https://raw.githubusercontent.com/Guthen/guthscpbase/remaster-as-modules-based/lua/guthscp/modules/base/main.lua",
+	version_url = "https://raw.githubusercontent.com/Guthen/guthscpbase/master/lua/guthscp/modules/base/main.lua",
 	requires = {
 		--["unit_test.lua"] = guthscp.REALMS.SHARED,
 		["workarounds/"] = guthscp.REALMS.SHARED,
