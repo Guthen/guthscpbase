@@ -75,7 +75,7 @@ MODULE.menu = {
 		function( form )
 			form:SetName( "Work-Arounds" )
 
-			form:Help( "This is where you can toggle fixes of other addons" )
+			form:Help( "This is where you can toggle fixes of other addons. If a workaround is disabled, this mean that the problem the workaround intend to fix isn't detected on your server." )
 
 			--  populate workarounds
 			local checkboxes = {}
@@ -142,6 +142,11 @@ MODULE.menu = {
 			url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3034737316",
 		},
 		{
+			text = "Modules Collection",
+			icon = "guthscp/icons/steam.png",
+			url = "https://steamcommunity.com/sharedfiles/filedetails/?id=3034749707",
+		},
+		{
 			text = "Discord",
 			icon = "guthscp/icons/discord.png",
 			url = "https://discord.gg/3dx8EGbwvK",
@@ -164,7 +169,7 @@ function MODULE:init()
 	--  warn to get rid of old base
 	timer.Simple( 0, function()
 		if GuthSCP and GuthSCP.Config then
-			local text = "The old base has been detected, please uninstall it and replace its addons by the new modules."
+			local text = "The old base has been detected, please uninstall it and replace the old SCP addons by the ones from the 'Modules Collection' (look at the right panel)."
 			self:add_error( text )
 			self:error( text )
 		end
