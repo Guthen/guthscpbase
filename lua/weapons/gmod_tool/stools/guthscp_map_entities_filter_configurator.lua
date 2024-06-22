@@ -1,6 +1,6 @@
 if not guthscp then return end
 
-TOOL.Category = "guthscp"
+TOOL.Category = "GuthSCP"
 TOOL.Name = "#tool.guthscp_map_entities_filter_configurator.name"
 
 TOOL.ClientConVar = {
