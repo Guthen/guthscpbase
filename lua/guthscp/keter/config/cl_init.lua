@@ -996,17 +996,41 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 			surface.DrawLine( 0, 5, 0, h - 5 )
 		end
 
-		local data = {
-			"Details",
-		}
+		local data = {}
 
-		--  debug: add module's id
+		--  add debug details
 		if guthscp.is_debug() then
+			data[#data + 1] = "Debug"
+
+			--  add module identifier
 			data[#data + 1] = {
 				text = module.id,
 				icon = "icon16/script_code.png"
 			}
+
+			--  add number of config vars
+			local count = 0
+			if module.menu and module.menu.config and module.menu.config.form then
+				for i, vars in ipairs( module.menu.config.form ) do
+					if not istable( vars ) then continue end
+
+					--  need to support both ways of setting up config vars
+					if vars.type then
+						count = count + 1
+					else
+						for _, var in ipairs( vars ) do
+							count = count + 1
+						end	
+					end
+				end
+			end
+			data[#data + 1] = {
+				text = ( "%d config vars" ):format( count ),
+				icon = "icon16/table_multiple.png"
+			}
 		end
+
+		data[#data + 1] = "Details"
 
 		--  add author
 		data[#data + 1] = {
