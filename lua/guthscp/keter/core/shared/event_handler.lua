@@ -9,7 +9,7 @@ function HANDLER:new()
 		listeners_count = 0,
 		listeners = {},
 	}
-	
+
 	return setmetatable( obj, HANDLER )
 end
 

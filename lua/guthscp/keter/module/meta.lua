@@ -7,21 +7,21 @@ local MODULE = {
 		online_version = "0.0.0",  --  version retrieved online
 		warnings = {},  --  list of registered warnings messages (using `MODULE/add_warning`)
 	},
-	
+
 	--  variables
 	name = "unknown",  --  required!
 	author = "unknown",  --  required!
 	version = "0.0.0",  -- required!
 	description = "No description",
-	
+
 	--  identifier used to reference the module table:
 	--  will register as 'guthscp.modules.<id>'
 	id = "",  --  internally set to the module's folder name
-	
+
 	icon = "icon16/brick.png",
 	dependencies = {},
 	requires = {},
-	
+
 	--  used by version checker to warn owner when a new version of this module is available
 	--version_url = "https://raw.githubusercontent.com/Guthen/VKXToolsEntitySpawner/master/lua/autorun/vkx_entspawner.lua",  --  optional
 }
@@ -34,7 +34,7 @@ MODULE.__index = MODULE
 	@function MODULE:construct
 		| description: called when the module is loaded by the manager; do not ensure all modules are loaded 
 ]]
-function MODULE:construct() 
+function MODULE:construct()
 end
 
 --[[ 

@@ -18,7 +18,7 @@ function FILTER:new( id, name )
 
 		count = 0,
 		container = {},
-		
+
 		event_added = guthscp.event_handler:new(),
 		event_removed = guthscp.event_handler:new(),
 	}
@@ -59,7 +59,7 @@ function FILTER:add_id( id )
 	else
 		guthscp.debug( self.global_id, "added ID:%s", id )
 	end
-	
+
 	--  schedule sync
 	if SERVER then
 		self:safe_sync()
@@ -85,7 +85,7 @@ function FILTER:remove_id( id )
 	if IsValid( ent ) then
 		self.event_removed:invoke( ent )
 
-		guthscp.debug( self.global_id, "removed %q (%s)", ent:IsPlayer() and ent:GetName() or ent:GetClass(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )	
+		guthscp.debug( self.global_id, "removed %q (%s)", ent:IsPlayer() and ent:GetName() or ent:GetClass(), ent:IsPlayer() and ent:SteamID() or ent:EntIndex() )
 	else
 		guthscp.debug( self.global_id, "removed ID:%s", id )
 	end
@@ -121,14 +121,14 @@ end
 --  getters
 function FILTER:get_entities()
 	local entities = {}
-	
+
 	for id in pairs( self.container ) do
 		local ent = Entity( id )
 		if IsValid( ent ) then
 			entities[#entities + 1] = ent
 		end
 	end
-	
+
 	return entities
 end
 
@@ -160,7 +160,7 @@ function FILTER:save()
 	--  serialize data
 	local data = self:serialize()
 	if not data then
-		guthscp.error( "guthscp.filter", "failed to serialize %q, either failed or not implemented", self.global_id ) 
+		guthscp.error( "guthscp.filter", "failed to serialize %q, either failed or not implemented", self.global_id )
 		return false
 	end
 
@@ -188,7 +188,7 @@ end
 if SERVER then
 	util.AddNetworkString( "guthscp.filter:sync" )
 	util.AddNetworkString( "guthscp.filter:io" )
-	
+
 	function FILTER:safe_sync( receiver )
 		timer.Create( self.global_id .. ":sync", .5, 1, function()
 			self:sync( receiver )
@@ -197,10 +197,10 @@ if SERVER then
 
 	function FILTER:sync( receiver )
 		net.Start( "guthscp.filter:sync" )
-	
+
 		--  filter id
 		net.WriteString( self.id )
-		
+
 		--  players
 		net.WriteUInt( self.count, self._ubits )
 		for id in pairs( self.container ) do
@@ -231,9 +231,9 @@ if SERVER then
 	end )
 
 	net.Receive( "guthscp.filter:io", function( len, ply )
-		if not hook.Run( "CanTool", ply, ply:GetEyeTrace(), guthscp.filter.tool_mode, ply:GetTool( guthscp.filter.tool_mode ), 1 ) then 
+		if not hook.Run( "CanTool", ply, ply:GetEyeTrace(), guthscp.filter.tool_mode, ply:GetTool( guthscp.filter.tool_mode ), 1 ) then
 			guthscp.warning( "guthscp.filter", "failed to save/load by %q (%s): not authorized", ply:GetName(), ply:SteamID() )
-			return 
+			return
 		end
 
 		--  get filter
@@ -245,8 +245,8 @@ if SERVER then
 		local is_save = net.ReadBool()
 		if is_save then
 			if filter:save() then
-				ply:ChatPrint( ( "Filter %q has been succesfully saved!" ):format( filter.name ) )	
-			else 
+				ply:ChatPrint( ( "Filter %q has been succesfully saved!" ):format( filter.name ) )
+			else
 				ply:ChatPrint( ( "Filter %q has failed to save, probably failed to serialize or not implemented." ):format( filter.name ) )
 			end
 		else
@@ -262,31 +262,31 @@ else
 		--  get filter
 		local id = net.ReadString()
 		local filter = guthscp.filters[id]
-		if not filter then 
+		if not filter then
 			guthscp.warning( "guthscp.filter", "failed to sync %q: filter not found!", id )
-			return 
+			return
 		end
 
 		--  retrieve count
 		local count = net.ReadUInt( filter._ubits )
-		
+
 		--  retrieve entities
 		local indexes = {}
 		for i = 1, count do
-			local id = net.ReadUInt( 16 )
-			indexes[id] = true
+			local ent_id = net.ReadUInt( 16 )
+			indexes[ent_id] = true
 		end
 
 		--  add indexes
-		for id in pairs( indexes ) do
-			filter:add_id( id )
+		for ent_id in pairs( indexes ) do
+			filter:add_id( ent_id )
 		end
 
 		--  remove not contained indexes
-		for id in pairs( filter.container ) do
-			if indexes[id] then continue end
+		for ent_id in pairs( filter.container ) do
+			if indexes[ent_id] then continue end
 
-			filter:remove_id( id )
+			filter:remove_id( ent_id )
 		end
 
 		guthscp.debug( filter.global_id, "received %d entities", count )

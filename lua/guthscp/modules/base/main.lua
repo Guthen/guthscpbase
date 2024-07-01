@@ -1,3 +1,7 @@
+local pairs = pairs
+local timer_Simple = timer.Simple
+local guthscp = guthscp
+
 local MODULE = {
 	name = "Base",
 	author = "Guthen",
@@ -18,8 +22,7 @@ It also includes:
 		--["unit_test.lua"] = guthscp.REALMS.SHARED,
 		["workarounds/"] = guthscp.REALMS.SHARED,
 		["sv_entity_breaking.lua"] = guthscp.REALMS.SERVER,
-	} 
-	
+	}
 }
 
 MODULE.menu = {
@@ -94,7 +97,7 @@ MODULE.menu = {
 					if workaround:is_active() then
 						--  only sync changes
 						local is_checked = v:GetChecked()
-						if not ( workaround:is_enabled() == is_checked ) then
+						if workaround:is_enabled() ~= is_checked then
 							workaround:set_enabled( is_checked )
 							workaround:sync()
 						end
@@ -167,7 +170,7 @@ function MODULE:init()
 	guthscp.entity_breaking_filter = guthscp.map_entities_filter:new( "guthscp_entity_breaking", "GuthSCP Entity Breaking" )
 
 	--  warn to get rid of old base
-	timer.Simple( 0, function()
+	timer_Simple( 0, function()
 		if GuthSCP and GuthSCP.Config then
 			local text = "The old base has been detected, please uninstall it and replace the old SCP addons by the ones from the 'Modules Collection' (look at the right panel)."
 			self:add_error( text )

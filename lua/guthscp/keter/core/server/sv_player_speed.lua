@@ -40,7 +40,7 @@ end
 
 function guthscp.update_player_speed( ply )
 	local modifiers = guthscp.player_speed_modifiers[ply]
-	
+
 	--  store default speeds
 	if not ply._guthscp_walk_speed then
 		ply._guthscp_walk_speed = ply:GetWalkSpeed()

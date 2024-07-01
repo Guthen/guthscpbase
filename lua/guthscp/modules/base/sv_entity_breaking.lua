@@ -25,11 +25,11 @@ function guthscp.break_entity( ent, velocity )
 		phys_ent:SetSkin( ent:GetSkin() )
 		phys_ent:Spawn()
 		phys_ent:EmitSound( ( "physics/metal/metal_box_break%d.wav" ):format( math.random( 1, 2 ) ) )
-		
+
 		--  allow hurting entities only some time
 		timer.Simple( 1, function()
 			if not IsValid( phys_ent ) then return end
-			phys_ent:SetCollisionGroup( COLLISION_GROUP_WEAPON ) 
+			phys_ent:SetCollisionGroup( COLLISION_GROUP_WEAPON )
 		end )
 
 		if velocity then
@@ -77,7 +77,7 @@ function guthscp.break_entity( ent, velocity )
 	return true
 end
 
-local breakable_classes = { 
+local breakable_classes = {
 	["prop_door_rotating"] = true,
 	["func_door_rotating"] = true,
 	["prop_dynamic"] = true,
@@ -108,7 +108,7 @@ end
 
 function guthscp.break_entities_at_player_trace( ply, break_force )
 	break_force = break_force or 1
-	
+
 	local count = 0
 	local tr = IsValid( ply ) and ply:GetEyeTrace() or ply
 
@@ -123,9 +123,9 @@ end
 
 --  concommands
 concommand.Add( "guthscp_repair_entities", function( ply )
-	if IsValid( ply ) and not ply:IsSuperAdmin() then 
+	if IsValid( ply ) and not ply:IsSuperAdmin() then
 		ply:PrintMessage( HUD_PRINTCONSOLE, "You can't use this superadmin command!" )
-		return 
+		return
 	end
 
 	--  repair
@@ -145,8 +145,8 @@ concommand.Add( "guthscp_repair_entities", function( ply )
 end )
 
 concommand.Add( "guthscp_debug_break_at_trace", function( ply )
-	if not IsValid( ply ) then 
-		return print( "You can't use this non-console command!" ) 
+	if not IsValid( ply ) then
+		return print( "You can't use this non-console command!" )
 	end
 	if not ply:IsSuperAdmin() then
 		ply:PrintMessage( HUD_PRINTCONSOLE, "You can't use this superadmin command!" )

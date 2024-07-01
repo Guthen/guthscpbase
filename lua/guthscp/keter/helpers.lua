@@ -73,18 +73,18 @@ function guthscp.helpers.compare_versions( current_version, extern_version )
 
 			while true do
 				local current_word = current_iter()
-				if not current_word then 
+				if not current_word then
 					return -1, 4
 				end
 
 				local extern_word = extern_iter()
-				if not extern_word then 
+				if not extern_word then
 					return 1, 4
 				end
 
 				--  parse numbers
 				local num = tonumber( current_word )
-				if num then 
+				if num then
 					current_word = num
 					num = tonumber( extern_word )
 					if num then
@@ -120,15 +120,15 @@ function guthscp.helpers.define_print_methods( meta, prefix )
 	function meta:info( message, ... )
 		guthscp.info( prefix .. "/" .. self.id, message, ... )
 	end
-	
+
 	function meta:error( message, ... )
 		guthscp.error( prefix .. "/" .. self.id, message, ... )
 	end
-	
+
 	function meta:warning( message, ... )
 		guthscp.warning( prefix .. "/" .. self.id, message, ... )
 	end
-	
+
 	function meta:debug( message, ... )
 		guthscp.debug( prefix .. "/" .. self.id, message, ... )
 	end
@@ -146,7 +146,7 @@ function guthscp.helpers.use_meta( tbl, meta )
 	for k, v in pairs( meta ) do
 		if k:StartWith( "__" ) or tbl[k] then continue end
 		if isfunction( v ) then continue end
-		
+
 		--  copy element
 		if istable( v ) then
 			tbl[k] = table.Copy( v )
@@ -154,7 +154,7 @@ function guthscp.helpers.use_meta( tbl, meta )
 			tbl[k] = v
 		end
 	end
-	
+
 	--  inherit meta
 	setmetatable( tbl, meta )
 end
@@ -201,7 +201,7 @@ function guthscp.helpers.format_message( msg, args )
 			format_word( word )
 			word = ""
 		end
-		
+
 		--  append letter to word
 		word = word .. l
 

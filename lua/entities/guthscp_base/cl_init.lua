@@ -11,7 +11,7 @@ hook.Add( "HUDPaint", "guthscp.entity:draw_hand_symbol", function()
 
 	--  get entity
 	local entity = ply:GetUseEntity()
-	if not IsValid( entity ) or not ( entity.Base == "guthscp_base" ) then return end
+	if not IsValid( entity ) or entity.Base ~= "guthscp_base" then return end
 
 	--  get screen pos
 	local pos = ( entity:GetPos() + entity:OBBCenter() ):ToScreen()

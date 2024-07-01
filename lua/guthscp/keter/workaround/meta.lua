@@ -2,7 +2,7 @@ local WORKAROUND = {
 	--  variables
 	name = "unknown", --  required!
 	realm = -1, --  required!
-	
+
 	id = "",
 
 	hooks = {},
@@ -73,10 +73,10 @@ function WORKAROUND:find_hook( slot, name, condition )
 
 	--  find the hook
 	for id, callback in pairs( hooks ) do
-        if condition( id, callback ) then
-           	return self:register_hook( slot, name, id )
-        end
-    end
+		if condition( id, callback ) then
+		   	return self:register_hook( slot, name, id )
+		end
+	end
 
 	return false
 end
@@ -145,12 +145,12 @@ end
 ]]
 function WORKAROUND:set_enabled( is_enabled )
 	--  checks
-	if not self._is_active then 
+	if not self._is_active then
 		self:warning( "unable to toggle when not active!" )
-		return 
+		return
 	end
 	if is_enabled == self._is_enabled then return end
-	
+
 	--  toggle
 	self._is_enabled = is_enabled
 
@@ -163,12 +163,12 @@ function WORKAROUND:set_enabled( is_enabled )
 			self:on_disabled()
 			self:info( "disabled!" )
 		end
-	end 
+	end
 end
 
 function WORKAROUND:sync( ply )
 	net.Start( CLIENT and "guthscp.workaround:apply" or "guthscp.workaround:sync" )
-	
+
 	--  write data
 	net.WriteString( self.id )
 	net.WriteBool( self._is_active )

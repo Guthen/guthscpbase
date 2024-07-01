@@ -18,7 +18,7 @@ end
 local function add_entity_node_doclick( panel, node, list, entity_type )
 	function node:DoClick()
 		--  populate
-		if not IsValid( self.panel ) then 
+		if not IsValid( self.panel ) then
 			--  create container
 			local container = panel:Add( "ContentContainer" )
 			container:SetVisible( false )
@@ -40,8 +40,8 @@ local function add_entity_node_doclick( panel, node, list, entity_type )
 						admin = weapon.AdminOnly
 					} )
 				end
-			end 
-			
+			end
+
 			--  register
 			self.container = container
 		end
@@ -56,7 +56,7 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 	local weapon_node = tree:AddNode( "Weapons", "icon16/gun.png" )
 	add_entity_node_doclick( panel, weapon_node, guthscp.spawnmenu.weapons, "weapon" )
 	weapon_node:InternalDoClick() --  set default
-	
+
 	--  entities
 	local entity_node = tree:AddNode( "Entities", "icon16/bricks.png" )
 	add_entity_node_doclick( panel, entity_node, guthscp.spawnmenu.entities, "entity" )
@@ -86,22 +86,22 @@ hook.Add( "guthscp.spawnmenu:populate", "guthscp.spawnmenu:populate", function( 
 			container:DockPadding( 5, 5, 5, 5 )
 			container:SetVisible( false )
 			container:SetSkin( "Default" )  --  prevent Helix from making my menu uglier
-	
+
 			local scroll_panel = container:Add( "DScrollPanel" )
 			scroll_panel:Dock( FILL )
-	
+
 			--  populate
 			guthscp.config.populate_config( scroll_panel, id, switch_callback )
-			
+
 			--  register
 			self.container = container
 		end
 		function node:DoClick()
 			--  populate
-			if not IsValid( self.panel ) then 
+			if not IsValid( self.panel ) then
 				self:DoPopulate()
 			end
-	
+
 			--  switch
 			panel:SwitchPanel( self.container )
 		end

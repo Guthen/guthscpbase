@@ -38,7 +38,7 @@ net.Receive( "guthscp.config:send", function( len, ply )
 	guthscp.config.apply( id, config )
 end )
 
-function guthscp.config.sync() 
+function guthscp.config.sync()
 	net.Start( "guthscp.config:receive" )
 	net.SendToServer()
 end
@@ -87,7 +87,7 @@ local function create_array_vguis( panel, meta, config_value, add_func )
 
 	local function add_vgui( value, key )
 		local child = add_func( scroll_panel, value, key )
-		if not child then return end 
+		if not child then return end
 
 		local mouse_pressed = child.OnMousePressed
 		function child:OnMousePressed( mouse_button )
@@ -166,7 +166,7 @@ end
 
 local function get_array_vguis_value( panel )
 	local data = {}
-	
+
 	for i, child in ipairs( panel ) do
 		if panel._meta.is_set then
 			data[child:GetValue()] = true
@@ -194,7 +194,7 @@ local function create_axes_vgui( panel, meta, config_value, axes )
 		label:Dock( LEFT )
 		label:DockMargin( 0, 0, -16, 0 )
 		label:SetDark( true )
-		
+
 		--  number
 		local wang = container:Add( "DNumberWang" )
 		wang:Dock( LEFT )
@@ -205,7 +205,7 @@ local function create_axes_vgui( panel, meta, config_value, axes )
 			return value[axis]
 		end )
 
-		container["axis_" .. axis] = wang 
+		container["axis_" .. axis] = wang
 	end
 
 	function container:SetValue( value )
@@ -229,7 +229,7 @@ function guthscp.config.serialize_form( form )
 		local vgui_type = vguis_types[v._type]
 		if vgui_type and vgui_type.get_value then
 			local value = vgui_type.get_value( v )
-			if not ( value == nil ) then
+			if value ~= nil then
 				config[k] = value
 			end
 		--  or value
@@ -284,9 +284,9 @@ vguis_types = {
 					if id then
 						form[id] = child
 					end
-					
+
 					--  set disabled
-					if isfunction( meta.is_disabled ) then 
+					if isfunction( meta.is_disabled ) then
 						child:SetDisabled( meta:is_disabled( child ) )
 					end
 
@@ -325,7 +325,7 @@ vguis_types = {
 					populate_element( current_panel, meta )
 				end
 			end
-			
+
 			return form
 		end,
 	},
@@ -382,24 +382,24 @@ vguis_types = {
 			numwang:SetValue( config_value or meta.default or 0 )
 			numwang:SetY( 10 )  --  default Y-pos is bad
 			numwang:SetInterval( meta.interval or 1.0 )
-			
+
 			--  set min-max
 			if meta.min then
 				local min = meta.min
-				
+
 				if isfunction( meta.min ) then
 					min = meta:min( numwang )
 				end
-			
+
 				numwang:SetMin( min )
 			end
 			if meta.max then
 				local max = meta.max
-				
+
 				if isfunction( meta.max ) then
 					max = meta:max( numwang )
 				end
-			
+
 				numwang:SetMax( max )
 			end
 
@@ -411,9 +411,9 @@ vguis_types = {
 				function button:DoClick()
 					local ply = LocalPlayer()
 					local ent = ply:GetEyeTrace().Entity
-					if not IsValid( ent ) then 
+					if not IsValid( ent ) then
 						ply:PrintMessage( HUD_PRINTTALK, "You must look at a valid entity!" )
-						return 
+						return
 					end
 					if not ent:CreatedByMap() then
 						ply:PrintMessage( HUD_PRINTTALK, "You must look at an entity created by the map!" )
@@ -453,7 +453,7 @@ vguis_types = {
 						textentry:SetValue( value )
 					end
 				end
-		
+
 				return textentry
 			end )
 		end,
@@ -481,9 +481,9 @@ vguis_types = {
 			install_reset_input( meta, combobox )
 			return combobox
 		end,
-		get_value = function( self ) 
+		get_value = function( self )
 			local text, data = self:GetSelected()
-			
+
 			--  1st priority: data
 			if data then
 				return data
@@ -499,7 +499,7 @@ vguis_types = {
 	["ComboBox[]"] = {
 		init = function( panel, meta, config_value )
 			return create_array_vguis( panel, meta, config_value, function( parent, value, key )
-				local new_value = value and meta.value and meta.value( value, key ) 
+				local new_value = value and meta.value and meta.value( value, key )
 				if new_value == false then return end
 				value = new_value or value
 
@@ -519,7 +519,7 @@ vguis_types = {
 				for i, v in ipairs( choices ) do
 					combobox:AddChoice( v.value, v.data )
 				end
-		
+
 				return combobox
 			end )
 		end,
@@ -529,11 +529,11 @@ vguis_types = {
 		init = function( panel, meta, config_value )
 			local checkbox = panel:CheckBox( meta.name )
 			checkbox:SetValue( config_value or false )
-	
+
 			install_reset_input( meta, checkbox )
 			return checkbox
 		end,
-		get_value = function( self ) 
+		get_value = function( self )
 			return self:GetChecked()
 		end,
 	},
@@ -551,7 +551,7 @@ vguis_types = {
 			function combobox:SetValue( value )
 				local idx = choices[value]
 				if not isnumber( idx ) then return end
-				
+
 				--  select corresponding choice
 				self:ChooseOptionID( idx )
 			end
@@ -559,8 +559,8 @@ vguis_types = {
 			install_reset_input( meta, combobox )
 			return combobox
 		end,
-		get_value = function( self ) 
-			local text, data = self:GetSelected()
+		get_value = function( self )
+			local _, data = self:GetSelected()
 			return data
 		end,
 	},
@@ -586,7 +586,7 @@ vguis_types = {
 				if not isnumber( idx ) then
 					idx = choices["nil"]
 				end
-				
+
 				--  select corresponding choice
 				self:ChooseOptionID( idx )
 			end
@@ -594,8 +594,8 @@ vguis_types = {
 			install_reset_input( meta, combobox )
 			return combobox
 		end,
-		get_value = function( self ) 
-			local text, data = self:GetSelected()
+		get_value = function( self )
+			local _, data = self:GetSelected()
 			return data
 		end,
 	},
@@ -613,19 +613,19 @@ vguis_types = {
 
 			--  retrieve teams
 			local teams, count = guthscp.get_usable_teams()
-			
+
 			local current_line = 1
 			local column, lines_per_column = nil, math.ceil( count / 4 )
 			local column_wide, column_tall = 0, 0
 			local function finish_column()
 				column:SetWide( column_wide )
 				column:InvalidateLayout( true )
-				
+
 				--  compute columns height
 				local last_child = column:GetChild( column:ChildCount() - 1 )
 				column_tall = math.max( column_tall, last_child:GetY() + last_child:GetTall() )
 			end
-			
+
 			if count == 0 then
 				local label = container:Add( Label( "No teams are available..", container ) )
 				label:Dock( TOP )
@@ -652,26 +652,26 @@ vguis_types = {
 				checkbox:SetText( team_info.Name )
 				checkbox:SetDark( true )
 				column_wide = math.max( column_wide, checkbox.Label:GetX() + checkbox.Label:GetContentSize() )
-				
+
 				--  check config
 				local team_keyname = guthscp.get_team_keyname( team_id )
-				if team_keyname == nil then 
+				if team_keyname == nil then
 					checkbox:SetDisabled( true )
 					guthscp.warning( "guthscp.config", "%q team doesn't have a unique 'TEAM_' name, disabling it..", team_info.Name )
 				else
 					if config_value[team_keyname] then
 						checkbox:SetChecked( true )
 					end
-	
+
 					--  assign to form
 					form[team_keyname] = checkbox
 				end
-				
+
 				--  handle layout
 				current_line = current_line + 1
 				if current_line > lines_per_column then
 					finish_column()
-					
+
 					current_line = 1
 					column_wide = 0
 					column = nil
@@ -706,7 +706,7 @@ vguis_types = {
 					checkbox:SetValue( data[team_keyname] or false )
 				end
 			end
-	
+
 			panel:AddItem( container )
 			return container
 		end,
@@ -724,7 +724,7 @@ vguis_types = {
 	["Vector"] = {
 		init = function( panel, meta, config_value )
 			local container = create_axes_vgui( panel, meta, config_value, { "x", "y", "z" } )
-			
+
 			if meta.show_usepos then
 				local button_usepos = container:Add( "DButton" )
 				button_usepos:Dock( LEFT )
@@ -733,7 +733,7 @@ vguis_types = {
 					container:SetValue( LocalPlayer():GetPos() )
 				end
 			end
-			
+
 			return container
 		end,
 		get_value = function( self )
@@ -754,9 +754,7 @@ vguis_types = {
 			local binder = vgui.Create( "DBinder", panel )
 			binder:SetWide( 120 )
 			function binder:UpdateText()
-				local str = input.GetKeyName( self:GetSelectedNumber() )
-				if ( !str ) then str = "NONE" end
-
+				local str = input.GetKeyName( self:GetSelectedNumber() ) or "NONE"
 				str = language.GetPhrase( str )
 
 				self:SetText( str:upper() )
@@ -827,11 +825,11 @@ vguis_types = {
 			end
 			function entry:SetToColor( color )
 				local text = " #"
-				text = text .. bit.tohex( color.r, 2 ) 
-							.. bit.tohex( color.g, 2 ) 
-							.. bit.tohex( color.b, 2 ) 
+				text = text .. bit.tohex( color.r, 2 )
+							.. bit.tohex( color.g, 2 )
+							.. bit.tohex( color.b, 2 )
 							.. bit.tohex( color.a, 2 )
-				
+
 				self:SetValue( text )
 			end
 
@@ -867,7 +865,7 @@ vguis_types = {
 					end
 
 					--  check cursor within bounds
-					local m_x, m_y = self:LocalCursorPos()
+					m_x, m_y = self:LocalCursorPos()
 					if m_x > -HOVER_EXTENT and m_y > -HOVER_EXTENT and m_x < self:GetWide() + HOVER_EXTENT and m_y < self:GetTall() + HOVER_EXTENT then return end
 
 					self:Remove()
@@ -897,7 +895,7 @@ vguis_types = {
 			return self.color
 		end,
 	},
-} 
+}
 
 local function create_label_category( parent, text )
 	local label = parent:Add( "DLabel" )
@@ -933,7 +931,7 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 		local container = vgui.Create( "DSizeToContents", category )
 		container:Dock( TOP )
 		container:DockPadding( 10, 10, 10, 5 )
-	
+
 		--  description
 		create_label_category( container, "Description" )
 
@@ -952,8 +950,8 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 				if dependency then  --  the reverse should not happen (since configs are loaded only if dependencies are constructed)
 					local container_dependency = container:Add( "Panel" )
 					container_dependency:Dock( TOP )
-					
-					local label_icon = container_dependency:Add( "guthscp_label_icon" ) 
+
+					local label_icon = container_dependency:Add( "guthscp_label_icon" )
 					label_icon:Dock( LEFT )
 					label_icon:DockMargin( 10, 0, 0, 0 )
 					label_icon:SetIcon( dependency.icon )
@@ -969,12 +967,12 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 		local warnings = module._.warnings
 		if #warnings > 0 then
 			create_label_category( container, "Warnings" )
-		
+
 			for i, v in ipairs( warnings ) do
 				local container_dependency = container:Add( "Panel" )
 				container_dependency:Dock( TOP )
 
-				local label_icon = container_dependency:Add( "guthscp_label_icon" ) 
+				local label_icon = container_dependency:Add( "guthscp_label_icon" )
 				label_icon:Dock( LEFT )
 				label_icon:DockMargin( 10, 0, 0, 0 )
 				label_icon:SetIcon( v.icon )
@@ -1020,7 +1018,7 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 					else
 						for _, var in ipairs( vars ) do
 							count = count + 1
-						end	
+						end
 					end
 				end
 			end
@@ -1060,7 +1058,7 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 		for i, v in ipairs( data ) do
 			if isstring( v ) then
 				create_label_category( sidebar, v )
-			elseif istable( v ) then 
+			elseif istable( v ) then
 				local container_dependency = sidebar:Add( "Panel" )
 				container_dependency:Dock( TOP )
 
@@ -1146,9 +1144,9 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 		reset_button:DockMargin( 0, 0, 0, 4 )
 		reset_button:SetText( "Reset to Default" )
 		function reset_button:DoClick()
-			Derma_Query( 
-				"Are you really sure to reset the actual configuration to its default settings? This will delete the existing configuration file.", 
-				"Reset Configuration", 
+			Derma_Query(
+				"Are you really sure to reset the actual configuration to its default settings? This will delete the existing configuration file.",
+				"Reset Configuration",
 				"Yes", function()
 					--  send reset to server
 					net.Start( "guthscp.config:reset" )
@@ -1167,12 +1165,12 @@ end
 
 function guthscp.config.get_pages_ids()
 	local pages = {}
-	
+
 	--  add configs
 	for id, config in pairs( guthscp.config_metas ) do
 		pages[id] = config.name
 	end
-	
+
 	--  add modules
 	for id, module in pairs( guthscp.modules ) do
 		pages[id] = module.name
@@ -1245,9 +1243,9 @@ end
 
 local should_hot_reload = true
 function guthscp.config.open_menu()
-	if not LocalPlayer():IsSuperAdmin() then 
+	if not LocalPlayer():IsSuperAdmin() then
 		guthscp.warning( "guthscp.config", "you are not part of the \"superadmin\" usergroup!" )
-		return 
+		return
 	end
 
 	--  hot reload: refresh menu
@@ -1276,7 +1274,7 @@ hook.Add( "guthscp.config:applied", "guthscp.menu:reload_config", function( id, 
 	local form = scroll_panel.form
 	for id, panel in pairs( form ) do
 		if id:StartsWith( "_" ) then continue end
-		
+
 		panel:SetValue( config[id] )
 	end
 end )

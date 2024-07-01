@@ -13,7 +13,7 @@ guthscp.filter.tool_mode = TOOL:GetMode()
 if CLIENT then
 	--  information
 	TOOL.Information = {
-		{ 
+		{
 			name = "left",
 		},
 		{
@@ -33,13 +33,13 @@ if CLIENT then
 	language.Add( "tool.guthscp_map_entities_filter_configurator.load", "Load Data" )
 
 	--  context panel
-	function TOOL.BuildCPanel( cpanel ) 
+	function TOOL.BuildCPanel( cpanel )
 		cpanel:AddControl( "Header", { Description = "#tool.guthscp_map_entities_filter_configurator.desc" } )
 
 		--  filters
 		local filter_combobox = cpanel:ComboBox( "#tool.guthscp_map_entities_filter_configurator.filter", guthscp.filter.tool_mode .. "_" .. "filter_id" )
 		for id, filter in pairs( guthscp.filters ) do
-			if not ( filter._key == guthscp.map_entities_filter._key ) then continue end
+			if filter._key ~= guthscp.map_entities_filter._key then continue end
 
 			filter_combobox:AddChoice( filter.name, id )
 		end
@@ -56,7 +56,7 @@ if CLIENT then
 				net.WriteBool( true )
 			net.SendToServer()
 		end
-		
+
 		local load_button = cpanel:Button( "#tool.guthscp_map_entities_filter_configurator.load" )
 		function load_button:DoClick()
 			local tool = LocalPlayer():GetTool( guthscp.filter.tool_mode )
@@ -73,10 +73,10 @@ if CLIENT then
 		local ply = LocalPlayer()
 
 		local active_weapon = ply:GetActiveWeapon()
-		if not IsValid( active_weapon ) or not ( active_weapon:GetClass() == "gmod_tool" ) then return end
+		if not IsValid( active_weapon ) or active_weapon:GetClass() ~= "gmod_tool" then return end
 
 		local tool = ply:GetTool()
-		if not istable( tool ) or not ( tool.Mode == guthscp.filter.tool_mode ) then return end
+		if not istable( tool ) or tool.Mode ~= guthscp.filter.tool_mode then return end
 
 		--  get filter
 		local filter_id = tool:GetClientInfo( "filter_id" )
@@ -92,8 +92,6 @@ end
 
 --  add access
 function TOOL:LeftClick( tr )
-	local ply = self:GetOwner()
-	
 	--  get filter
 	local filter_id = self:GetClientInfo( "filter_id" )
 	local filter = guthscp.filters[filter_id]
@@ -103,25 +101,23 @@ function TOOL:LeftClick( tr )
 	local ent = tr.Entity
 	if not IsValid( ent ) then return false end
 	if not filter:filter( ent ) then return false end
-	
+
 	if SERVER then
 		filter:add( ent )
 	end
-	
+
 	return true
 end
 
 --  remove access
 function TOOL:RightClick( tr )
-	local ply = self:GetOwner()
-
 	--  get filter
 	local filter_id = self:GetClientInfo( "filter_id" )
 	local filter = guthscp.filters[filter_id]
 	if not filter then return false end
 
 	--  check compatible entity
-	local ent = ply:GetEyeTrace().Entity
+	local ent = tr.Entity
 	if not IsValid( ent ) then return false end
 	if not filter:filter( ent ) then return false end
 

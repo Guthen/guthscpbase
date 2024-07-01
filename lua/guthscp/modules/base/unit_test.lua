@@ -33,7 +33,7 @@ unit_testing( "guthscp.helpers.compare_versions", function()
 	local current = tests[1]
 	for i = 2, #tests do
 		local previous = tests[i]
-		
+
 		--  test: current < previous
 		local result, depth = guthscp.helpers.compare_versions( current, previous )
 		if result == -1 then
@@ -44,7 +44,7 @@ unit_testing( "guthscp.helpers.compare_versions", function()
 		end
 
 		--  test: previous > current
-		local result, depth = guthscp.helpers.compare_versions( previous, current )
+		result, depth = guthscp.helpers.compare_versions( previous, current )
 		if result == 1 then
 			MODULE:info( "%q > %q, ok!", previous, current )
 		else
@@ -59,7 +59,7 @@ end )
 
 unit_testing( "guthscp.event_handler", function()
 	local handler = guthscp.event_handler:new()
-	
+
 	handler:add_listener( "#1", function( ... )
 		MODULE:info( "#1: %s", table.concat( { ... }, "; " ) )
 		handler:remove_listener( "#1" )

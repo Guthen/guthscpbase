@@ -10,7 +10,7 @@ function guthscp.module.construct( id )
 
 	local module = guthscp.require_file( guthscp.module.path .. id .. "/main.lua", guthscp.REALMS.SHARED )
 	if not module then
-		guthscp.error( "guthscp.module", "failed to construct module %q (\"main.lua\" not found)!", id )  
+		guthscp.error( "guthscp.module", "failed to construct module %q (\"main.lua\" not found)!", id )
 		guthscp.print_tabs = guthscp.print_tabs - 1
 		return false
 	end
@@ -19,7 +19,6 @@ function guthscp.module.construct( id )
 	module.id = id
 
 	--  check required properties
-	local failed = false
 	if not isstring( module.name ) or #module.name == 0 then
 		guthscp.error( "guthscp.module", "%q must have the 'name' property of type 'string'", id )
 		guthscp.print_tabs = guthscp.print_tabs - 1
@@ -44,7 +43,7 @@ function guthscp.module.construct( id )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 	module:construct()
 	guthscp.print_tabs = guthscp.print_tabs - 1
-	
+
 	--  register
 	guthscp.modules[id] = module
 	guthscp.print_tabs = guthscp.print_tabs - 1
@@ -53,15 +52,15 @@ end
 
 function guthscp.module.init( id )
 	local module
-	if istable( id ) then 
+	if istable( id ) then
 		module = id
 		id = module.id
 	else
 		module = guthscp.modules[id]
 	end
-	
+
 	if not module then
-		guthscp.error( "guthscp.module", "failed to initialize module %q (module not found)!", id )  
+		guthscp.error( "guthscp.module", "failed to initialize module %q (module not found)!", id )
 		return false
 	end
 
@@ -86,7 +85,7 @@ function guthscp.module.init( id )
 		--  ensure dependency is registered
 		local dep_module = guthscp.modules[dep_id]
 		if not dep_module then
-			guthscp.error( "guthscp.module", "dependency %q can't be found", dep_id )  
+			guthscp.error( "guthscp.module", "dependency %q can't be found", dep_id )
 			module:add_error( "Dependency %q wasn't found, install its version v%s+!", dep_id, version )
 			guthscp.print_tabs = old_tabs
 			return false
@@ -114,7 +113,7 @@ function guthscp.module.init( id )
 			return false
 		end
 	end
-	
+
 	--  add config
 	if istable( module.menu ) and istable( module.menu.config ) then
 		guthscp.info( "guthscp.module", "registering the configuration" )
@@ -171,8 +170,8 @@ function guthscp.module.require()
 
 	--  find modules
 	local _, dirs = file.Find( guthscp.module.path .. "*", "LUA" )
-	if #dirs == 0 then 
-		return guthscp.warning( "guthscp.module", "no modules found, aborting.." ) 
+	if #dirs == 0 then
+		return guthscp.warning( "guthscp.module", "no modules found, aborting.." )
 	end
 	guthscp.info( "guthscp.module", "loading %d modules..", #dirs )
 	guthscp.print_tabs = guthscp.print_tabs + 1
@@ -192,7 +191,7 @@ function guthscp.module.require()
 		guthscp.module.init( module )
 	end
 	guthscp.print_tabs = guthscp.print_tabs - 1
-	
+
 	guthscp.info( "guthscp.module", "finished!" )
 	guthscp.print_tabs = guthscp.print_tabs - 1
 	print()
@@ -212,16 +211,16 @@ function guthscp.module.hot_reload( id )
 	--  construct
 	guthscp.info( "guthscp.module", "constructing.." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
-	if not guthscp.module.construct( id ) then 
+	if not guthscp.module.construct( id ) then
 		guthscp.print_tabs = 0
-		return 
+		return
 	end
 	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  initialize
 	guthscp.info( "guthscp.module", "initializing.." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
-	if not guthscp.module.init( id ) then 
+	if not guthscp.module.init( id ) then
 		guthscp.print_tabs = 0
 		return
 	end
@@ -268,18 +267,18 @@ hook.Add( "InitPostEntity", "guthscp.modules:version_url", function()
 	timer.Simple( 5, function()
 		for id, module in pairs( guthscp.modules ) do
 			if not module.version_url then continue end
-	
-			http.Fetch( module.version_url, 
+
+			http.Fetch( module.version_url,
 				function( body )
 					local remote_version = body:match( "version = \"(.-)\"" )
-					if not remote_version then 
+					if not remote_version then
 						module._.version_check = guthscp.VERSION_STATES.NONE
-						return guthscp.error( "guthscp.module", "failed to retrieve online version for %q (pattern returned nil)!", id ) 
+						return guthscp.error( "guthscp.module", "failed to retrieve online version for %q (pattern returned nil)!", id )
 					end
 
 					--  store online version
 					module._.online_version = remote_version
-	
+
 					--  compare versions
 					local result = guthscp.helpers.compare_versions( module.version, remote_version )
 					if result >= 0 then

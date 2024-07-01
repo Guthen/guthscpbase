@@ -83,7 +83,7 @@ function ZONE:save()
 	--  serialize data
 	local data = self:serialize()
 	if not data then
-		guthscp.error( "guthscp.zone", "failed to serialize %q, either failed or not implemented", self.global_id ) 
+		guthscp.error( "guthscp.zone", "failed to serialize %q, either failed or not implemented", self.global_id )
 		return false
 	end
 
@@ -136,7 +136,7 @@ if SERVER then
 		table.remove( self.regions, id )
 		self:safe_sync()
 	end
-	
+
 	function ZONE:safe_sync( receiver )
 		timer.Create( self.global_id .. ":sync", .5, 1, function()
 			self:sync( receiver )
@@ -145,10 +145,10 @@ if SERVER then
 
 	function ZONE:sync( receiver )
 		net.Start( "guthscp.zone:sync" )
-	
+
 		--  zone id
 		net.WriteString( self.id )
-		
+
 		--  regions
 		net.WriteUInt( #self.regions, self._ubits )
 		for i, region in ipairs( self.regions ) do
@@ -179,9 +179,9 @@ if SERVER then
 	end )
 
 	net.Receive( "guthscp.zone:io", function( len, ply )
-		if not guthscp.zone.has_permission_to_edit( ply ) then 
+		if not guthscp.zone.has_permission_to_edit( ply ) then
 			guthscp.warning( "guthscp.zone", "failed to save/load by %q (%s): not authorized", ply:GetName(), ply:SteamID() )
-			return 
+			return
 		end
 
 		--  get zone
@@ -193,8 +193,8 @@ if SERVER then
 		local is_save = net.ReadBool()
 		if is_save then
 			if zone:save() then
-				ply:ChatPrint( ( "Zone %q has been succesfully saved!" ):format( zone.name ) )	
-			else 
+				ply:ChatPrint( ( "Zone %q has been succesfully saved!" ):format( zone.name ) )
+			else
 				ply:ChatPrint( ( "Zone %q has failed to save, probably failed to serialize or not implemented." ):format( zone.name ) )
 			end
 		else
@@ -207,9 +207,9 @@ if SERVER then
 	end )
 
 	net.Receive( "guthscp.zone:region", function( len, ply )
-		if not guthscp.zone.has_permission_to_edit( ply ) then 
+		if not guthscp.zone.has_permission_to_edit( ply ) then
 			guthscp.warning( "guthscp.zone", "failed to update region by %q (%s): not authorized", ply:GetName(), ply:SteamID() )
-			return 
+			return
 		end
 
 		--  get zone
@@ -219,7 +219,7 @@ if SERVER then
 
 		--  check id will be in bounds (allowing one upper max for inserting a new region)
 		local id = net.ReadUInt( zone._ubits )
-		if id < 1 or id > #zone.regions + 1 then 
+		if id < 1 or id > #zone.regions + 1 then
 			guthscp.warning( "guthscp.zone", "failed to update region ID %d by %q (%s): out of bounds (1 <= ID <= %d)", id, ply:GetName(), ply:SteamID(), #zone.regions + 1 )
 			return
 		end
@@ -248,9 +248,9 @@ else
 		--  get zone
 		local id = net.ReadString()
 		local zone = guthscp.zones[id]
-		if not zone then 
+		if not zone then
 			guthscp.warning( "guthscp.zone", "failed to sync %q: zone not found!", id )
-			return 
+			return
 		end
 
 		--  clear

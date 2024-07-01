@@ -16,12 +16,12 @@ function guthscp.config.add( id, tbl, no_load )
 	if no_load then
 		guthscp.config.setup( id )
 	end
-	
+
 	--  load config
 	if no_load or not guthscp.config.load( id ) then
 		guthscp.config.apply( id, guthscp.configs[id] )
 	end
-end 
+end
 
 function guthscp.config.sync( id, config, receiver )
 	net.Start( "guthscp.config:send" )
@@ -42,20 +42,20 @@ util.AddNetworkString( "guthscp.config:receive" )
 util.AddNetworkString( "guthscp.config:reset" )
 
 net.Receive( "guthscp.config:send", function( len, ply )
-	if not ply:IsSuperAdmin() then 
+	if not ply:IsSuperAdmin() then
 		guthscp.warning( "guthscp.config", "%s (%s) tried to apply a config but he doesn't have the permission!", ply:GetName(), ply:SteamID() )
-		return 
+		return
 	end
 
 	--  check config id
 	local config_id = net.ReadString()
-	if not guthscp.config_metas[config_id] then 
+	if not guthscp.config_metas[config_id] then
 		return guthscp.error( "guthscp.config", "%q (%s) sent config of %q which isn't registered!", ply:GetName(), ply:SteamID(), config_id )
 	end
 
 	--  check data
 	local config = net.ReadTable()
-	if table.Count( config ) <= 0 then 
+	if table.Count( config ) <= 0 then
 		return guthscp.error( "guthscp.config", "%q (%s) sent config of %q which has no data!", ply:GetName(), ply:SteamID(), config_id )
 	end
 
@@ -73,26 +73,26 @@ end )
 
 --  reset config
 net.Receive( "guthscp.config:reset", function( len, ply )
-	if not ply:IsSuperAdmin() then 
+	if not ply:IsSuperAdmin() then
 		guthscp.warning( "guthscp.config", "%s (%s) tried to reset a config but he doesn't have the permission!", ply:GetName(), ply:SteamID() )
-		return 
+		return
 	end
 
 	--  get config id
 	local config_id = net.ReadString()
-	if not guthscp.configs[config_id] then 
+	if not guthscp.configs[config_id] then
 		guthscp.warning( "guthscp.config", "%s (%s) tried to reset %q config which doesn't exist!", ply:GetName(), ply:SteamID(), config_id )
-		return 
+		return
 	end
 
 	--  load defaults
 	guthscp.config.load_defaults( config_id )
-	
+
 	--  delete config file
 	guthscp.data.delete( guthscp.config.path .. config_id .. ".json" )
 
 	--  network changes
-	guthscp.config.apply( config_id, guthscp.configs[config_id], { 
+	guthscp.config.apply( config_id, guthscp.configs[config_id], {
 		network = true,
 	} )
 

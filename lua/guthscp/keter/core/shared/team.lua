@@ -22,13 +22,13 @@ function guthscp.get_scps()
 	local teams, players = guthscp.configs.base.scp_teams, {}
 
 	--  no teams? no need to iterate through all players
-	if not teams or not next( teams ) then 
-		return players 
+	if not teams or not next( teams ) then
+		return players
 	end
 
 	for i, v in ipairs( player.GetAll() ) do
-		if teams[guthscp.get_team_keyname( v:Team() )] then 
-			players[#players + 1] = v 
+		if teams[guthscp.get_team_keyname( v:Team() )] then
+			players[#players + 1] = v
 		end
 	end
 
@@ -42,7 +42,7 @@ end
 					   used internally by @`guthscp.get_teams_keynames` & @`guthscp.get_team_keyname`
 ]]
 local teams_keynames, keynames_teams
-function guthscp.cache_teams_keynames() 
+function guthscp.cache_teams_keynames()
 	teams_keynames = {}
 
 	local count = 0
@@ -90,10 +90,10 @@ end )
 		| return: <table[string, number]> teams_keynames
 ]]
 function guthscp.get_teams_keynames()
-	if not teams_keynames then 
-		guthscp.cache_teams_keynames() 
+	if not teams_keynames then
+		guthscp.cache_teams_keynames()
 	end
-	
+
 	return teams_keynames
 end
 
@@ -105,8 +105,8 @@ end
 		| return: <string> team_keyname
 ]]
 function guthscp.get_team_keyname( team_id )
-	if not keynames_teams then 
-		guthscp.cache_teams_keynames() 
+	if not keynames_teams then
+		guthscp.cache_teams_keynames()
 	end
 
 	return keynames_teams[team_id]
@@ -118,7 +118,7 @@ end
 
 function guthscp.get_usable_teams()
 	local teams, count = {}, 0
-	
+
 	for team_id, team_info in pairs( team.GetAllTeams() ) do
 		if team_id == TEAM_SPECTATOR then continue end
 		if not team_info.Joinable then continue end

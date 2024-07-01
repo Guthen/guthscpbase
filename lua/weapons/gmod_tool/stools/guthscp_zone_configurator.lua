@@ -40,7 +40,7 @@ if CLIENT then
 	end
 
 	--  context panel
-	function TOOL.BuildCPanel( cpanel ) 
+	function TOOL.BuildCPanel( cpanel )
 		cpanel:AddControl( "Header", { Description = "#tool.guthscp_zone_configurator.desc" } )
 
 		--  zones
@@ -50,7 +50,7 @@ if CLIENT then
 		end
 
 		--  new region parameters
-		local name_entry = cpanel:TextEntry( "#tool.guthscp_zone_configurator.region_name", guthscp.zone.tool_mode .. "_" .. "region_name" )
+		cpanel:TextEntry( "#tool.guthscp_zone_configurator.region_name", guthscp.zone.tool_mode .. "_" .. "region_name" )
 		--[[ local new_button = cpanel:Button( "#tool.guthscp_zone_configurator.new_region" )
 		function new_button:DoClick()
 			local ply = LocalPlayer()
@@ -107,7 +107,7 @@ if CLIENT then
 				net.WriteBool( true )
 			net.SendToServer()
 		end
-		
+
 		local load_button = cpanel:Button( "#tool.guthscp_zone_configurator.load" )
 		function load_button:DoClick()
 			local tool = LocalPlayer():GetTool( guthscp.zone.tool_mode )
@@ -148,10 +148,10 @@ if CLIENT then
 		local ply = LocalPlayer()
 
 		local active_weapon = ply:GetActiveWeapon()
-		if not IsValid( active_weapon ) or not ( active_weapon:GetClass() == "gmod_tool" ) then return end
+		if not IsValid( active_weapon ) or active_weapon:GetClass() ~= "gmod_tool" then return end
 
 		local tool = ply:GetTool()
-		if not istable( tool ) or not ( tool.Mode == guthscp.zone.tool_mode ) then return end
+		if not istable( tool ) or tool.Mode ~= guthscp.zone.tool_mode then return end
 
 		local trace = tool:GetTrace()
 
@@ -166,7 +166,7 @@ if CLIENT then
 		local zone, zone_id = tool:GetCurrentZone()
 		if #zone_id == 0 then return end
 		assert( zone, "Zone '" .. zone_id .. "' doesn't exists!" )
-		
+
 		--  draw regions boxes
 		local has_found_cursor = false
 		local centers = {}
@@ -198,7 +198,7 @@ function TOOL:GetTrace()
 	tr.mask = bit.bor( CONTENTS_SOLID, CONTENTS_MOVEABLE, CONTENTS_MONSTER, CONTENTS_WINDOW, CONTENTS_DEBRIS, CONTENTS_GRATE, CONTENTS_AUX )
 	tr.mins = vector_origin
 	tr.maxs = tr.mins
-	
+
 	return util.TraceHull( tr )
 end
 
@@ -222,12 +222,10 @@ function TOOL:LeftClick( tr )
 	if CLIENT then return true end
 	if not IsFirstTimePredicted() then return end
 
-	local ply = self:GetOwner()
-	
 	--  get zone
 	local zone = self:GetCurrentZone()
 	if not zone then return end
-	
+
 	--  set start position
 	local start_pos = self:GetRegionStartPosition()
 	if start_pos == vector_origin then
@@ -237,22 +235,20 @@ function TOOL:LeftClick( tr )
 		--  apply region
 		local name = self:GetClientInfo( "region_name" )
 		zone:set_region( #zone.regions + 1, {
-			name = name, 
-			start_pos = start_pos, 
+			name = name,
+			start_pos = start_pos,
 			end_pos = tr.HitPos
 		} )
 
 		--  clear
 		self:Reload( tr )
 	end
-	
+
 	return true
 end
 
 function TOOL:RightClick( tr )
 	if CLIENT then return true end
-
-	local ply = self:GetOwner()
 
 	--  get zone
 	local zone = self:GetCurrentZone()
@@ -261,7 +257,7 @@ function TOOL:RightClick( tr )
 	--  delete region
 	for id, region in ipairs( zone.regions ) do
 		if not zone:is_in_region( id, tr.HitPos ) then continue end
-		
+
 		zone:delete_region( id )
 		break
 	end
@@ -270,8 +266,6 @@ function TOOL:RightClick( tr )
 end
 
 function TOOL:Reload( tr )
-	local ply = self:GetOwner()
-
 	self:SetStage( 0 )
 	self:SetRegionStartPosition( vector_origin )
 

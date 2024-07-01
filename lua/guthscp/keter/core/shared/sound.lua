@@ -1,7 +1,7 @@
 guthscp.sound = guthscp.sound or {}
 
 --  basic client sound
-if SERVER then 
+if SERVER then
 	util.AddNetworkString( "guthscp:play_sound" )
 else
 	net.Receive( "guthscp:play_sound", function()
@@ -12,7 +12,7 @@ end
 function guthscp.sound.play_client( ply, sound_path )
 	if istable( sound_path ) then
 		if #sound_path == 0 then return end
-		
+
 		--  choose a random sound path
 		sound_path = sound_path[math.random( #sound_path )]
 	end

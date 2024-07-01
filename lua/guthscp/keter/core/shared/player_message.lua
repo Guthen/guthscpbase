@@ -1,14 +1,14 @@
 
 if SERVER then
 	util.AddNetworkString( "guthscp:set_message" )
-	
+
 	function guthscp.player_message( ply, text )
 		net.Start( "guthscp:set_message" )
 			net.WriteString( text )
 		net.Send( ply )
 	end
 else
-	local max_lifetime = 3 
+	local max_lifetime = 3
 	local fading_time_ratio = .8  --  80% of 3s = 2.4s
 	function guthscp.player_message( text )
 		local lifetime = 0

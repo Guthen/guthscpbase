@@ -4,13 +4,13 @@ guthscp.configs = guthscp.configs or {}
 
 function guthscp.config.apply( id, config, options )
 	local config_meta = guthscp.config_metas[id]
-	if not config_meta then 
+	if not config_meta then
 		return guthscp.error( "guthscp.config", "trying to apply config %q which isn't registered!", id )
 	end
 
 	--  parse
-	if config_meta.parse then 
-		config_meta.parse( config ) 
+	if config_meta.parse then
+		config_meta.parse( config )
 	end
 
 	--  apply data
@@ -24,8 +24,8 @@ function guthscp.config.apply( id, config, options )
 		--  network to players
 		if SERVER and options.network then
 			if player.GetCount() > 0 then  --  only sync if players are in-game
-				timer.Simple( 0, function() 
-					guthscp.config.sync( id, config ) 
+				timer.Simple( 0, function()
+					guthscp.config.sync( id, config )
 				end )
 			end
 		end
@@ -41,19 +41,19 @@ function guthscp.config.apply( id, config, options )
 end
 
 function guthscp.config.setup( id )
-	guthscp.configs[id] = guthscp.configs[id] or {} 
+	guthscp.configs[id] = guthscp.configs[id] or {}
 	guthscp.config.load_defaults( id )
 end
 
 function guthscp.config.load( id )
 	--  setup
 	guthscp.config.setup( id )
-	
+
 	--  load from data file
 	local config = guthscp.data.load_from_json( guthscp.config.path .. id .. ".json" )
-	if not config then 
+	if not config then
 		guthscp.info( "guthscp.config", "failed to load data for %q config", id )
-		return false 
+		return false
 	end
 
 	--  apply data

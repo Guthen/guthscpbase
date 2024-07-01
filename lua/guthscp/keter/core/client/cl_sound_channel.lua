@@ -31,8 +31,8 @@ end )
 net.Receive( "guthscp:play_sound_channel", function()
 	local path = net.ReadString()
 
-	local parent = net.ReadEntity() 
-	if not IsValid( parent ) then 
+	local parent = net.ReadEntity()
+	if not IsValid( parent ) then
 		return guthscp.error( "guthscp", "failed to find entity while trying to play a channel sound" )
 	end
 
@@ -46,9 +46,9 @@ end )
 net.Receive( "guthscp:stop_sound_channel", function()
 	local path = net.ReadString()
 
-	local parent = net.ReadEntity() 
-	if not IsValid( parent ) then 
-		return guthscp.error( "guthscp.sound", "failed to find entity while trying to stop a channel sound" ) 
+	local parent = net.ReadEntity()
+	if not IsValid( parent ) then
+		return guthscp.error( "guthscp.sound", "failed to find entity while trying to stop a channel sound" )
 	end
 
 	guthscp.sound.stop( parent, path )
@@ -56,11 +56,11 @@ end )
 
 function guthscp.sound.play( ent, path, radius, looping, volume )
 	if not IsValid( ent ) then return end
-	
+
 	if volume == 0.0 then return end
 	if istable( path ) then
 		if #path == 0 then return end
-		
+
 		--  choose a random sound path
 		path = path[math.random( #path )]
 	end
@@ -72,13 +72,13 @@ function guthscp.sound.play( ent, path, radius, looping, volume )
 	volume = volume or 1
 
 	sound.PlayFile( "sound/" .. path, "3d noblock noplay", function( channel, err_id, err_name )
-		if not IsValid( channel ) then 
-			return guthscp.error( "guthscp", "failed to play %q ('%s' (%d))!", path, err_name, err_id ) 
+		if not IsValid( channel ) then
+			return guthscp.error( "guthscp", "failed to play %q ('%s' (%d))!", path, err_name, err_id )
 		end
-		if not IsValid( ent ) then 
-			return guthscp.error( "guthscp", "failed to play %q (entity invalid)!", path, err_name, err_id ) 
+		if not IsValid( ent ) then
+			return guthscp.error( "guthscp", "failed to play %q (entity invalid)!", path, err_name, err_id )
 		end
-	
+
 		--  channel
 		channel:SetPos( ent:GetPos() )
 		channel:Set3DFadeDistance( radius * .15, radius )
@@ -106,8 +106,8 @@ end
 function guthscp.sound.stop( ent, path )
 	local key = path .. ":" .. ent:EntIndex()
 
-	if sounds[key] then 
-		sounds[key].channel:Stop() 
+	if sounds[key] then
+		sounds[key].channel:Stop()
 	end
 
 	sounds[key] = nil

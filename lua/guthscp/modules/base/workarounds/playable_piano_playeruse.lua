@@ -12,7 +12,7 @@ function WORKAROUND:on_enabled()
 	--  https://github.com/macdguy/playablepiano/blob/master/lua/entities/gmt_instrument_base/init.lua#L108-L131
 	self:override_hook( 1, function( ply, ent )
 		local inst = ent:GetOwner()
-	
+
 		if IsValid( inst ) and inst.Base == "gmt_instrument_base" then
 			if not IsValid( inst.Owner ) then
 				inst:AddInstOwner( ply )

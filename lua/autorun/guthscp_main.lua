@@ -26,10 +26,10 @@ function guthscp.is_same_realm( realm_a, realm_b )
 	if realm_a == guthscp.REALMS.SHARED or realm_b == guthscp.REALMS.SHARED then
 		return true
 	end
-	
+
 	--  check for equal
-	if realm_a == realm_b then 
-		return true 
+	if realm_a == realm_b then
+		return true
 	end
 
 	return false
@@ -54,7 +54,7 @@ function guthscp.print( color, message, ... )
 
 	--  indentation
 	if guthscp.print_tabs > 0 then
-		message =  ( "    " ):rep( guthscp.print_tabs ) .. "└─ " ..message
+		message =  ( "    " ):rep( guthscp.print_tabs ) .. "└─ " .. message
 	end
 
 	--  output

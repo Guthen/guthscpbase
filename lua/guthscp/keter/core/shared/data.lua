@@ -9,9 +9,9 @@ guthscp.data.path = "guthscp/"
 			data: <string> content to save
 ]]
 function guthscp.data.save( path, data )
-	local path = guthscp.data.path .. path
-	file.CreateDir( string.GetPathFromFilename( path ) )  --  ensure all folders are created
-	file.Write( path, data )
+	local full_path = guthscp.data.path .. path
+	file.CreateDir( string.GetPathFromFilename( full_path ) )  --  ensure all folders are created
+	file.Write( full_path, data )
 end
 
 --[[ 
@@ -24,7 +24,7 @@ end
 ]]
 function guthscp.data.save_to_json( path, tbl, is_pretty_print )
 	local json = util.TableToJSON( tbl, is_pretty_print )
-	if not json then 
+	if not json then
 		return guthscp.error( "guthscp.data", "failed to export json for %q", path )
 	end
 
@@ -94,7 +94,7 @@ function guthscp.data.move_file( path, new_path )
 	end
 
 	guthscp.info( "guthscp.data", "moving file %q to %q", path, guthscp.data.path .. new_path )
-	
+
 	--  save file to the new path
 	guthscp.data.save( new_path, data )
 
@@ -125,7 +125,7 @@ function guthscp.data.move( path, wildcard, new_path, callback )
 	for i, name in ipairs( files ) do
 		local source_path = path .. name
 		local end_path = new_path .. name
-		
+
 		--  get custom end path 
 		if callback then
 			end_path = callback( name, source_path, end_path )
@@ -144,7 +144,7 @@ function guthscp.data.move( path, wildcard, new_path, callback )
 		if callback then
 			end_path = callback( name, source_path, end_path )
 		end
-		
+
 		--  move folder
 		guthscp.info( "guthscp.data", "moving folder %q to %q", source_path, guthscp.data.path .. end_path )
 

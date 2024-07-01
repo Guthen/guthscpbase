@@ -62,10 +62,10 @@ function guthscp.workaround.load()
 	if guthscp.workaround.is_initialized then
 		guthscp.info( "guthscp.workaround", "de-serializing %d states", table.Count( data ) )
 		guthscp.print_tabs = guthscp.print_tabs + 1
-		
+
 		local should_sync = player.GetCount() > 0
 		for id, workaround in pairs( guthscp.workarounds ) do
-			if not ( data[id] == nil ) then
+			if data[id] ~= nil then
 				--  set state
 				workaround:set_enabled( data[id] )
 
@@ -84,7 +84,7 @@ end
 
 hook.Add( "InitPostEntity", "guthscp.workaround:init", function()
 	local current_realm = guthscp.get_current_realm()
-	
+
 	guthscp.info( "guthscp.workaround", "loading %d workarounds", table.Count( guthscp.workarounds ) )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 
@@ -111,7 +111,7 @@ hook.Add( "InitPostEntity", "guthscp.workaround:init", function()
 		net.SendToServer()
 
 		guthscp.info( "guthscp.workaround", "retrieving states from server.." )
-	else 
+	else
 		guthscp.workaround.load()
 	end
 
@@ -123,9 +123,9 @@ end )
 local function net_apply_workaround( ply )
 	local id = net.ReadString()
 	local workaround = guthscp.workarounds[id]
-	if not workaround then 
+	if not workaround then
 		guthscp.warning( "guthscp.workaround", "tried to apply unknown workaround %q through network%s", id, IsValid( ply ) and " by " .. ply:GetName() or "" )
-		return 
+		return
 	end
 
 	local is_active = net.ReadBool()

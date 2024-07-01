@@ -4,7 +4,7 @@ function PANEL:Init()
 	self:SetTall( 22 )
 	self:SetClickable( true )
 	self:SetCursor( "hand" )
-	
+
 	self.icon = self:Add( "DImage" )
 	self.icon:SetSize( 16, 16 )
 	self.icon:SetImage( "icon16/brick.png" )

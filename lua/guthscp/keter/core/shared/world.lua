@@ -1,56 +1,56 @@
 guthscp.world = guthscp.world or {}
 
 --[[ 
-    @function guthscp.world.is_ground
-        | description: check if the given position is above the ground by using a raycast
-        | params:
-            pos: <Vector> position to check
-        | return: <bool> is_ground
+	@function guthscp.world.is_ground
+		| description: check if the given position is above the ground by using a raycast
+		| params:
+			pos: <Vector> position to check
+		| return: <bool> is_ground
 ]]
 function guthscp.world.is_ground( pos )
 	local tr = util.TraceLine( {
-        collisiongroup = COLLISION_GROUP_WORLD,
-        start = pos,
-        endpos = pos - Vector( 0, 0, 3 ),
-    } )
+		collisiongroup = COLLISION_GROUP_WORLD,
+		start = pos,
+		endpos = pos - Vector( 0, 0, 3 ),
+	} )
 
-    return tr.HitWorld
+	return tr.HitWorld
 end
 
 --[[ 
-    @function guthscp.world.safe_entity_trace
-        | description: trace at the given position to check safe placement for the entity
-        | params:
-            ent: <Entity> entity to use
-            pos: <Vector?> position to check, default to entity's position
-            end_pos: <Vector?> end-position to check, default to 'pos'
-        | return: <TraceResult> trace
+	@function guthscp.world.safe_entity_trace
+		| description: trace at the given position to check safe placement for the entity
+		| params:
+			ent: <Entity> entity to use
+			pos: <Vector?> position to check, default to entity's position
+			end_pos: <Vector?> end-position to check, default to 'pos'
+		| return: <TraceResult> trace
 ]]
 function guthscp.world.safe_entity_trace( ent, pos, end_pos )
-    pos = pos or ent:GetPos()
-    end_pos = end_pos or pos
+	pos = pos or ent:GetPos()
+	end_pos = end_pos or pos
 
-    return util.TraceEntity( {
-        start = pos,
-        endpos = end_pos,
-        filter = ent,
-    }, ent )
+	return util.TraceEntity( {
+		start = pos,
+		endpos = end_pos,
+		filter = ent,
+	}, ent )
 end
 
 --[[ 
-    @function guthscp.world.player_trace_attack
-        | description: perform a hull trace on the given player for weapons attack purpose
-        | params:
-            ply: <Player> attacking player
-            max_dist: <number> maximum trace distance
-            bounds: <Vector> minimums & maximums of hull
-        | return: <TraceResult> tr
+	@function guthscp.world.player_trace_attack
+		| description: perform a hull trace on the given player for weapons attack purpose
+		| params:
+			ply: <Player> attacking player
+			max_dist: <number> maximum trace distance
+			bounds: <Vector> minimums & maximums of hull
+		| return: <TraceResult> tr
 ]]
 function guthscp.world.player_trace_attack( ply, max_dist, bounds )
-    local start_pos = ply:EyePos()
+	local start_pos = ply:EyePos()
 
-    --  perform trace
-    local tr = util.TraceHull( {
+	--  perform trace
+	local tr = util.TraceHull( {
 		start = start_pos,
 		endpos = start_pos + ply:GetAimVector() * max_dist,
 		filter = ply,
@@ -59,22 +59,22 @@ function guthscp.world.player_trace_attack( ply, max_dist, bounds )
 		mask = MASK_SHOT_HULL,
 	} )
 
-    --  debug render:
-    --  convar 'developer' should be greater or equal 1
-    --  you must also be in a singleplayer game (a dedicated server won't work)
-    if SERVER and ply:IsListenServerHost() then
-        local lifetime = 2.5
-        local target = tr.Entity
-        debugoverlay.SweptBox( start_pos, tr.HitPos, -bounds, bounds, angle_zero, lifetime, IsValid( target ) and Color( 255, 0, 0 ) or color_white )
+	--  debug render:
+	--  convar 'developer' should be greater or equal 1
+	--  you must also be in a singleplayer game (a dedicated server won't work)
+	if SERVER and ply:IsListenServerHost() then
+		local lifetime = 2.5
+		local target = tr.Entity
+		debugoverlay.SweptBox( start_pos, tr.HitPos, -bounds, bounds, angle_zero, lifetime, IsValid( target ) and Color( 255, 0, 0 ) or color_white )
 
-        if IsValid( target ) then
-            debugoverlay.BoxAngles( target:GetPos(), target:OBBMins(), target:OBBMaxs(), target:GetAngles(), lifetime, Color( 255, 0, 0, 64 ) )
-        end
-    end
+		if IsValid( target ) then
+			debugoverlay.BoxAngles( target:GetPos(), target:OBBMins(), target:OBBMaxs(), target:GetAngles(), lifetime, Color( 255, 0, 0, 64 ) )
+		end
+	end
 
-	return tr 
+	return tr
 end
 
 function guthscp.world.is_living_entity( ent )
-    return ent:IsPlayer() or ent:IsNPC() or ent:IsNextBot()
+	return ent:IsPlayer() or ent:IsNPC() or ent:IsNextBot()
 end
