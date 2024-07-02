@@ -22,7 +22,7 @@ It also includes:
 		--["unit_test.lua"] = guthscp.REALMS.SHARED,
 		["workarounds/"] = guthscp.REALMS.SHARED,
 		["sv_entity_breaking.lua"] = guthscp.REALMS.SERVER,
-		["sv_permissions.lua"] = guthscp.REALMS.SERVER,
+		["sh_permissions.lua"] = guthscp.REALMS.SHARED,
 	}
 }
 
