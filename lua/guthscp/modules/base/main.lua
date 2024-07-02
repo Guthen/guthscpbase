@@ -5,7 +5,7 @@ local guthscp = guthscp
 local MODULE = {
 	name = "Base",
 	author = "Guthen",
-	version = "2.2.2",
+	version = "2.3.0",
 	description = [[The must-have addon that allows you to see this interface (and surely more)!
 
 It comes with everything considered useful for making SCPs addons work together in harmony.
@@ -22,6 +22,7 @@ It also includes:
 		--["unit_test.lua"] = guthscp.REALMS.SHARED,
 		["workarounds/"] = guthscp.REALMS.SHARED,
 		["sv_entity_breaking.lua"] = guthscp.REALMS.SERVER,
+		["sv_permissions.lua"] = guthscp.REALMS.SERVER,
 	}
 }
 
@@ -37,6 +38,16 @@ MODULE.menu = {
 					id = "scp_teams",
 					desc = "All teams which represents a SCP team. These teams may not trigger SCPs behaviours.",
 					default = {},
+				},
+			},
+			"Permissions",
+			{
+				{
+					type = "Bool",
+					name = "Default Tools Permissions",
+					id = "permissions_default_tools",
+					desc = "If checked, GuthSCP tools can ONLY be used by superadmins. Warning messages are sent to the console if an un-authorized player attempt to use them. It is recommended to set this configuration active, unless you restrict them with a 3rd-party admin mod (e.g. FPP, SAM).",
+					default = true,
 				},
 			},
 			"Entity Breaking",
