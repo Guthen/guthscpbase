@@ -69,6 +69,20 @@ if CLIENT then
 		end
 	end
 
+	local color_red = Color( 255, 0, 0 )
+	function TOOL:DrawHUD()
+		local x, y = ScrW() / 2, ScrH() * .75
+		local ent = LocalPlayer():GetEyeTrace().Entity
+		if not IsValid( ent ) then return end
+
+		--  NOTE: This warning is not exact, it doesn't say if you're actually authorized to use the tool. A hook.Run to "CanTool" could be useful here. 
+		--  	  However it would need to be done in each tool. For now, this should be enough.
+		if FPP and not FPP.canTouchEnt( ent, "Toolgun" ) then
+			local text = "Falco's Prop Protection prevent you from editing this entity, please ensure both 'Admins can use tool on world/blocked entities' are enabled in the 'Toolgun options'!"
+			draw.SimpleText( text, "DermaDefaultBold", x, y + 30, color_red, TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER )
+		end
+	end
+
 	hook.Add( "PreDrawHalos", "guthscp:map_entities_filter_configurator", function()
 		local ply = LocalPlayer()
 
