@@ -1,7 +1,3 @@
-local pairs = pairs
-local timer_Simple = timer.Simple
-local guthscp = guthscp
-
 local MODULE = {
 	name = "Base",
 	author = "Guthen",
@@ -181,7 +177,7 @@ function MODULE:init()
 	guthscp.entity_breaking_filter = guthscp.map_entities_filter:new( "guthscp_entity_breaking", "GuthSCP Entity Breaking" )
 
 	--  warn to get rid of old base
-	timer_Simple( 0, function()
+	timer.Simple( 0, function()
 		if GuthSCP and GuthSCP.Config then
 			local text = "The old base has been detected, please uninstall it and replace the old SCP addons by the ones from the 'Modules Collection' (look at the right panel)."
 			self:add_error( text )
