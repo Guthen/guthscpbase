@@ -173,11 +173,11 @@ function guthscp.module.require()
 	if #dirs == 0 then
 		return guthscp.warning( "guthscp.module", "no modules found, aborting.." )
 	end
-	guthscp.info( "guthscp.module", "loading %d modules..", #dirs )
+	guthscp.info( "guthscp.module", "loading %d modules...", #dirs )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 
 	--  construct modules
-	guthscp.info( "guthscp.module", "constructing.." )
+	guthscp.info( "guthscp.module", "constructing..." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 	for i, name in ipairs( dirs ) do
 		guthscp.module.construct( name )
@@ -185,7 +185,7 @@ function guthscp.module.require()
 	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  init modules
-	guthscp.info( "guthscp.module", "initializing.." )
+	guthscp.info( "guthscp.module", "initializing..." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 	for id, module in pairs( guthscp.modules ) do
 		guthscp.module.init( module )
@@ -205,11 +205,11 @@ function guthscp.module.hot_reload( id )
 
 	local old_module = guthscp.modules[id]
 
-	guthscp.info( "guthscp.module", "hot reloading %q..", id )
+	guthscp.info( "guthscp.module", "hot reloading %q...", id )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 
 	--  construct
-	guthscp.info( "guthscp.module", "constructing.." )
+	guthscp.info( "guthscp.module", "constructing..." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 	if not guthscp.module.construct( id ) then
 		guthscp.print_tabs = 0
@@ -218,7 +218,7 @@ function guthscp.module.hot_reload( id )
 	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  initialize
-	guthscp.info( "guthscp.module", "initializing.." )
+	guthscp.info( "guthscp.module", "initializing..." )
 	guthscp.print_tabs = guthscp.print_tabs + 1
 	if not guthscp.module.init( id ) then
 		guthscp.print_tabs = 0
