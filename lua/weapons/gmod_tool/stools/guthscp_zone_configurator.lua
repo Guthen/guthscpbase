@@ -120,9 +120,7 @@ if CLIENT then
 		end
 
 		--  update 
-		local ply = LocalPlayer()
-		local tool = ply:GetTool( guthscp.zone.tool_mode )
-		local zone_id = tool:GetClientInfo( "zone_id" )
+		local zone_id = GetConVar( guthscp.zone.tool_mode .. "_zone_id" ):GetString()
 		update_zone( zone_id )
 	end
 
