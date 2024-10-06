@@ -254,13 +254,20 @@ end
 
 
 --  modules load config
-hook.Add( "InitPostEntity", "guthscp.modules:load_config", function()
-	for id, module in pairs( guthscp.modules ) do
-		if not istable( module.menu ) or not istable( module.menu.config ) then continue end
+if SERVER then
+	hook.Add( "InitPostEntity", "guthscp.modules:load_config", function()
+		guthscp.info( "guthscp.module", "loading configurations..." )
+		guthscp.print_tabs = guthscp.print_tabs + 1
 
-		guthscp.config.load( id )
-	end
-end )
+		for id, module in pairs( guthscp.modules ) do
+			if not istable( module.menu ) or not istable( module.menu.config ) then continue end
+
+			guthscp.config.load( id )
+		end
+
+		guthscp.print_tabs = guthscp.print_tabs - 1
+	end )
+end
 
 --  modules version checking
 hook.Add( "InitPostEntity", "guthscp.modules:version_url", function()
