@@ -2,7 +2,7 @@ guthscp.sound = guthscp.sound or {}
 
 local sounds = {}
 
-timer.Create( "guthscp:sound_channel", .1, 0, function()
+timer.Create( "guthscp:sound_channel", 0.1, 0, function()
 	local ply = LocalPlayer()
 	if not IsValid( ply ) then return end
 
@@ -81,7 +81,7 @@ function guthscp.sound.play( ent, path, radius, looping, volume )
 
 		--  channel
 		channel:SetPos( ent:GetPos() )
-		channel:Set3DFadeDistance( radius * .15, radius )
+		channel:Set3DFadeDistance( radius * 0.15, radius )
 		channel:EnableLooping( looping )
 		channel:Play()
 		channel:SetVolume( volume )

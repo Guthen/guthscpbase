@@ -1180,7 +1180,7 @@ function guthscp.config.get_pages_ids()
 end
 
 local function create_menu()
-	local w, h = ScrW() * .6, ScrH() * .65
+	local w, h = ScrW() * 0.6, ScrH() * 0.65
 
 	--  create frame
 	local frame = vgui.Create( "DFrame" )
@@ -1198,7 +1198,7 @@ local function create_menu()
 	sheet:Dock( FILL )
 	function sheet:OnActiveTabChanged( old, new )
 		--  somehow, the scroll vbar is showing incorrectly when there is not enough space to scroll, so here's my fix..
-		timer.Simple( .1, function()
+		timer.Simple( 0.1, function()
 			new:GetPanel().scroll_panel:InvalidateLayout()
 		end )
 	end

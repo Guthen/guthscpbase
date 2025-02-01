@@ -190,7 +190,7 @@ if SERVER then
 	util.AddNetworkString( "guthscp.filter:io" )
 
 	function FILTER:safe_sync( receiver )
-		timer.Create( self.global_id .. ":sync", .5, 1, function()
+		timer.Create( self.global_id .. ":sync", 0.5, 1, function()
 			self:sync( receiver )
 		end )
 	end

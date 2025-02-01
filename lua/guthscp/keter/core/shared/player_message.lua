@@ -9,7 +9,7 @@ if SERVER then
 	end
 else
 	local max_lifetime = 3
-	local fading_time_ratio = .8  --  80% of 3s = 2.4s
+	local fading_time_ratio = 0.8  --  80% of 3s = 2.4s
 	function guthscp.player_message( text )
 		local lifetime = 0
 		hook.Add( "HUDPaint", "guthscp.player_message:draw", function()

@@ -4,7 +4,7 @@ local symbol_mat = Material( "scp_content/handsymbol2.png" )
 local symbol_size = ScreenScale( 20 )
 
 local screen_center = Vector( ScrW(), ScrH(), 0 ) / 2
-local screen_center_weight = .4
+local screen_center_weight = 0.4
 
 hook.Add( "HUDPaint", "guthscp.entity:draw_hand_symbol", function()
 	local ply = LocalPlayer()

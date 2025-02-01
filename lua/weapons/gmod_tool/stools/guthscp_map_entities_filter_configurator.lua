@@ -71,7 +71,7 @@ if CLIENT then
 
 	local color_red = Color( 255, 0, 0 )
 	function TOOL:DrawHUD()
-		local x, y = ScrW() / 2, ScrH() * .75
+		local x, y = ScrW() / 2, ScrH() * 0.75
 		local ent = LocalPlayer():GetEyeTrace().Entity
 		if not IsValid( ent ) then return end
 
