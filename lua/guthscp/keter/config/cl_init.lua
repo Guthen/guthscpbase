@@ -918,7 +918,7 @@ local function create_label( parent, text )
 	return label
 end
 
-function guthscp.config.populate_config( parent, id, switch_callback )
+function guthscp.config.populate_config( parent, id )
 	--  populate module data
 	local module = guthscp.modules[id]
 	if module then
@@ -957,7 +957,7 @@ function guthscp.config.populate_config( parent, id, switch_callback )
 					label_icon:SetIcon( dependency.icon )
 					label_icon:SetText( ( "%s (>=v%s)" ):format( dependency.name, version ) )
 					function label_icon:DoClick()
-						switch_callback( id )
+						guthscp.config.menu:switch_to_config( id )
 					end
 				end
 			end
@@ -1206,8 +1206,8 @@ local function create_menu()
 	guthscp.config.menu.sheets = {}
 
 	--  callback for switching panel (e.g. dependencies hyperlinks)
-	local function switch_callback( id )
-		guthscp.config.menu.sheet:SetActiveTab( guthscp.config.menu.sheets[id].Tab )
+	function guthscp.config.menu:switch_to_config( id )
+		self.sheet:SetActiveTab( self.sheets[id].Tab )
 	end
 
 	--  create pages
@@ -1223,10 +1223,11 @@ local function create_menu()
 		panel.scroll_panel = scroll_panel
 
 		--  populate
-		guthscp.config.populate_config( scroll_panel, id, switch_callback )
+		guthscp.config.populate_config( scroll_panel, id )
 
 		--  add sheet
 		guthscp.config.menu.sheets[id] = sheet:AddSheet( name or id, panel, data.icon )
+		guthscp.config.menu.sheets[id].Tab.config_id = id
 
 		--  size to children
 		scroll_panel:InvalidateLayout( true )
@@ -1241,18 +1242,11 @@ function guthscp.config.remove_menu()
 	guthscp.config.menu:Remove()
 end
 
-local should_hot_reload = true
 function guthscp.config.open_menu()
 	if not LocalPlayer():IsSuperAdmin() then
 		guthscp.warning( "guthscp.config", "you are not part of the \"superadmin\" usergroup!" )
 		return
 	end
-
-	--  hot reload: refresh menu
-	if should_hot_reload then
-		guthscp.config.remove_menu()
-	end
-	should_hot_reload = false
 
 	--  create or show menu
 	if not IsValid( guthscp.config.menu ) then
@@ -1279,8 +1273,17 @@ hook.Add( "guthscp.config:applied", "guthscp.menu:reload_config", function( id, 
 	end
 end )
 
---  hot reload
-if IsValid( guthscp.config.menu ) then
-	guthscp.module.require()
-	guthscp.config.sync()  --  this will eventually call the above hook
+function guthscp.config.reload_menu()
+	if not IsValid( guthscp.config.menu ) then return end
+
+	local active_config_id = guthscp.config.menu.sheet:GetActiveTab().config_id
+
+	guthscp.config.menu:Remove()
+	create_menu()
+
+	guthscp.config.menu:switch_to_config( active_config_id )
 end
+concommand.Add( "guthscp_menu_reload", guthscp.config.reload_menu )
+
+--  hot reload
+guthscp.config.reload_menu()
