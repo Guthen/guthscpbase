@@ -310,3 +310,42 @@ hook.Add( "InitPostEntity", "guthscp.modules:version_url", function()
 		end
 	end )
 end )
+
+if CLIENT then
+	hook.Add( "FinishMove", "guthscp.modules:warn_for_issues", function( ply, mv )
+		--  ensure we are ourselves (this is probably always the case, but just-in-case)
+		if ply ~= LocalPlayer() then return end
+		--  ensure player has moved and is not AFK
+		if mv:GetVelocity():IsZero() then return end
+
+		if ply:IsSuperAdmin() then
+			--  warn superadmins about modules issues as soon as they enter the game
+			local has_issues = false
+			for id, module in pairs( guthscp.modules ) do
+				local warnings = module._.warnings
+				if #warnings > 0 then
+					chat.AddText( color_white, "[", Color( 255, 121, 54 ), "GuthSCP", color_white, "] ",
+						( "%d issue%s have been found on module %q:" ):format( #warnings, #warnings > 1 and "s" or "", module.id )
+					)
+		
+					for i, warning in pairs( warnings ) do
+						chat.AddText( color_white, "- ", warning.color, warning.text )
+					end
+
+					has_issues = true
+				end
+			end
+
+			if has_issues then
+				--  some sfx going on to captivate the audience :D
+				surface.PlaySound( "buttons/blip1.wav" )
+				timer.Simple( 0.3, function() 
+					surface.PlaySound( "buttons/blip1.wav" )
+				end )
+			end
+		end
+
+		--  remove hook
+		hook.Remove( "FinishMove", "guthscp.modules:warn_for_issues" )
+	end )
+end
