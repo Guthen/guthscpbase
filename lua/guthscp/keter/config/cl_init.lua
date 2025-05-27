@@ -799,7 +799,6 @@ vguis_types = {
 			entry:SetWide( 64 )
 			entry:SetDrawLanguageID( false )
 			entry:SetPlaceholderText( " #ffffffff" )
-			--entry:SetValue( " #eb3c07" )
 			function entry:AllowInput( char )
 				return char:match( "[a-fA-F%d%s#]" ) == nil
 			end
@@ -810,14 +809,12 @@ vguis_types = {
 
 				--  split components
 				local r, g, b, a = text:sub( 1, 2 ), text:sub( 3, 4 ), text:sub( 5, 6 ), text:sub( 7, 8 )
-				--print( r, g, b, a )
 
 				--  convert from hexadecimal
 				r = tonumber( r, 16 )
 				g = tonumber( g, 16 )
 				b = tonumber( b, 16 )
 				a = tonumber( a, 16 ) or 255
-				--print( r, g, b, a )
 
 				--  set color
 				local color = Color( r, g, b, a )
@@ -948,11 +945,8 @@ function guthscp.config.populate_config( parent, id )
 			for id, version in pairs( module.dependencies ) do
 				local dependency = guthscp.modules[id]
 				if dependency then  --  the reverse should not happen (since configs are loaded only if dependencies are constructed)
-					local container_dependency = container:Add( "Panel" )
-					container_dependency:Dock( TOP )
-
-					local label_icon = container_dependency:Add( "guthscp_label_icon" )
-					label_icon:Dock( LEFT )
+					local label_icon = container:Add( "guthscp_label_icon" )
+					label_icon:Dock( TOP )
 					label_icon:DockMargin( 10, 0, 0, 0 )
 					label_icon:SetIcon( dependency.icon )
 					label_icon:SetText( ( "%s (>=v%s)" ):format( dependency.name, version ) )
@@ -969,17 +963,33 @@ function guthscp.config.populate_config( parent, id )
 			create_label_category( container, "Warnings" )
 
 			for i, v in ipairs( warnings ) do
-				local container_dependency = container:Add( "Panel" )
-				container_dependency:Dock( TOP )
+				local warning_notification = container:Add( "Panel" )
+				warning_notification:Dock( TOP )
+				warning_notification:DockMargin( 10, 0, 0, 4 )
+				warning_notification:DockPadding( 6, 6, 6, 6 )
 
-				local label_icon = container_dependency:Add( "guthscp_label_icon" )
-				label_icon:Dock( LEFT )
-				label_icon:DockMargin( 10, 0, 0, 0 )
-				label_icon:SetIcon( v.icon )
-				label_icon:SetText( v.text )
-				label_icon:SetClickable( false )
-				function label_icon:Paint( w, h )
-					draw.RoundedBox( 2, 0, 0, w, 16, ColorAlpha( v.color, math.abs( math.sin( CurTime() * 3 ) * 84 ) ) )
+				local icon_image = warning_notification:Add( "DImage" )
+				icon_image:SetSize( 16, 16 )
+				icon_image:SetImage( v.icon )
+
+				local label = warning_notification:Add( "DLabel" )
+				label:Dock( FILL )
+				label:DockMargin( 24, 0, 0, 0 )
+				label:SetDark( true )
+				label:SetText( v.text )
+				label:SetWrap( true )
+				label:SetAutoStretchVertical( true )
+				function label:PerformLayout( w, h )
+					local left_padding = warning_notification:GetDockPadding()
+					warning_notification:SetTall( left_padding * 2 + h )
+					icon_image:SetPos(
+						left_padding / 2 + label:GetDockMargin() / 2 - icon_image:GetWide() / 2,
+						warning_notification:GetTall() / 2 - icon_image:GetTall() / 2
+					)
+				end
+
+				function warning_notification:Paint( w, h )
+					draw.RoundedBox( 4, 0, 0, w, h, ColorAlpha( v.color, 16 + math.abs( math.sin( CurTime() * 2 ) * 84 ) ) )
 				end
 			end
 		end
