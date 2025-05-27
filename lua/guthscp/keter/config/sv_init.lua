@@ -12,14 +12,12 @@ function guthscp.config.add( id, tbl, no_load )
 		parse = tbl.parse,
 	}
 
-	--  setup if no load
 	if no_load then
-		guthscp.config.setup( id )
-	end
-
-	--  load config
-	if no_load or not guthscp.config.load( id ) then
-		guthscp.config.apply( id, guthscp.configs[id] )
+		--  modules config data loading is handled by the module loader itself
+		--  and is deferred for the InitPostEntity hook
+		guthscp.config.set_defaults( id )
+	else
+		guthscp.config.load( id )
 	end
 end
 

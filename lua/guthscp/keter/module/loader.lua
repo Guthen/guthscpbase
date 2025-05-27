@@ -119,7 +119,7 @@ function guthscp.module.init( id )
 		guthscp.info( "guthscp.module", "registering the configuration" )
 		guthscp.print_tabs = guthscp.print_tabs + 1
 
-		--  register
+		--  register and defer config data loading later
 		guthscp.config.add( module.id, {
 			name = module.name,
 			icon = module.icon,
@@ -131,7 +131,7 @@ function guthscp.module.init( id )
 				} )
 			end,
 			parse = module.menu.config.parse,
-		}, true )
+		}, /* no_load */ true )
 
 		guthscp.print_tabs = guthscp.print_tabs - 1
 	end
@@ -262,7 +262,13 @@ if SERVER then
 		for id, module in pairs( guthscp.modules ) do
 			if not istable( module.menu ) or not istable( module.menu.config ) then continue end
 
-			guthscp.config.load( id )
+			if not guthscp.config.load( id ) then
+				--  still apply the config if no data has been found to ensure
+				--  that the 'guthscp.config:applied' hook is called no matter what
+				guthscp.config.apply( id, {}, {
+					network = true
+				} )
+			end
 		end
 
 		guthscp.print_tabs = guthscp.print_tabs - 1
