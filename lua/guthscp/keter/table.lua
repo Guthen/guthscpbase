@@ -50,3 +50,36 @@ function guthscp.table.rehash( tbl )
 
 	return new_tbl
 end
+
+--[[
+	@function guthscp.table.is_equal
+		| version: base@2.4.0
+		| description: checks whether both tables contain exactly the same elements; designed to work for both sequential and non-sequential tables
+		| params:
+			tbl1: const <table> first table to compare
+			tbl2: const <table> second table to compare
+		| return: <bool>
+]]
+function guthscp.table.is_equal( tbl1, tbl2 )
+	for k, v in pairs( tbl1 ) do
+		if istable( v ) and istable( tbl2[k] ) then
+			if not guthscp.table.is_equal( v, tbl2[k] ) then
+				return false
+			end
+		elseif v ~= tbl2[k] then
+			return false
+		end
+	end
+
+	for k, v in pairs( tbl2 ) do
+		if istable( v ) and istable( tbl1[k] ) then
+			if not guthscp.table.is_equal( v, tbl1[k] ) then
+				return false
+			end
+		elseif v ~= tbl1[k] then
+			return false
+		end
+	end
+
+	return true
+end
