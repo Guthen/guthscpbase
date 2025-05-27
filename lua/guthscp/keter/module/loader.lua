@@ -322,13 +322,13 @@ if CLIENT then
 			--  warn superadmins about modules issues as soon as they enter the game
 			local has_issues = false
 			for id, module in pairs( guthscp.modules ) do
-				local warnings = module._.warnings
-				if #warnings > 0 then
+				local issues = module._.issues
+				if #issues > 0 then
 					chat.AddText( color_white, "[", Color( 255, 121, 54 ), "GuthSCP", color_white, "] ",
-						( "%d issue%s have been found on module %q:" ):format( #warnings, #warnings > 1 and "s" or "", module.id )
+						( "%d issue%s have been found on module %q:" ):format( #issues, #issues > 1 and "s" or "", module.id )
 					)
 		
-					for i, warning in pairs( warnings ) do
+					for i, warning in pairs( issues ) do
 						chat.AddText( color_white, "- ", warning.color, warning.text )
 					end
 

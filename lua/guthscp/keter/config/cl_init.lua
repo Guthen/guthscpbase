@@ -957,22 +957,22 @@ function guthscp.config.populate_config( parent, id )
 			end
 		end
 
-		--  display warnings
-		local warnings = module._.warnings
-		if #warnings > 0 then
-			create_label_category( container, "Warnings" )
+		--  display issues
+		local issues = module._.issues
+		if #issues > 0 then
+			create_label_category( container, "Issues" )
 
-			for i, v in ipairs( warnings ) do
-				local warning_notification = container:Add( "Panel" )
-				warning_notification:Dock( TOP )
-				warning_notification:DockMargin( 10, 0, 0, 4 )
-				warning_notification:DockPadding( 6, 6, 6, 6 )
+			for i, v in ipairs( issues ) do
+				local issue_notification = container:Add( "Panel" )
+				issue_notification:Dock( TOP )
+				issue_notification:DockMargin( 10, 0, 0, 4 )
+				issue_notification:DockPadding( 6, 6, 6, 6 )
 
-				local icon_image = warning_notification:Add( "DImage" )
+				local icon_image = issue_notification:Add( "DImage" )
 				icon_image:SetSize( 16, 16 )
 				icon_image:SetImage( v.icon )
 
-				local label = warning_notification:Add( "DLabel" )
+				local label = issue_notification:Add( "DLabel" )
 				label:Dock( FILL )
 				label:DockMargin( 24, 0, 0, 0 )
 				label:SetDark( true )
@@ -980,15 +980,15 @@ function guthscp.config.populate_config( parent, id )
 				label:SetWrap( true )
 				label:SetAutoStretchVertical( true )
 				function label:PerformLayout( w, h )
-					local left_padding = warning_notification:GetDockPadding()
-					warning_notification:SetTall( left_padding * 2 + h )
+					local left_padding = issue_notification:GetDockPadding()
+					issue_notification:SetTall( left_padding * 2 + h )
 					icon_image:SetPos(
 						left_padding / 2 + label:GetDockMargin() / 2 - icon_image:GetWide() / 2,
-						warning_notification:GetTall() / 2 - icon_image:GetTall() / 2
+						issue_notification:GetTall() / 2 - icon_image:GetTall() / 2
 					)
 				end
 
-				function warning_notification:Paint( w, h )
+				function issue_notification:Paint( w, h )
 					draw.RoundedBox( 4, 0, 0, w, h, ColorAlpha( v.color, 16 + math.abs( math.sin( CurTime() * 2 ) * 84 ) ) )
 				end
 			end

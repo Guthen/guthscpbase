@@ -5,7 +5,7 @@ local MODULE = {
 		is_initialized = false,  --  is the module fully initialized (is `MODULE/init` has been called by the loader?)
 		version_check = guthscp.VERSION_STATES.NONE,  --  state of the online version checking
 		online_version = "0.0.0",  --  version retrieved online
-		warnings = {},  --  list of registered warnings messages (using `MODULE/add_warning`)
+		issues = {},  --  list of registered issues messages (using `MODULE/add_warning`)
 	},
 
 	--  variables
@@ -70,7 +70,7 @@ function MODULE:add_warning( message, ... )
 		message = message:format( ... )
 	end
 
-	self._.warnings[#self._.warnings + 1] = {
+	self._.issues[#self._.issues + 1] = {
 		text = message,
 		icon = "icon16/error.png",
 		color = Color( 242, 214, 85 ),
@@ -89,7 +89,7 @@ function MODULE:add_error( message, ... )
 		message = message:format( ... )
 	end
 
-	self._.warnings[#self._.warnings + 1] = {
+	self._.issues[#self._.issues + 1] = {
 		text = message,
 		icon = "icon16/cancel.png",
 		color = Color( 242, 85, 85 ),
