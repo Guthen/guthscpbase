@@ -85,14 +85,11 @@ net.Receive( "guthscp.config:reset", function( len, ply )
 		return
 	end
 
-	--  load defaults
-	guthscp.config.load_defaults( config_id )
-
 	--  delete config file
 	guthscp.data.delete( guthscp.config.path .. config_id .. ".json" )
 
-	--  network changes
-	guthscp.config.apply( config_id, guthscp.configs[config_id], {
+	--  reset runtime config and network it
+	guthscp.config.apply( config_id, {}, {
 		network = true,
 	} )
 

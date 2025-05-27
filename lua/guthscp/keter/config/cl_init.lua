@@ -7,7 +7,7 @@ function guthscp.config.add( id, tbl )
 	tbl.form = guthscp.table.rehash( tbl.form )
 	guthscp.config_metas[id] = tbl
 
-	guthscp.config.setup( id )
+	guthscp.config.set_defaults( id )
 end
 
 function guthscp.config.send( id, config )
