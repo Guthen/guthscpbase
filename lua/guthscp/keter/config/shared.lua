@@ -57,7 +57,7 @@ function guthscp.config.load( id )
 	end
 
 	--  apply data
-	guthscp.config.apply( id, table.Merge( guthscp.configs[id] or {}, config ), {
+	guthscp.config.apply( id, config, {
 		network = true,
 	} )
 	guthscp.info( "guthscp.config", "loaded data to %q config", id )
