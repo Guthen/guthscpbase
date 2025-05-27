@@ -323,13 +323,23 @@ if CLIENT then
 			local has_issues = false
 			for id, module in pairs( guthscp.modules ) do
 				local issues = module._.issues
-				if #issues > 0 then
+
+				--  filter issues to only alert for errors
+				local filtered_issues = {}
+				for i, issue in pairs( issues ) do
+					--  this is the only way currently to check if an issue is an error, that's not pretty, yet it works
+					if issue.icon:find( "cancel" ) then
+						filtered_issues[#filtered_issues + 1] = issue
+					end
+				end
+
+				if #filtered_issues > 0 then
 					chat.AddText( color_white, "[", Color( 255, 121, 54 ), "GuthSCP", color_white, "] ",
-						( "%d issue%s have been found on module %q:" ):format( #issues, #issues > 1 and "s" or "", module.id )
+						( "%d error%s have been found on module %q:" ):format( #filtered_issues, #filtered_issues > 1 and "s" or "", module.id )
 					)
 		
-					for i, warning in pairs( issues ) do
-						chat.AddText( color_white, "- ", warning.color, warning.text )
+					for i, issue in pairs( filtered_issues ) do
+						chat.AddText( color_white, "- ", issue.color, issue.text )
 					end
 
 					has_issues = true
@@ -342,6 +352,14 @@ if CLIENT then
 				timer.Simple( 0.3, function() 
 					surface.PlaySound( "buttons/blip1.wav" )
 				end )
+
+				chat.AddText( color_white, "[", Color( 255, 121, 54 ), "GuthSCP", color_white, "] ", 
+					"Errors have been found, please follow the instructions to fix them!"
+				)
+			else
+				chat.AddText( color_white, "[", Color( 255, 121, 54 ), "GuthSCP", color_white, "] ", 
+					"No issues have been raised from modules, enjoy your time! :)"
+				)
 			end
 		end
 
