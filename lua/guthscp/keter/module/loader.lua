@@ -396,7 +396,7 @@ if CLIENT then
 					chat.AddText( color_white, "[", Color( 255, 121, 54 ), "GuthSCP", color_white, "] ",
 						( "%d error%s have been found on module %q:" ):format( #filtered_issues, #filtered_issues > 1 and "s" or "", module.id )
 					)
-		
+
 					for i, issue in pairs( filtered_issues ) do
 						chat.AddText( color_white, "- ", issue.color, issue.text )
 					end
@@ -408,16 +408,12 @@ if CLIENT then
 			if has_issues then
 				--  some sfx going on to captivate the audience :D
 				surface.PlaySound( "buttons/blip1.wav" )
-				timer.Simple( 0.3, function() 
+				timer.Simple( 0.3, function()
 					surface.PlaySound( "buttons/blip1.wav" )
 				end )
 
-				chat.AddText( color_white, "[", Color( 255, 121, 54 ), "GuthSCP", color_white, "] ", 
+				chat.AddText( color_white, "[", Color( 255, 121, 54 ), "GuthSCP", color_white, "] ",
 					"Errors have been found, please follow the instructions to fix them!"
-				)
-			else
-				chat.AddText( color_white, "[", Color( 255, 121, 54 ), "GuthSCP", color_white, "] ", 
-					"No issues have been raised from modules, enjoy your time! :)"
 				)
 			end
 		end
