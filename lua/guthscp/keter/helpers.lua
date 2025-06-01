@@ -107,6 +107,22 @@ function guthscp.helpers.compare_versions( current_version, extern_version )
 	return 0, -1
 end
 
+--[[ 
+	@function guthscp.helpers.read_dependency_version
+		| version: base@2.5.0
+		| description: get informations out-of a dependency version format, supporting strings like "1.0.0-beta"
+					   or containing labels like "optional:2.1.0"
+		| params:
+			version: <string> version text to use
+		| return: 
+			version: <string> semantic version without labels
+			is_optional: <bool> whether the dependency is optional or not
+]]
+function guthscp.helpers.read_dependency_version( version )
+	local replace_count
+	version, replace_count = version:gsub( "optional:", "" )
+	return version, replace_count > 0
+end
 
 --[[ 
 	@function guthscp.helpers.define_print_methods

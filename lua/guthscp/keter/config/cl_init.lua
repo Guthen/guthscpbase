@@ -941,18 +941,37 @@ function guthscp.config.populate_config( parent, id )
 		if next( module.dependencies ) then
 			create_label_category( container, "Dependencies" )
 
-			--  show all
+			--  show all dependencies
 			for id, version in pairs( module.dependencies ) do
 				local dependency = guthscp.modules[id]
-				if dependency then  --  the reverse should not happen (since configs are loaded only if dependencies are constructed)
-					local label_icon = container:Add( "guthscp_label_icon" )
-					label_icon:Dock( TOP )
-					label_icon:DockMargin( 10, 0, 0, 0 )
-					label_icon:SetIcon( dependency.icon )
-					label_icon:SetText( ( "%s (>=v%s)" ):format( dependency.name, version ) )
+				local version, is_optional = guthscp.helpers.read_dependency_version( version )
+
+				local name, icon
+				if dependency then
+					name = dependency.name
+					icon = dependency.icon
+				else
+					name = id
+				end
+
+				if is_optional then
+					name = "Optional: " .. name
+					icon = icon or "icon16/help.png"
+				elseif not icon then
+					icon = "icon16/exclamation.png"
+				end
+
+				local label_icon = container:Add( "guthscp_label_icon" )
+				label_icon:Dock( TOP )
+				label_icon:DockMargin( 10, 0, 0, 0 )
+				label_icon:SetIcon( icon )
+				label_icon:SetText( ( "%s (>=v%s)" ):format( name, version ) )
+				if dependency then
 					function label_icon:DoClick()
 						guthscp.config.menu:switch_to_config( id )
 					end
+				else
+					label_icon:SetClickable( false )
 				end
 			end
 		end

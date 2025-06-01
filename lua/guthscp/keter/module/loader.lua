@@ -50,6 +50,12 @@ function guthscp.module.construct( id )
 	return true
 end
 
+local function capitalise_first_letter( str )
+	return str:gsub( "^%w", function( letter )
+		return letter:upper()
+	end )
+end
+
 function guthscp.module.init( id )
 	local module
 	if istable( id ) then
@@ -81,14 +87,31 @@ function guthscp.module.init( id )
 	end
 
 	--  check dependencies
+	local is_optional
+	local can_initialize = true
 	for dep_id, version in pairs( module.dependencies ) do
+		--  check for optional dependency
+		version, is_optional = guthscp.helpers.read_dependency_version( version )
+
 		--  ensure dependency is registered
 		local dep_module = guthscp.modules[dep_id]
 		if not dep_module then
-			guthscp.error( "guthscp.module", "dependency %q can't be found", dep_id )
-			module:add_error( "Dependency %q wasn't found, install its version v%s+!", dep_id, version )
-			guthscp.print_tabs = old_tabs
-			return false
+			if is_optional then
+				guthscp.info( "guthscp.module", "optional dependency %q isn't installed, skipping (required: v%s)", dep_id, version )
+				continue
+			else
+				guthscp.error( "guthscp.module", "dependency %q isn't installed (required: v%s)", dep_id, version )
+				module:add_error( "Dependency %q wasn't found, install its version v%s+!", dep_id, version )
+
+				can_initialize = false
+				continue
+			end
+		end
+
+		--  construct dependency text
+		local dep_text = "dependency"
+		if is_optional then
+			dep_text = "optional " .. dep_text
 		end
 
 		--  compare version
@@ -96,22 +119,58 @@ function guthscp.module.init( id )
 		if result >= 0 then
 			--  warn for eventual API's changes
 			if depth == 1 then
-				guthscp.warning( "guthscp.module", "dependency %q API's version is greater than required, script errors could happen (current: v%s; required: v%s)", dep_id, dep_module.version, version )
-				module:add_warning( "Dependency %q API's version is greater than required, script errors could happen!", dep_id )
+				guthscp.warning(
+					"guthscp.module",
+					"%s %q API's version is greater than required, script errors could happen (current: v%s; required: v%s)",
+					dep_text, dep_id,
+					dep_module.version, version
+				)
+				module:add_warning(
+					"%s %q API's version is greater than required, script errors could happen!",
+					capitalise_first_letter( dep_text ), dep_id
+				)
 			else
-				guthscp.info( "guthscp.module", "dependency %q found (current: v%s; required: v%s)", dep_id, dep_module.version, version )
+				guthscp.info(
+					"guthscp.module",
+					"%s %q is found (current: v%s; required: v%s)",
+					dep_text, dep_id,
+					dep_module.version, version
+				)
 			end
 		--  warn for versions using development tag
 		elseif depth == 4 then
-			guthscp.warning( "guthscp.module", "dependency %q is under a development version, beware, some features may be broken (current: v%s; required: v%s)", dep_id, dep_module.version, version )
-			module:add_warning( "Dependency %q is using a development version, some features may be broken!", dep_id )
+			guthscp.warning(
+				"guthscp.module",
+				"%s %q is under a development version, beware, some features may be broken (current: v%s; required: v%s)",
+				dep_text, dep_id,
+				dep_module.version, version
+			)
+			module:add_warning(
+				"%s %q is using a development version, some features may be broken!",
+				capitalise_first_letter( dep_text ), dep_id
+			)
 		--  version lower than required, failing!
 		else
-			guthscp.error( "guthscp.module", "dependency %q version is lower than required, update it (current: v%s; required: v%s)", dep_id, dep_module.version, version )
-			module:add_error( "Dependency %q version is lower than required, update it to v%s+!", dep_id, version )
-			guthscp.print_tabs = old_tabs
-			return false
+			guthscp.error(
+				"guthscp.module",
+				"%s %q version is lower than required, update it (current: v%s; required: v%s)",
+				dep_text, dep_id,
+				dep_module.version, version
+			)
+			module:add_error(
+				"%s %q version is lower than required, update it to v%s+!",
+				capitalise_first_letter( dep_text ),
+				dep_id, version
+			)
+
+			can_initialize = false
+			continue
 		end
+	end
+
+	if not can_initialize then
+		guthscp.print_tabs = old_tabs
+		return false
 	end
 
 	--  add config
