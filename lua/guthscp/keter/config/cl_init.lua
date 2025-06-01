@@ -1295,6 +1295,9 @@ hook.Add( "guthscp.config:applied", "guthscp.menu:reload_config", function( id, 
 	local panel = guthscp.config.menu.sheets[id].Panel
 	local scroll_panel = panel.scroll_panel
 	local form = scroll_panel.form
+	--  check that a config exists on this module first
+	if not istable( form ) then return end
+
 	for id, panel in pairs( form ) do
 		if id:StartsWith( "_" ) then continue end
 
