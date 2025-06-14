@@ -2,17 +2,41 @@ guthscp.config = guthscp.config or {}
 guthscp.config.path = "configs/"
 guthscp.configs = guthscp.configs or {}
 
+local function is_save_per_map_format( value, meta )
+	if not istable( value ) then return false end
+
+	if meta.type == "Color" then
+		if IsColor( value ) then return false end
+		-- IsColor is not enough sometimes, maybe due to networking?
+		-- but by reading the code, it seems like the color should still be re-created...
+		if isnumber( value.r ) and isnumber( value.g ) and isnumber( value.b ) then return false end
+	end
+
+	return true
+end
+
 function guthscp.config.apply( id, config, options )
 	local config_meta = guthscp.config_metas[id]
 	if not config_meta then
 		return guthscp.error( "guthscp.config", "trying to apply config %q which isn't registered!", id )
 	end
 
-	--  apply default values while prioritizing changes
-	local defaults = guthscp.config.get_defaults( id )
-	for k, v in pairs( defaults ) do
-		if config[k] == nil then
-			config[k] = v
+	local metas = guthscp.config.get_metas( id )
+	for k, v in pairs( metas ) do
+		--  parse save-per-map configuration
+		--  if the value is not in the save-per-map format, we assume the value doesn't need any changes 
+		if v.save_per_map and is_save_per_map_format( config[k], v ) then
+			if config[k][game.GetMap()] ~= nil then
+				config[k] = config[k][game.GetMap()]
+			else
+				--	set to nil for a reset to default later down the loop 
+				config[k] = nil
+			end
+		end
+
+		--  apply default values while prioritizing changes
+		if v.default ~= nil and config[k] == nil then
+			config[k] = v.default
 		end
 	end
 
@@ -50,7 +74,9 @@ end
 
 function guthscp.config.save( id )
 	local config = guthscp.configs[id] or {}
-	local defaults = guthscp.config.get_defaults( id )
+	local metas = guthscp.config.get_metas( id )
+	local current_map = game.GetMap()
+	local last_changes = guthscp.data.load_from_json( guthscp.config.path .. id .. ".json" ) or {}
 
 	--  we will only save config variables that are different from default values, this allows developpers
 	--  to change default values in future updates that will be effective once the mod is updated
@@ -59,19 +85,33 @@ function guthscp.config.save( id )
 	local changes_count = 0
 	for k, v in pairs( config ) do
 		--  ensure the value is registered in the config
-		if not defaults[k] then continue end
+		if not metas[k] or not metas[k].default then continue end
+
+		if metas[k].save_per_map then
+			--	pre-pass to keep last changes while reseting current map value
+			--	in case it has to be skipped (i.e. equals to default)
+			changes[k] = last_changes[k]
+			changes[k][current_map] = nil
+		end
 
 		--  only gather non-default values
 		if istable( v ) and not IsColor( v ) then
-			--  table types need extra work to compare them since by defaults Lua only compares their memory adresses
-			if guthscp.table.is_equal( v, defaults[k] ) then
+			--  table types need extra work to compare them since by default Lua only compares their memory adresses
+			if guthscp.table.is_equal( v, metas[k].default ) then
 				continue
 			end
-		elseif v == defaults[k] then
+		elseif v == metas[k].default then
 			continue
 		end
 		
-		changes[k] = v
+		if metas[k].save_per_map then
+			--	save our changes to the current map slot
+			changes[k] = changes[k] or {}
+			changes[k][current_map] = v
+		else
+			changes[k] = v
+		end
+
 		changes_count = changes_count + 1
 	end
 
@@ -108,9 +148,37 @@ function guthscp.config.load( id )
 	return true
 end
 
+function guthscp.config.get_metas( id )
+	local config_meta = guthscp.config_metas[id]
+	if not config_meta or not config_meta.form then return nil end
+
+	local metas = {}
+
+	local function try_set_meta( meta )
+		if meta.id == nil then return end
+		metas[meta.id] = meta
+	end
+
+	for i, meta in ipairs( config_meta.form ) do
+		if not istable( meta ) then continue end
+
+		--  check is an element
+		if meta.type then
+			try_set_meta( meta )
+		else
+			--  consider as a group of elements
+			for j, meta2 in ipairs( meta ) do
+				try_set_meta( meta2 )
+			end
+		end
+	end
+
+	return metas
+end
+
 function guthscp.config.get_defaults( id )
 	local config_meta = guthscp.config_metas[id]
-	if not config_meta or not config_meta.form then return end
+	if not config_meta or not config_meta.form then return nil end
 
 	local defaults = {}
 
