@@ -103,11 +103,13 @@ function guthscp.config.save( id )
 		--  ensure the value is registered in the config
 		if not metas[k] or not metas[k].default then continue end
 
-		if metas[k].save_per_map then
+		if metas[k].save_per_map and is_save_per_map_format( last_changes[k], metas[k] ) then
 			--	pre-pass to keep last changes while reseting current map value
 			--	in case it has to be skipped (i.e. equals to default)
 			changes[k] = last_changes[k]
+			if changes[k] then
 				changes[k][current_map] = nil
+			end
 		end
 
 		--  only gather non-default values
