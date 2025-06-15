@@ -35,6 +35,7 @@ function guthscp.config.apply( id, config, options )
 		return guthscp.error( "guthscp.config", "trying to apply config %q which isn't registered!", id )
 	end
 
+	guthscp.print_tabs = guthscp.print_tabs + 1
 	local metas = guthscp.config.get_metas( id )
 	for k, v in pairs( metas ) do
 		--  parse save-per-map configuration
@@ -55,6 +56,7 @@ function guthscp.config.apply( id, config, options )
 
 		ensure_config_type( config, v )
 	end
+	guthscp.print_tabs = guthscp.print_tabs - 1
 
 	--  parse
 	if config_meta.parse then
