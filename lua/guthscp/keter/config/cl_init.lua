@@ -161,6 +161,15 @@ local function create_array_vguis( panel, meta, config_value, add_func )
 	end
 	install_reset_input( meta, scroll_panel, nil, vguis )
 
+	function vguis:SetDisabled( is_disabled )
+		for i, v in ipairs( vguis ) do
+			v:SetDisabled( is_disabled )
+		end
+
+		add_button:SetDisabled( is_disabled )
+		remove_button:SetDisabled( is_disabled )
+	end
+
 	return vguis
 end
 
@@ -286,8 +295,16 @@ vguis_types = {
 					end
 
 					--  set disabled
-					if isfunction( meta.is_disabled ) then
-						child:SetDisabled( meta:is_disabled( child ) )
+					if meta.is_disabled then
+						if not isfunction( child.SetDisabled ) then
+							guthscp.error( "guthscp.config", "VGUI for config type %q doesn't support 'is_disabled' flag", meta.type )
+						else
+							local is_disabled = meta.is_disabled
+							if isfunction( is_disabled ) then
+								is_disabled = meta:is_disabled( child )
+							end
+							child:SetDisabled( is_disabled )
+						end
 					end
 
 					--  create description
