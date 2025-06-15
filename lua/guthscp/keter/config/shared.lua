@@ -5,14 +5,28 @@ guthscp.configs = guthscp.configs or {}
 local function is_save_per_map_format( value, meta )
 	if not istable( value ) then return false end
 
-	if meta.type == "Color" then
-		if IsColor( value ) then return false end
-		-- IsColor is not enough sometimes, maybe due to networking?
-		-- but by reading the code, it seems like the color should still be re-created...
-		if isnumber( value.r ) and isnumber( value.g ) and isnumber( value.b ) then return false end
+	if meta.type == "Color" and guthscp.helpers.is_color( value ) then
+		return false
 	end
 
 	return true
+end
+
+local function ensure_config_type( config, meta )
+	local value = config[meta.id]
+	if value == nil then return end
+
+	local is_correct, message = guthscp.config.is_value_valid( value, meta )
+	if not is_correct then
+		guthscp.warning( "guthscp.config", "element %q isn't of the required type %s, reseting to default.", meta.id, meta.type )	
+		config[meta.id] = meta.default
+	end
+
+	if message then
+		guthscp.print_tabs = guthscp.print_tabs + 1
+		guthscp.warning( "guthscp.config", message )
+		guthscp.print_tabs = guthscp.print_tabs - 1
+	end
 end
 
 function guthscp.config.apply( id, config, options )
@@ -38,6 +52,8 @@ function guthscp.config.apply( id, config, options )
 		if v.default ~= nil and config[k] == nil then
 			config[k] = v.default
 		end
+
+		ensure_config_type( config, v )
 	end
 
 	--  parse
@@ -91,7 +107,7 @@ function guthscp.config.save( id )
 			--	pre-pass to keep last changes while reseting current map value
 			--	in case it has to be skipped (i.e. equals to default)
 			changes[k] = last_changes[k]
-			changes[k][current_map] = nil
+				changes[k][current_map] = nil
 		end
 
 		--  only gather non-default values
@@ -146,63 +162,6 @@ function guthscp.config.load( id )
 	} )
 	guthscp.info( "guthscp.config", "loaded data to %q config with %d changes", id, changes_count )
 	return true
-end
-
-function guthscp.config.get_metas( id )
-	local config_meta = guthscp.config_metas[id]
-	if not config_meta or not config_meta.form then return nil end
-
-	local metas = {}
-
-	local function try_set_meta( meta )
-		if meta.id == nil then return end
-		metas[meta.id] = meta
-	end
-
-	for i, meta in ipairs( config_meta.form ) do
-		if not istable( meta ) then continue end
-
-		--  check is an element
-		if meta.type then
-			try_set_meta( meta )
-		else
-			--  consider as a group of elements
-			for j, meta2 in ipairs( meta ) do
-				try_set_meta( meta2 )
-			end
-		end
-	end
-
-	return metas
-end
-
-function guthscp.config.get_defaults( id )
-	local config_meta = guthscp.config_metas[id]
-	if not config_meta or not config_meta.form then return nil end
-
-	local defaults = {}
-
-	local function try_set_default( meta )
-		if meta.id == nil or meta.default == nil then return end
-		defaults[meta.id] = meta.default
-	end
-
-	--  apply default in form
-	for i, meta in ipairs( config_meta.form ) do
-		if not istable( meta ) then continue end
-
-		--  check is an element
-		if meta.type then
-			try_set_default( meta )
-		else
-			--  consider as a group of elements
-			for j, meta2 in ipairs( meta ) do
-				try_set_default( meta2 )
-			end
-		end
-	end
-
-	return defaults
 end
 
 function guthscp.config.set_defaults( id )

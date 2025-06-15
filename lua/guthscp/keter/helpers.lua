@@ -248,3 +248,13 @@ function guthscp.helpers.lerp_color( t, a, b, should_lerp_alpha )
 		should_lerp_alpha and Lerp( t, a.a, b.a ) or a.a
 	)
 end
+
+function guthscp.helpers.is_color( value )
+	if IsColor( value ) then return true end
+	
+	-- IsColor is not enough sometimes, maybe due to networking?
+	-- but by reading the code, it seems like the color should still be re-created...
+	if isnumber( value.r ) and isnumber( value.g ) and isnumber( value.b ) then return true end
+
+	return false
+end

@@ -37,6 +37,19 @@ end
 
 --  teams
 --[[ 
+	@function guthscp.is_valid_team_keyname
+		| description: check if a given string is in the correct team keyname format, which means starting by "TEAM_" or "FACTION_" 
+		| params:
+			keyname: <string>
+		| return: <bool> is_valid
+]]
+function guthscp.is_valid_team_keyname( keyname )
+	if not isstring( keyname ) then return false end
+	return keyname:StartWith( "TEAM_" ) or	--  DarkRP
+		   keyname:StartWith( "FACTION_" )	--  Helix
+end
+
+--[[ 
 	@function guthscp.cache_teams_keynames
 		| description: cache all teams keynames (global Lua variable names) and their IDs values by looping over `_G`; 
 					   used internally by @`guthscp.get_teams_keynames` & @`guthscp.get_team_keyname`
@@ -47,8 +60,7 @@ function guthscp.cache_teams_keynames()
 
 	local count = 0
 	for k, v in pairs( _G ) do
-		if k:StartWith( "TEAM_" ) or       --  DarkRP
-		   k:StartWith( "FACTION_" ) then  --  Helix
+		if guthscp.is_valid_team_keyname( k ) then
 			teams_keynames[k] = v
 			count = count + 1
 		end
